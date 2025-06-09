@@ -8,6 +8,7 @@ import type { CarouselItem as CarouselItemType } from "@/lib/types";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { motion } from "framer-motion";
 
 interface HomePageCarouselProps {
   items: CarouselItemType[]; 
@@ -32,7 +33,7 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
         <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
           <div className="flex flex-row justify-start gap-4 pl-4">
-            {[...Array(3)].map((_, index) => (
+            {[...Array(4)].map((_, index) => ( // Changed from 3 to 4
                <motion.div
                 key={`skeleton-${index}`}
                 className="rounded-3xl"
@@ -84,7 +85,3 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
     </section>
   );
 }
-
-// Added motion import for skeleton animation consistency if needed later
-// but not actively using motion for skeletons themselves to keep it simple.
-import { motion } from "framer-motion";
