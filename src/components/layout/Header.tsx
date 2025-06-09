@@ -17,8 +17,7 @@ export async function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/contact', label: 'Contact' },
-    // Admin link for easy access during development, remove for production
-    { href: '/admin/dashboard', label: 'Admin' }, 
+    // Admin link removed as per request
   ];
 
   return (
