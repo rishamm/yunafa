@@ -4,8 +4,8 @@
 
 @layer base {
   @font-face {
-    font-family: 'Ragna';
-    src: url('/fonts/Ragna-Regular.woff2') format('woff2'); /* Adjust path if your filename is different */
+    font-family: 'Maniac';
+    src: url('/fonts/Maniac-Regular.woff2') format('woff2'); /* Adjust path if your filename is different */
     font-weight: normal;
     font-style: normal;
   }

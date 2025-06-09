@@ -15,7 +15,7 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
         y="50%"
         dominantBaseline="middle"
         textAnchor="middle"
-        fontFamily="Ragna, serif" 
+        fontFamily="Maniac, serif" 
         fontSize="24"
         fill="currentColor"
       >
