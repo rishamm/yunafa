@@ -40,7 +40,7 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon" side="left" variant="sidebar" className="border-r">
       <SidebarHeader className="flex items-center justify-between p-4">
         <Link href="/admin/dashboard" className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
-          <Logo height={28} />
+          <Logo height={32} />
         </Link>
       </SidebarHeader>
       <SidebarContent className="p-2">

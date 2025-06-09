@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Logo } from '@/components/icons/Logo';
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,7 @@ export function AdminHeader() {
           <SidebarTrigger />
         </div>
         <Link href="/admin/dashboard" className="hidden md:block">
-          <Logo height={28} />
+          <Logo height={32} />
         </Link>
       </div>
       

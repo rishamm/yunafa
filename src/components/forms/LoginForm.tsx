@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,7 +65,7 @@ export function LoginForm() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
-            <Logo height={40} />
+            <Logo height={48} />
           </div>
           <CardTitle className="text-3xl font-headline">Admin Login</CardTitle>
           <CardDescription>Enter your credentials to access the admin panel.</CardDescription>

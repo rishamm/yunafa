@@ -16,7 +16,7 @@ export function Logo({ height = 30, className }: LogoProps) {
 
   return (
     <Image
-      src="/logo.png" 
+      src="/logo.jpg" 
       alt="Yunafa Logo"
       width={width}
       height={height}
