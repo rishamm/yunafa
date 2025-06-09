@@ -16,7 +16,7 @@ type CardData = {
 
 const cards: CardData[] = [
   {
-    src: "https://placehold.co/600x800.png",
+    src: "https://images.unsplash.com/photo-1616583936499-d4116e7e2e76?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     title: "Timeless Elegance",
     category: "Luxury Watches",
     content: <p>Discover watches that are a testament to craftsmanship and precision. Each piece is a work of art.</p>,
