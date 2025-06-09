@@ -1,3 +1,4 @@
+
 import { getProductById, getCategories } from '@/lib/data';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
@@ -38,13 +39,18 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
         <div className="aspect-square relative rounded-lg overflow-hidden shadow-xl">
           <Image
-            src={product.imageUrl}
+            src={product.imageUrl ? product.imageUrl.trim() : '/placeholder-image.png'}
             alt={product.name}
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
             data-ai-hint={product['data-ai-hint'] || "product image"}
+            onError={(e) => {
+              // Fallback for broken images
+              e.currentTarget.srcset = '/placeholder-image.png';
+              e.currentTarget.src = '/placeholder-image.png';
+            }}
           />
         </div>
         <div>

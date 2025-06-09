@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,7 +30,10 @@ const formSchema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   price: z.coerce.number().positive('Price must be a positive number'),
-  imageUrl: z.string().url('Must be a valid URL').or(z.string().startsWith('https://placehold.co')),
+  imageUrl: z.preprocess(
+    (val) => (typeof val === 'string' ? val.trim() : val),
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+  ),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
   tags: z.string().optional(), 
   'data-ai-hint': z.string().optional(),
@@ -57,7 +61,7 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
       name: product?.name || '',
       description: product?.description || '',
       price: product?.price || 0,
-      imageUrl: product?.imageUrl || 'https://placehold.co/600x400.png',
+      imageUrl: product?.imageUrl?.trim() || 'https://placehold.co/600x400.png',
       categoryIds: product?.categoryIds || [],
       tags: product?.tags?.join(', ') || '',
       'data-ai-hint': product?.['data-ai-hint'] || '',

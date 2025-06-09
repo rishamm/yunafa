@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { getProducts, getCategories } from '@/lib/data';
 import { Button } from '@/components/ui/button';
@@ -53,12 +54,17 @@ export default async function AdminProductsPage() {
                 <TableRow key={product.id}>
                   <TableCell>
                     <Image
-                      src={product.imageUrl}
+                      src={product.imageUrl ? product.imageUrl.trim() : '/placeholder-image.png'}
                       alt={product.name}
                       width={50}
                       height={50}
                       className="rounded object-cover aspect-square"
                       data-ai-hint={product['data-ai-hint'] || "product image"}
+                      onError={(e) => {
+                        // Fallback for broken images
+                        e.currentTarget.srcset = '/placeholder-image.png';
+                        e.currentTarget.src = '/placeholder-image.png';
+                      }}
                     />
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>

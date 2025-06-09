@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { getCarouselItems } from '@/lib/data';
@@ -48,12 +49,17 @@ export default async function AdminCarouselPage() {
                 <TableRow key={item.id}>
                   <TableCell>
                     <Image
-                      src={item.imageUrl}
+                      src={item.imageUrl ? item.imageUrl.trim() : '/placeholder-image.png'}
                       alt={item.title}
                       width={80}
                       height={80}
                       className="rounded object-cover aspect-square"
                       data-ai-hint={item.dataAiHint || "carousel image"}
+                      onError={(e) => {
+                        // Fallback for broken images
+                        e.currentTarget.srcset = '/placeholder-image.png';
+                        e.currentTarget.src = '/placeholder-image.png';
+                      }}
                     />
                   </TableCell>
                   <TableCell className="font-medium">{item.title}</TableCell>

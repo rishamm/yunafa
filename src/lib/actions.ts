@@ -1,3 +1,4 @@
+
 'use server';
 
 import { z } from 'zod';
@@ -43,7 +44,10 @@ const productSchema = z.object({
   name: z.string().min(3, 'Product name must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   price: z.coerce.number().positive('Price must be a positive number'),
-  imageUrl: z.string().url('Must be a valid URL').or(z.string().startsWith('https://placehold.co')),
+  imageUrl: z.preprocess(
+    (val) => (typeof val === 'string' ? val.trim() : val),
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+  ),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
   tags: z.string().transform(val => val.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)),
   'data-ai-hint': z.string().optional(),
@@ -171,7 +175,10 @@ export async function deleteCategoryAction(id: string) {
 const carouselItemSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
-  imageUrl: z.string().url('Must be a valid URL.').or(z.string().startsWith('https://placehold.co')),
+  imageUrl: z.preprocess(
+    (val) => (typeof val === 'string' ? val.trim() : val),
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+  ),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
 });

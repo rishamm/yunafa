@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,7 +25,10 @@ import { useTransition } from 'react';
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
-  imageUrl: z.string().url('Must be a valid URL.').or(z.string().startsWith('https://placehold.co')),
+  imageUrl: z.preprocess(
+    (val) => (typeof val === 'string' ? val.trim() : val),
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+  ),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
 });
@@ -45,7 +49,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
     defaultValues: {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
-      imageUrl: carouselItem?.imageUrl || 'https://placehold.co/600x800.png',
+      imageUrl: carouselItem?.imageUrl?.trim() || 'https://placehold.co/600x800.png',
       content: carouselItem?.content || '',
       dataAiHint: carouselItem?.dataAiHint || '',
     },

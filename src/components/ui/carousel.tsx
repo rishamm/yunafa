@@ -1,3 +1,4 @@
+
 "use client";
 import React, {
   useEffect,
@@ -12,23 +13,21 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion"; // Corrected import
-// import Image, { ImageProps } from "next/image"; // Not used directly here anymore for BlurImage props
+import { AnimatePresence, motion } from "framer-motion"; 
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { useIsMobile } from "@/hooks/use-mobile"; // Using existing hook
+import { useIsMobile } from "@/hooks/use-mobile"; 
 
 interface CarouselProps {
   items: JSX.Element[];
   initialScroll?: number;
 }
 
-// Renamed Card to CardData to avoid confusion and to match HomePageCarousel
 export type CardData = {
   src: string;
   title: string;
   category: string;
   content: React.ReactNode;
-  'data-ai-hint'?: string; // Added data-ai-hint
+  'data-ai-hint'?: string; 
 };
 
 export const CarouselContext = createContext<{
@@ -44,7 +43,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isMobileView = useIsMobile(); // Using the project's useIsMobile hook
+  const isMobileView = useIsMobile(); 
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -121,7 +120,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                     duration: 0.5,
                     delay: 0.2 * index,
                     ease: "easeOut",
-                    // once: true, // Framer Motion's animate doesn't have `once` directly, this is usually for viewport triggers
                   },
                 }}
                 key={"card" + index}
@@ -153,19 +151,18 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
-// Renamed 'Card' to 'CarouselUICard' to avoid naming conflict with shadcn Card
 export const Card = ({ 
   card,
   index,
   layout = false,
 }: {
-  card: CardData; // Using the more specific CardData type
+  card: CardData; 
   index: number;
   layout?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose } = useContext(CarouselContext); // Removed currentIndex as it's not used here
+  const { onCardClose } = useContext(CarouselContext); 
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -183,7 +180,7 @@ export const Card = ({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]); // Removed onCardClose and index from deps as they don't change and handleClose has them in scope
+  }, [open]); 
 
   useOutsideClick(containerRef, () => handleClose());
 
@@ -269,36 +266,42 @@ export const Card = ({
   );
 };
 
-// Define a more specific props type for BlurImage as it uses a standard <img> tag
 interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
-  'data-ai-hint'?: string; // Ensure data-ai-hint is part of the props
+  'data-ai-hint'?: string; 
 }
 
 export const BlurImage = ({
   src,
   alt,
   className,
-  'data-ai-hint': dataAiHint, // Destructure data-ai-hint
+  'data-ai-hint': dataAiHint, 
   ...rest
 }: BlurImageProps) => {
-  // Removed isLoading state and onLoad handler to remove blur effect
+  const [imgSrc, setImgSrc] = useState(src ? src.trim() : '/placeholder-image.png');
+
+  useEffect(() => {
+    setImgSrc(src ? src.trim() : '/placeholder-image.png');
+  }, [src]);
+
+  const handleError = () => {
+    setImgSrc('/placeholder-image.png'); // Fallback to a local placeholder
+  };
+
   return (
     <img
       {...rest}
-      src={src}
+      src={imgSrc}
       alt={alt}
-      data-ai-hint={dataAiHint} // Pass data-ai-hint to the img element
+      data-ai-hint={dataAiHint} 
       className={cn(
         "h-full w-full transition duration-300",
-        // No blur classes
         className,
       )}
       loading="lazy"
       decoding="async"
-      // blurDataURL is not applicable here as we're not using next/image placeholder blur
-      // For standard img, if you want a low-res placeholder, you'd handle it differently (e.g. two images)
+      onError={handleError}
     />
   );
 };
