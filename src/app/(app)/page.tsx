@@ -1,14 +1,13 @@
 
 import { getCategories, getCarouselItems } from '@/lib/data'; // Added getCarouselItems
 import type { Category, CarouselItem } from '@/lib/types'; // Added CarouselItem type
-import { CategoryList } from '@/components/categories/CategoryList';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 
 export default async function HomePage() {
-  const categories: Category[] = await getCategories();
+  const categories: Category[] = await getCategories(); // This line might become unused, but let's keep it for now in case other sections might use it later.
   const carouselItems: CarouselItem[] = await getCarouselItems(); // Fetch carousel items
 
   return (
@@ -22,17 +21,23 @@ export default async function HomePage() {
             Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
           </p>
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
-            <Link href="#browse-categories">Explore Collection</Link>
+            {/* Updated link to point to carousel or a general products page if categories are removed */}
+            <Link href="#home-carousel">Explore Collection</Link>
           </Button>
         </div>
       </section>
       
+      {/* Removed Browse by Category section */}
+      {/* 
       <section id="browse-categories">
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Browse by Category</h2>
         <CategoryList categories={categories} />
-      </section>
+      </section> 
+      */}
 
-      <HomePageCarousel items={carouselItems} /> {/* Pass items as props */}
+      <section id="home-carousel"> {/* Added id here for the button link */}
+        <HomePageCarousel items={carouselItems} /> {/* Pass items as props */}
+      </section>
 
        <section className="py-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">
