@@ -8,7 +8,7 @@ import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 export default async function HomePage() {
-  const categories: Category[] = await getCategories(); 
+  const categories: Category[] = await getCategories();
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
   const heroTextContent = (
@@ -26,27 +26,29 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="space-y-12 md:space-y-20"> {/* Adjusted spacing */}
-      {/* Static Hero Text Section */}
-      <section className="pt-12 pb-8 md:pt-20 md:pb-10"> {/* Adjusted padding */}
-        {heroTextContent}
-      </section>
+    <div className="space-y-12 md:space-y-20">
+      {/* Hero Section with ContainerScroll Background */}
+      <div className="relative">
+        <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
+          <div className="relative w-full h-full">
+            <Image
+              src="https://placehold.co/1200x800.png"
+              alt="Yunafa Collection Showcase"
+              fill
+              className="object-cover rounded-2xl"
+              data-ai-hint="luxury lifestyle"
+              priority
+            />
+          </div>
+        </ContainerScroll>
 
-      {/* ContainerScroll Animation */}
-      <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
-        <div className="relative w-full h-full">
-          <Image
-            src="https://placehold.co/1200x800.png"
-            alt="Yunafa Collection Showcase"
-            fill
-            className="object-cover rounded-2xl"
-            data-ai-hint="luxury lifestyle"
-            priority
-          />
-        </div>
-      </ContainerScroll>
-      
-      <section id="home-carousel" className="pt-8 md:pt-12"> {/* Added top padding to space from scroll animation */}
+        {/* Static Hero Text Section - Overlaid */}
+        <section className="absolute top-0 left-0 w-full h-full z-10 flex flex-col items-center justify-start pt-20 md:pt-40">
+          {heroTextContent}
+        </section>
+      </div>
+
+      <section id="home-carousel" className="pt-8 md:pt-12">
         <HomePageCarousel items={carouselItems} />
       </section>
 
@@ -65,9 +67,9 @@ export default async function HomePage() {
             </Button>
           </div>
           <div className="rounded-lg overflow-hidden shadow-xl aspect-video relative">
-            <Image 
-              src="https://placehold.co/800x600.png" 
-              alt="Artisanal products" 
+            <Image
+              src="https://placehold.co/800x600.png"
+              alt="Artisanal products"
               fill
               className="object-cover"
               data-ai-hint="fashion boutique"
