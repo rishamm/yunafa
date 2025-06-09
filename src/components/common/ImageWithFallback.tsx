@@ -2,7 +2,7 @@
 'use client';
 
 import NextImage, { type ImageProps as NextImageProps } from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 // Pick props that are common and then add specific ones for width/height vs fill
 type BaseProps = Omit<NextImageProps, 'src' | 'alt' | 'onError' | 'width' | 'height' | 'fill' | 'sizes' | 'priority'>;
@@ -11,6 +11,7 @@ interface ImageWithFallbackPropsShared extends BaseProps {
   initialSrc?: string | null;
   alt: string;
   className?: string;
+  'data-ai-hint'?: string;
 }
 
 // Discriminated union for width/height vs fill
@@ -23,37 +24,32 @@ export function ImageWithFallback({
   initialSrc,
   alt,
   className,
-  ...props
+  ...props // Contains dimensional props (fill or width/height) and other NextImageProps like data-ai-hint
 }: ImageWithFallbackProps) {
   
-  let placeholderUrl: string;
-  if (props.fill) {
-    placeholderUrl = `https://placehold.co/600x400.png`; // Generic placeholder for fill
-  } else {
-    // props.width and props.height are guaranteed to be numbers here by TypeScript
-    placeholderUrl = `https://placehold.co/${props.width}x${props.height}.png`;
-  }
+  const getPlaceholderUrl = useCallback(() => {
+    if (props.fill) {
+      return `https://placehold.co/600x400.png`;
+    }
+    // If not fill, props.width and props.height are guaranteed by types
+    return `https://placehold.co/${props.width}x${props.height}.png`;
+  }, [props.fill, (props as {width?: number}).width, (props as {height?: number}).height]); // useCallback dependencies
+  
+  const [currentSrc, setCurrentSrc] = useState(initialSrc?.trim() || getPlaceholderUrl());
 
-  const [currentSrc, setCurrentSrc] = useState(initialSrc?.trim() || placeholderUrl);
+  // Destructure specific props for the dependency array
+  const { fill } = props;
+  // Conditionally get width and height for dependency array
+  const width = 'width' in props ? props.width : undefined;
+  const height = 'height' in props ? props.height : undefined;
 
   useEffect(() => {
-    let newPlaceholderUrl: string;
-    if (props.fill) {
-        newPlaceholderUrl = `https://placehold.co/600x400.png`;
-    } else {
-        newPlaceholderUrl = `https://placehold.co/${(props as {width: number}).width}x${(props as {height: number}).height}.png`;
-    }
-    setCurrentSrc(initialSrc?.trim() || newPlaceholderUrl);
-  }, [initialSrc, props]);
+    setCurrentSrc(initialSrc?.trim() || getPlaceholderUrl());
+  }, [initialSrc, fill, width, height, getPlaceholderUrl]);
+
 
   const handleError = () => {
-    let errorFallbackUrl: string;
-    if (props.fill) {
-        errorFallbackUrl = `https://placehold.co/600x400.png`;
-    } else {
-        errorFallbackUrl = `https://placehold.co/${(props as {width: number}).width}x${(props as {height: number}).height}.png`;
-    }
-    setCurrentSrc(errorFallbackUrl);
+    setCurrentSrc(getPlaceholderUrl());
   };
 
   if (props.fill) {
@@ -66,10 +62,11 @@ export function ImageWithFallback({
         priority={props.priority}
         className={className}
         onError={handleError}
-        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority'>)}
+        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height'>)}
       />
     );
   } else {
+    // props.width and props.height are numbers here
     return (
       <NextImage
         src={currentSrc}
@@ -78,8 +75,9 @@ export function ImageWithFallback({
         height={props.height}
         className={className}
         onError={handleError}
-        {...(props as Omit<typeof props, 'width' | 'height'>)}
+        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height'>)}
       />
     );
   }
 }
+
