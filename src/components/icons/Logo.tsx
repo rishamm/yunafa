@@ -1,28 +1,29 @@
 import Image from 'next/image';
 
 interface LogoProps {
-  height?: number; // in pixels
-  className?: string; // Allow className for margins or other container styles
+  height?: number; 
+  className?: string; 
 }
 
-/**
- * Displays the Yunafa logo.
- * IMPORTANT: This component expects an image file named `logo.jpg` to be present in the `public` directory.
- */
+
 export function Logo({ height = 60, className }: LogoProps) {
-  // Estimated aspect ratio (width / height) of the core logo content from the provided image
-  const aspectRatio = 2.25; // Increased from 2.5
+  const aspectRatio = 2.25; 
   const width = Math.round(height * aspectRatio);
 
   return (
+    <div className='flex flex-col items-center '>
     <Image
-      src="/logo3.jpg" // Changed from logo.png back to logo.jpg as per user's file content
+      src="/logo3.jpg" 
       alt="Yunafa Logo"
       width={width}
       height={height}
       className={className}
-      priority // Good for LCP elements like a header logo
-      aria-label="Yunafa Logo" // Keep accessibility
+      priority 
+      aria-label="Yunafa Logo" 
     />
+    <span>
+      YUNAFA
+    </span>
+    </div>
   );
 }
