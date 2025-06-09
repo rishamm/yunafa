@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Ragna Regular', 'sans-serif'],
-        headline: ['Ragna Regular', 'serif'], // Using Ragna Regular for headlines as well
+        body: ['Ragna', 'sans-serif'],
+        headline: ['Ragna', 'serif'], 
         code: ['monospace'],
       },
       colors: {
