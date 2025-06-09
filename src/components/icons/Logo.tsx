@@ -16,7 +16,7 @@ export function Logo({ height = 150, className }: LogoProps) {
 
   return (
     <Image
-      src="/logo.jpg" // Changed from logo.png back to logo.jpg as per user's file content
+      src="/logo2.png" // Changed from logo.png back to logo.jpg as per user's file content
       alt="Yunafa Logo"
       width={width}
       height={height}
