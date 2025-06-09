@@ -1,10 +1,11 @@
 
-import { getProducts, getCategories } from '@/lib/data';
-import { ProductList } from '@/components/products/ProductList';
+
+import { getCategories } from '@/lib/data';
 import { CategoryList } from '@/components/categories/CategoryList';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
+import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 
 export default async function HomePage() {
   const categories = await getCategories();
@@ -33,6 +34,8 @@ export default async function HomePage() {
           <p className="text-center text-muted-foreground">No categories available at the moment.</p>
         )}
       </section>
+
+      <HomePageCarousel />
 
        <section className="py-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">
