@@ -21,9 +21,11 @@ async function getCurrentHostnames(): Promise<{ hostnames: string[]; error?: str
     const config: NextConfig = configModule.default || configModule;
 
     if (config.images && config.images.remotePatterns) {
-      const hostnames = config.images.remotePatterns
+      const hostnamesWithDuplicates = config.images.remotePatterns
         .map(p => p.hostname)
         .filter(Boolean) as string[];
+      // Deduplicate hostnames
+      const hostnames = Array.from(new Set(hostnamesWithDuplicates));
       return { hostnames };
     }
     return { hostnames: [], error: "No remotePatterns configured in next.config.js." };
