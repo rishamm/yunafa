@@ -5,18 +5,30 @@ import { Carousel, Card as CarouselUICard } from "@/components/ui/carousel";
 import type { CardData } from "@/components/ui/carousel"; 
 import React from "react"; 
 import type { CarouselItem as CarouselItemType } from "@/lib/types"; 
-// Skeleton import removed as it's no longer used
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface HomePageCarouselProps {
   items: CarouselItemType[]; 
 }
 
 export function HomePageCarousel({ items }: HomePageCarouselProps) {
-  // items is guaranteed to be CarouselItemType[] by the parent page.tsx
-  // If items array is empty, it means "no carousels loaded" from the data source.
-
-  // Removed skeleton rendering block.
-  // If items is empty, carouselUiItems will be empty, and the Carousel component will render without cards.
+  if (!items || items.length === 0) {
+    return (
+      <section className="py-12">
+        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
+        <div className="text-center text-muted-foreground py-10 border border-dashed rounded-lg">
+          <p className="mb-2">No collections to display at the moment.</p>
+          <p className="text-sm">
+            You can add new carousel items via the{' '}
+            <Button variant="link" asChild className="p-0 h-auto text-sm">
+                <Link href="/admin/carousel/new">Admin Panel</Link>
+            </Button>.
+            </p>
+        </div>
+      </section>
+    );
+  }
 
   const carouselUiItems = items.map((item, index) => (
     <CarouselUICard
@@ -33,7 +45,6 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
     />
   ));
 
-  // Render the Carousel with the items (or an empty array if no items)
   return (
     <section className="py-12">
       <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
