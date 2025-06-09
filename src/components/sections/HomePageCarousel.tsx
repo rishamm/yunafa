@@ -23,11 +23,11 @@ const cards: CardData[] = [
     'data-ai-hint': "luxury watch",
   },
   {
-    src: "https://placehold.co/600x800.png",
+    src: "http://images.unsplash.com/photo-1657367144402-73ed741837dc?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXRobmljJTIwJTVDZmFzaGlvbnxlbnwwfHwwfHx8MA%3D%3D",
     title: "Sparkling Designs",
     category: "Fine Jewelry",
     content: <p>Adorn yourself with jewelry that tells a story. Exquisite designs for every occasion.</p>,
-    'data-ai-hint': "jewelry piece",
+    'data-ai-hint': "ethnic fashion",
   },
   {
     src: "https://placehold.co/600x800.png",
