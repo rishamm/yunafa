@@ -31,7 +31,8 @@ const formSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number'),
   imageUrl: z.string().url('Must be a valid URL').or(z.string().startsWith('https://placehold.co')),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
-  tags: z.string().optional(), // Comma-separated string
+  tags: z.string().optional(), 
+  'data-ai-hint': z.string().optional(),
 });
 
 type ProductFormValues = z.infer<typeof formSchema>;
@@ -59,6 +60,7 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
       imageUrl: product?.imageUrl || 'https://placehold.co/600x400.png',
       categoryIds: product?.categoryIds || [],
       tags: product?.tags?.join(', ') || '',
+      'data-ai-hint': product?.['data-ai-hint'] || '',
     },
   });
 
@@ -80,7 +82,6 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
       const result = await suggestProductTags({ productName, productDescription });
       setSuggestedTags(result.suggestedTags);
       
-      // Match suggested categories with existing ones by name (case-insensitive)
       const matchedCategoryIds = result.suggestedCategories
         .map(sc => {
           const found = allCategories.find(ac => ac.name.toLowerCase() === sc.toLowerCase());
@@ -141,7 +142,7 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
           description: result.message,
         });
         router.push('/admin/products');
-        router.refresh(); // To ensure fresh data is loaded on the product list page
+        router.refresh(); 
       } else {
         toast({
           title: 'Error',
@@ -254,6 +255,20 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
                     <Input placeholder="https://placehold.co/600x400.png" {...field} />
                   </FormControl>
                    <FormDescription>Use placeholder e.g., https://placehold.co/600x400.png</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="data-ai-hint"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>AI Hint (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g., fashion model" {...field} />
+                  </FormControl>
+                  <FormDescription>Keywords for AI image search if the image needs replacing (max 2 words).</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

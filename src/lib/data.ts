@@ -1,5 +1,5 @@
 
-import type { Product, Category } from './types';
+import type { Product, Category, CarouselItem } from './types';
 
 let categories: Category[] = [
   { id: '1', name: 'Luxury Timepieces', slug: 'luxury-timepieces', description: 'Exquisite watches from renowned craftsmen.' },
@@ -16,6 +16,47 @@ let products: Product[] = [
   { id: '5', name: 'Organic Truffle Oil Set', description: 'A selection of the finest organic truffle oils, sourced from Italian artisans.', price: 120, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['4'], tags: ['gourmet', 'truffle', 'organic'], "data-ai-hint": "knit sweater" },
   { id: '6', name: 'Silk Scarf "Impression"', description: 'A luxurious silk scarf featuring an abstract impressionist design. Hand-rolled edges.', price: 280, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['2'], tags: ['scarf', 'silk', 'fashion'], "data-ai-hint": "silk scarf" },
 ];
+
+let carouselItems: CarouselItem[] = [
+  {
+    id: 'car1',
+    src: "https://images.unsplash.com/photo-1616583936499-d4116e7e2e76?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    title: "Timeless Elegance",
+    category: "Luxury Watches",
+    content: "Discover watches that are a testament to craftsmanship and precision. Each piece is a work of art.",
+    dataAiHint: "luxury watch",
+    // Keep existing imageUrl naming for consistency with Product, but map 'src' from existing data
+    imageUrl: "https://images.unsplash.com/photo-1616583936499-d4116e7e2e76?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    id: 'car2',
+    src: "http://images.unsplash.com/photo-1657367144402-73ed741837dc?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXRobmljJTIwJTVDZmFzaGlvbnxlbnwwfHwwfHx8MA%3D%3D",
+    title: "Sparkling Designs",
+    category: "Fine Jewelry",
+    content: "Adorn yourself with jewelry that tells a story. Exquisite designs for every occasion.",
+    dataAiHint: "ethnic fashion",
+    imageUrl: "http://images.unsplash.com/photo-1657367144402-73ed741837dc?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXRobmljJTIwJTVDZmFzaGlvbnxlbnwwfHwwfHx8MA%3D%3D",
+  },
+  {
+    id: 'car3',
+    src: "https://placehold.co/600x800.png",
+    title: "Handcrafted Beauty",
+    category: "Artisanal Decor",
+    content: "Elevate your space with unique decor items, handcrafted by skilled artisans.",
+    dataAiHint: "home decor",
+    imageUrl: "https://placehold.co/600x800.png",
+  },
+  {
+    id: 'car4',
+    src: "https://placehold.co/600x800.png",
+    title: "Exquisite Tastes",
+    category: "Gourmet Delights",
+    content: "Indulge in a curated selection of gourmet foods and rare culinary ingredients.",
+    dataAiHint: "gourmet food",
+    imageUrl: "https://placehold.co/600x800.png",
+  },
+].map(item => ({ ...item, imageUrl: item.src, dataAiHint: item.dataAiHint || item.category.toLowerCase() }));
+
 
 // Simulate API delay
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -114,4 +155,40 @@ export async function deleteProduct(id: string): Promise<boolean> {
   const initialLength = products.length;
   products = products.filter(prod => prod.id !== id);
   return products.length < initialLength;
+}
+
+// Carousel Item Functions
+export async function getCarouselItems(): Promise<CarouselItem[]> {
+  await delay(50);
+  return [...carouselItems];
+}
+
+export async function getCarouselItemById(id: string): Promise<CarouselItem | undefined> {
+  await delay(50);
+  return carouselItems.find(item => item.id === id);
+}
+
+export async function createCarouselItem(itemData: Omit<CarouselItem, 'id'>): Promise<CarouselItem> {
+  await delay(100);
+  const newItem: CarouselItem = {
+    ...itemData,
+    id: `car${carouselItems.length + 1 + Math.random()}`, // ensure unique id
+  };
+  carouselItems.push(newItem);
+  return newItem;
+}
+
+export async function updateCarouselItem(id: string, updates: Partial<Omit<CarouselItem, 'id'>>): Promise<CarouselItem | null> {
+  await delay(100);
+  const itemIndex = carouselItems.findIndex(item => item.id === id);
+  if (itemIndex === -1) return null;
+  carouselItems[itemIndex] = { ...carouselItems[itemIndex], ...updates };
+  return carouselItems[itemIndex];
+}
+
+export async function deleteCarouselItem(id: string): Promise<boolean> {
+  await delay(100);
+  const initialLength = carouselItems.length;
+  carouselItems = carouselItems.filter(item => item.id !== id);
+  return carouselItems.length < initialLength;
 }

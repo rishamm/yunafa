@@ -11,9 +11,8 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-} from '@/components/ui/sidebar'; // Adjusted import for shadcn/ui structure
+} from '@/components/ui/sidebar'; 
 import { Logo } from '@/components/icons/Logo';
-import { Button } from '@/components/ui/button';
 import {
   LayoutDashboard,
   Package,
@@ -21,14 +20,15 @@ import {
   Users,
   Settings,
   LogOut,
-  ChevronLeft,
   Home,
+  ImageIcon // Added for Carousel
 } from 'lucide-react';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tags },
+  { href: '/admin/carousel', label: 'Carousel', icon: ImageIcon }, // New Carousel Link
   // Add more admin links here if needed, e.g., Users, Settings
 ];
 
@@ -41,7 +41,6 @@ export function AdminSidebar() {
         <Link href="/admin/dashboard" className="flex items-center gap-2 group-data-[collapsible=icon]:hidden">
           <Logo className="h-7 text-primary" />
         </Link>
-        {/* Optional: Add a collapse button if not using the default rail */}
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
@@ -77,7 +76,6 @@ export function AdminSidebar() {
            </SidebarMenuItem>
            <SidebarMenuItem>
              <SidebarMenuButton asChild tooltip={{children: "Logout"}} className="justify-start">
-                {/* This would be a logout action in a real app */}
                 <Link href="/admin/login"> 
                   <LogOut className="h-5 w-5" />
                   <span className="group-data-[collapsible=icon]:hidden">Logout</span>

@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
-            data-ai-hint={product['data-ai-hint'] as string || "product image"}
+            data-ai-hint={product['data-ai-hint'] || "product image"}
           />
         </div>
         <div>

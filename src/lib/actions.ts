@@ -8,9 +8,12 @@ import {
   deleteProduct as dbDeleteProduct,
   createCategory as dbCreateCategory,
   updateCategory as dbUpdateCategory,
-  deleteCategory as dbDeleteCategory
-} from './data'; // Assuming these are your data access functions
-import type { Product, Category } from './types';
+  deleteCategory as dbDeleteCategory,
+  createCarouselItem as dbCreateCarouselItem,
+  updateCarouselItem as dbUpdateCarouselItem,
+  deleteCarouselItem as dbDeleteCarouselItem
+} from './data'; 
+import type { Product, Category, CarouselItem } from './types';
 
 // Contact Form Inquiry
 const inquirySchema = z.object({
@@ -28,9 +31,8 @@ export async function submitInquiry(values: z.infer<typeof inquirySchema>) {
     return { error: 'Invalid data.', success: false };
   }
   
-  // Simulate sending an email or saving to DB
   console.log('New Inquiry:', validatedFields.data);
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 1000)); 
 
   return { success: true };
 }
@@ -43,14 +45,13 @@ const productSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number'),
   imageUrl: z.string().url('Must be a valid URL').or(z.string().startsWith('https://placehold.co')),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
-  tags: z.string().transform(val => val.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)), // Handles comma-separated string
+  tags: z.string().transform(val => val.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)),
+  'data-ai-hint': z.string().optional(),
 });
 
 export async function createProductAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-  // categoryIds might come as a single string if only one is selected, or might not be present if using a multi-select component that doesn't directly map.
-  // For robust handling, ensure categoryIds is an array.
-  const categoryIds = formData.getAll('categoryIds[]'); // Assuming name="categoryIds[]" for multi-select
+  const categoryIds = formData.getAll('categoryIds[]');
   
   const parsedData = productSchema.safeParse({
     ...rawData,
@@ -58,14 +59,14 @@ export async function createProductAction(formData: FormData) {
   });
 
   if (!parsedData.success) {
-    console.error('Validation errors:', parsedData.error.flatten().fieldErrors);
+    console.error('Validation errors (createProductAction):', parsedData.error.flatten().fieldErrors);
     return { success: false, error: 'Invalid product data.', errors: parsedData.error.flatten().fieldErrors };
   }
 
   try {
     await dbCreateProduct(parsedData.data as Omit<Product, 'id'>);
     revalidatePath('/admin/products');
-    revalidatePath('/'); // Revalidate homepage if it shows products
+    revalidatePath('/'); 
     return { success: true, message: 'Product created successfully.' };
   } catch (e) {
     console.error(e);
@@ -83,7 +84,7 @@ export async function updateProductAction(id: string, formData: FormData) {
   });
 
   if (!parsedData.success) {
-    console.error('Validation errors:', parsedData.error.flatten().fieldErrors);
+    console.error('Validation errors (updateProductAction):', parsedData.error.flatten().fieldErrors);
     return { success: false, error: 'Invalid product data.', errors: parsedData.error.flatten().fieldErrors };
   }
   
@@ -158,10 +159,72 @@ export async function deleteCategoryAction(id: string) {
   try {
     await dbDeleteCategory(id);
     revalidatePath('/admin/categories');
-    revalidatePath('/'); // Categories might affect homepage
+    revalidatePath('/'); 
     return { success: true, message: 'Category deleted successfully.' };
   } catch (e) {
     console.error(e);
     return { success: false, error: 'Failed to delete category.' };
+  }
+}
+
+// Carousel Item Actions
+const carouselItemSchema = z.object({
+  title: z.string().min(3, 'Title must be at least 3 characters.'),
+  category: z.string().min(3, 'Category must be at least 3 characters.'),
+  imageUrl: z.string().url('Must be a valid URL.').or(z.string().startsWith('https://placehold.co')),
+  content: z.string().min(10, 'Content must be at least 10 characters.'),
+  dataAiHint: z.string().optional(),
+});
+
+export async function createCarouselItemAction(formData: FormData) {
+  const rawData = Object.fromEntries(formData.entries());
+  const parsedData = carouselItemSchema.safeParse(rawData);
+
+  if (!parsedData.success) {
+    console.error('Validation errors (createCarouselItemAction):', parsedData.error.flatten().fieldErrors);
+    return { success: false, error: 'Invalid carousel item data.', errors: parsedData.error.flatten().fieldErrors };
+  }
+
+  try {
+    await dbCreateCarouselItem(parsedData.data as Omit<CarouselItem, 'id'>);
+    revalidatePath('/admin/carousel');
+    revalidatePath('/'); // Revalidate homepage as carousel is there
+    return { success: true, message: 'Carousel item created successfully.' };
+  } catch (e) {
+    console.error(e);
+    return { success: false, error: 'Failed to create carousel item.' };
+  }
+}
+
+export async function updateCarouselItemAction(id: string, formData: FormData) {
+  const rawData = Object.fromEntries(formData.entries());
+  const parsedData = carouselItemSchema.safeParse(rawData);
+
+  if (!parsedData.success) {
+     console.error('Validation errors (updateCarouselItemAction):', parsedData.error.flatten().fieldErrors);
+    return { success: false, error: 'Invalid carousel item data.', errors: parsedData.error.flatten().fieldErrors };
+  }
+
+  try {
+    await dbUpdateCarouselItem(id, parsedData.data as Partial<Omit<CarouselItem, 'id'>>);
+    revalidatePath('/admin/carousel');
+    revalidatePath(`/admin/carousel/edit/${id}`);
+    revalidatePath('/');
+    return { success: true, message: 'Carousel item updated successfully.' };
+  } catch (e) {
+    console.error(e);
+    return { success: false, error: 'Failed to update carousel item.' };
+  }
+}
+
+export async function deleteCarouselItemAction(id: string) {
+  try {
+    await dbDeleteCarouselItem(id);
+    revalidatePath('/admin/carousel');
+    revalidatePath('/');
+    return { success: true, message: 'Carousel item deleted successfully.' };
+  } catch (e) {
+    console.error(e);
+    return { success: false, error: 'Failed to delete carousel item.' };
   }
 }

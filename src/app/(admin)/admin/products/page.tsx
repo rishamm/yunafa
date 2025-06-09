@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { PlusCircle, Edit } from 'lucide-react';
 import Image from 'next/image';
 import { DeleteProductButton } from './_components/DeleteProductButton';
 import type { Category } from '@/lib/types';
@@ -58,7 +58,7 @@ export default async function AdminProductsPage() {
                       width={50}
                       height={50}
                       className="rounded object-cover aspect-square"
-                      data-ai-hint={product['data-ai-hint'] as string || "product image"}
+                      data-ai-hint={product['data-ai-hint'] || "product image"}
                     />
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>

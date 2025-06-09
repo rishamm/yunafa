@@ -13,7 +13,7 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Card className="overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out flex flex-col h-full">
       <CardHeader className="p-0">
-        <Link href={`/products/${product.id}`} className="block">
+        <Link href={`/products/${product.id}`} className="block group">
           <div className="aspect-[4/3] relative w-full">
             <Image
               src={product.imageUrl}
@@ -21,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
-              data-ai-hint={product['data-ai-hint'] as string || "product image"}
+              data-ai-hint={product['data-ai-hint'] || "product image"}
             />
           </div>
         </Link>
