@@ -34,7 +34,7 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
   if (isLoading && (!items || items.length === 0)) { // Show skeleton only if truly no items yet and loading
     return (
       <section className="py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Collections</h2>
+        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
         <div className="flex justify-center gap-4 py-10">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="space-y-2">
@@ -48,11 +48,11 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
     );
   }
 
-  if (!items.length) {
+  if (!items || !items.length) {
     return (
        <section className="py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Collections</h2>
-        <p className="text-center text-muted-foreground">No featured collections to display at the moment.</p>
+        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
+        <p className="text-center text-muted-foreground">No collections to display at the moment.</p>
       </section>
     );
   }
@@ -74,7 +74,7 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
 
   return (
     <section className="py-12">
-      <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Collections</h2>
+      <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
       {carouselUiItems.length > 0 ? <Carousel items={carouselUiItems} /> : <p className="text-center text-muted-foreground">No collections to display.</p>}
     </section>
   );

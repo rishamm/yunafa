@@ -16,19 +16,11 @@
     "dataAiHint": "ethnic fashion"
   },
   {
-    "id": "car3",
-    "title": "Handcrafted Beauty",
-    "category": "Artisanal Decor",
-    "content": "Elevate your space with unique decor items, handcrafted by skilled artisans.",
-    "imageUrl": "https://placehold.co/600x800.png",
-    "dataAiHint": "home decor"
-  },
-  {
-    "id": "car4",
-    "title": "Exquisite Tastes",
-    "category": "Gourmet Delights",
-    "content": "Indulge in a curated selection of gourmet foods and rare culinary ingredients.",
-    "imageUrl": "https://placehold.co/600x800.png",
-    "dataAiHint": "gourmet food"
+    "title": "Summer Dupatta",
+    "category": "New Arraivals",
+    "imageUrl": "https://images.unsplash.com/photo-1743229995736-06cff31b9157?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGV0aG5pYyUyMHBha2lzdGhhbmklMjBmYXNoaW9ufGVufDB8fDB8fHww",
+    "content": "Short description of Content or card",
+    "dataAiHint": "fashion model",
+    "id": "carmbovz6k101e6vktpmgkn"
   }
 ]
