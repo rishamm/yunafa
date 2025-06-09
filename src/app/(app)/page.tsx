@@ -5,38 +5,43 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
+import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 export default async function HomePage() {
-  const categories: Category[] = await getCategories(); // This line might become unused, but let's keep it for now in case other sections might use it later.
-  const carouselItems: CarouselItem[] = await getCarouselItems(); // Fetch carousel items
+  const categories: Category[] = await getCategories(); 
+  const carouselItems: CarouselItem[] = await getCarouselItems();
+
+  const titleComponent = (
+    <>
+      <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
+        Welcome to Yunafa
+      </h1>
+      <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-2xl mx-auto">
+        Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
+      </p>
+      <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
+        <Link href="#home-carousel">Explore Collection</Link>
+      </Button>
+    </>
+  );
 
   return (
     <div className="space-y-16">
-      <section className="text-center py-12 md:py-20 bg-gradient-to-br from-primary/10 via-background to-accent/10 rounded-lg shadow-inner">
-        <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
-            Welcome to Yunafa
-          </h1>
-          <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-2xl mx-auto">
-            Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
-          </p>
-          <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
-            {/* Updated link to point to carousel or a general products page if categories are removed */}
-            <Link href="#home-carousel">Explore Collection</Link>
-          </Button>
+      <ContainerScroll titleComponent={titleComponent}>
+        <div className="relative w-full h-full">
+          <Image
+            src="https://placehold.co/1200x800.png"
+            alt="Yunafa Collection Showcase"
+            fill
+            className="object-cover rounded-2xl"
+            data-ai-hint="luxury lifestyle"
+            priority // Good to add priority for LCP element if this is high on the page
+          />
         </div>
-      </section>
+      </ContainerScroll>
       
-      {/* Removed Browse by Category section */}
-      {/* 
-      <section id="browse-categories">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Browse by Category</h2>
-        <CategoryList categories={categories} />
-      </section> 
-      */}
-
-      <section id="home-carousel"> {/* Added id here for the button link */}
-        <HomePageCarousel items={carouselItems} /> {/* Pass items as props */}
+      <section id="home-carousel">
+        <HomePageCarousel items={carouselItems} />
       </section>
 
        <section className="py-12">
