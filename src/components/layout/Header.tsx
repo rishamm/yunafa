@@ -23,7 +23,7 @@ export async function Header() {
   ];
 
   return (
-    <header className="bg-background/80 backdrop-blur-md sticky top-0 z-50 border-b">
+    <header className="bg-card sticky top-0 z-50 border-b">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" aria-label="Yunafa Home">
           <Logo height={40} />
