@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 export default async function HomePage() {
-  const featuredProducts = await getProducts(3); // Get 3 featured products
   const categories = await getCategories();
 
   return (
@@ -21,21 +20,12 @@ export default async function HomePage() {
             Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
           </p>
           <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
-            <Link href="#featured-products">Explore Collection</Link>
+            <Link href="#browse-categories">Explore Collection</Link>
           </Button>
         </div>
       </section>
       
-      <section id="featured-products">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Products</h2>
-        {featuredProducts.length > 0 ? (
-          <ProductList products={featuredProducts} />
-        ) : (
-          <p className="text-center text-muted-foreground">No featured products available at the moment.</p>
-        )}
-      </section>
-
-      <section>
+      <section id="browse-categories">
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Browse by Category</h2>
         {categories.length > 0 ? (
           <CategoryList categories={categories} />
@@ -72,4 +62,3 @@ export default async function HomePage() {
     </div>
   );
 }
-

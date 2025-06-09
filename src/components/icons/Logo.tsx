@@ -18,9 +18,9 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
         fontFamily="Batusa, serif" 
         fontSize="24"
         fill="currentColor"
-        textTransform="uppercase"
+        
       >
-        Yunafa
+        YUNAFA
       </text>
     </svg>
   );

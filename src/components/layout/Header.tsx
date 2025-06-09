@@ -36,46 +36,9 @@ export async function Header() {
               {link.label}
             </Link>
           ))}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors duration-200 ease-in-out">
-                Categories
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {categories.map((category) => (
-                <DropdownMenuItem key={category.id} asChild>
-                  <Link href={`/category/${category.slug}`}>{category.name}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+         
         </nav>
-        <div className="md:hidden">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {navLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild>
-                  <Link href={link.href}>{link.label}</Link>
-                </DropdownMenuItem>
-              ))}
-               <DropdownMenuItem>
-                <span className="font-medium">Categories</span>
-              </DropdownMenuItem>
-              {categories.map((category) => (
-                <DropdownMenuItem key={category.id} asChild className="pl-6">
-                  <Link href={`/category/${category.slug}`}>{category.name}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      
       </div>
     </header>
   );
