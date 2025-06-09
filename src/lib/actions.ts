@@ -3,9 +3,9 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-import { 
-  createProduct as dbCreateProduct, 
-  updateProduct as dbUpdateProduct, 
+import {
+  createProduct as dbCreateProduct,
+  updateProduct as dbUpdateProduct,
   deleteProduct as dbDeleteProduct,
   createCategory as dbCreateCategory,
   updateCategory as dbUpdateCategory,
@@ -13,7 +13,7 @@ import {
   createCarouselItem as dbCreateCarouselItem,
   updateCarouselItem as dbUpdateCarouselItem,
   deleteCarouselItem as dbDeleteCarouselItem
-} from './data'; 
+} from './data';
 import type { Product, Category, CarouselItem } from './types';
 
 // Contact Form Inquiry
@@ -31,9 +31,9 @@ export async function submitInquiry(values: z.infer<typeof inquirySchema>) {
   if (!validatedFields.success) {
     return { error: 'Invalid data.', success: false };
   }
-  
+
   console.log('New Inquiry:', validatedFields.data);
-  await new Promise(resolve => setTimeout(resolve, 1000)); 
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   return { success: true };
 }
@@ -56,7 +56,7 @@ const productSchema = z.object({
 export async function createProductAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
   const categoryIds = formData.getAll('categoryIds[]');
-  
+
   const parsedData = productSchema.safeParse({
     ...rawData,
     categoryIds: categoryIds.length > 0 ? categoryIds : (rawData.categoryIds ? [rawData.categoryIds as string] : []),
@@ -70,7 +70,7 @@ export async function createProductAction(formData: FormData) {
   try {
     await dbCreateProduct(parsedData.data as Omit<Product, 'id'>);
     revalidatePath('/admin/products');
-    revalidatePath('/'); 
+    revalidatePath('/');
     return { success: true, message: 'Product created successfully.' };
   } catch (e) {
     console.error(e);
@@ -81,7 +81,7 @@ export async function createProductAction(formData: FormData) {
 export async function updateProductAction(id: string, formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
   const categoryIds = formData.getAll('categoryIds[]');
-  
+
   const parsedData = productSchema.safeParse({
     ...rawData,
     categoryIds: categoryIds.length > 0 ? categoryIds : (rawData.categoryIds ? [rawData.categoryIds as string] : []),
@@ -91,7 +91,7 @@ export async function updateProductAction(id: string, formData: FormData) {
     console.error('Validation errors (updateProductAction):', parsedData.error.flatten().fieldErrors);
     return { success: false, error: 'Invalid product data.', errors: parsedData.error.flatten().fieldErrors };
   }
-  
+
   try {
     await dbUpdateProduct(id, parsedData.data as Partial<Omit<Product, 'id'>>);
     revalidatePath('/admin/products');
@@ -143,7 +143,7 @@ export async function createCategoryAction(formData: FormData) {
 
 export async function updateCategoryAction(id: string, formData: FormData) {
   const parsedData = categorySchema.safeParse(Object.fromEntries(formData.entries()));
-  
+
   if (!parsedData.success) {
     return { success: false, error: 'Invalid category data.', errors: parsedData.error.flatten().fieldErrors };
   }
@@ -163,7 +163,7 @@ export async function deleteCategoryAction(id: string) {
   try {
     await dbDeleteCategory(id);
     revalidatePath('/admin/categories');
-    revalidatePath('/'); 
+    revalidatePath('/');
     return { success: true, message: 'Category deleted successfully.' };
   } catch (e) {
     console.error(e);
@@ -235,3 +235,30 @@ export async function deleteCarouselItemAction(id: string) {
     return { success: false, error: 'Failed to delete carousel item.' };
   }
 }
+
+// Site Settings Actions
+const hostnameSchema = z.object({
+  hostname: z.string().min(3, 'Hostname must be valid (e.g., example.com).'),
+});
+
+export async function requestNewHostnameAction(hostname: string) {
+  const validatedHostname = hostnameSchema.safeParse({ hostname });
+
+  if (!validatedHostname.success) {
+    return { success: false, error: 'Invalid hostname format.', errors: validatedHostname.error.flatten().fieldErrors };
+  }
+
+  // In a real application, you might save this to a database, send an email, or create a ticket.
+  // For this example, we'll just log it to the server console.
+  console.log(`ADMIN ACTION: New hostname requested for approval: ${validatedHostname.data.hostname}`);
+  console.log("IMPORTANT: This hostname must be manually added to next.config.js and the server restarted.");
+
+  // Simulate some processing
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  return {
+    success: true,
+    message: `Request for hostname '${validatedHostname.data.hostname}' has been logged. A developer needs to manually update the configuration and restart the server.`
+  };
+}
+

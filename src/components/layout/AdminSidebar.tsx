@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -11,25 +12,25 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
-} from '@/components/ui/sidebar'; 
+} from '@/components/ui/sidebar';
 import { Logo } from '@/components/icons/Logo';
 import {
   LayoutDashboard,
   Package,
   Tags,
-  Users,
-  Settings,
+  Settings, // Changed from Users to Settings general icon
   LogOut,
   Home,
-  ImageIcon // Added for Carousel
+  ImageIcon,
+  ShieldCheck // Added for Site Settings / Trusted Hosts
 } from 'lucide-react';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/products', label: 'Products', icon: Package },
   { href: '/admin/categories', label: 'Categories', icon: Tags },
-  { href: '/admin/carousel', label: 'Carousel', icon: ImageIcon }, // New Carousel Link
-  // Add more admin links here if needed, e.g., Users, Settings
+  { href: '/admin/carousel', label: 'Carousel', icon: ImageIcon },
+  { href: '/admin/settings', label: 'Site Settings', icon: ShieldCheck }, // New Site Settings Link
 ];
 
 export function AdminSidebar() {
@@ -76,7 +77,7 @@ export function AdminSidebar() {
            </SidebarMenuItem>
            <SidebarMenuItem>
              <SidebarMenuButton asChild tooltip={{children: "Logout"}} className="justify-start">
-                <Link href="/admin/login"> 
+                <Link href="/admin/login">
                   <LogOut className="h-5 w-5" />
                   <span className="group-data-[collapsible=icon]:hidden">Logout</span>
                 </Link>
