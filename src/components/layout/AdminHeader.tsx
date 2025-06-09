@@ -20,7 +20,7 @@ export function AdminHeader() {
           <SidebarTrigger />
         </div>
         <Link href="/admin/dashboard" className="hidden md:block">
-          <Logo className="h-7 text-primary" />
+          <Logo height={28} />
         </Link>
       </div>
       

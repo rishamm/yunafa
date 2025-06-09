@@ -64,7 +64,7 @@ export function LoginForm() {
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4">
-            <Logo className="h-10 text-primary" />
+            <Logo height={40} />
           </div>
           <CardTitle className="text-3xl font-headline">Admin Login</CardTitle>
           <CardDescription>Enter your credentials to access the admin panel.</CardDescription>
