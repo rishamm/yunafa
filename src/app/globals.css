@@ -5,22 +5,22 @@
 @layer base {
   :root {
     --background: 0 0% 94.1%; /* #F0F0F0 */
-    --foreground: 240 10% 3.9%;
+    --foreground: 240 6% 20%; /* Updated: Was 240 10% 3.9% */
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 240 6% 20%; /* Updated: Was 240 10% 3.9% */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 240 6% 20%; /* Updated: Was 240 10% 3.9% */
 
     --primary: 277 100% 25.1%; /* Deep Indigo #4B0082 */
     --primary-foreground: 277 80% 95%; /* Lighter for contrast on primary */
 
     --secondary: 0 0% 96.1%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary-foreground: 240 6% 25%; /* Updated: Was 240 5.9% 10% */
 
     --muted: 0 0% 90%;
-    --muted-foreground: 240 5% 45%;
+    --muted-foreground: 240 5% 50%; /* Updated: Was 240 5% 45% */
 
     --accent: 180 100% 25.1%; /* Teal #008080 */
     --accent-foreground: 180 80% 95%; /* Lighter for contrast on accent */
