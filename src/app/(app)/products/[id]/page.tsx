@@ -1,12 +1,12 @@
 
 import { getProductById, getCategories } from '@/lib/data';
-import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ChevronLeft, Mail } from 'lucide-react';
 import type { Category } from '@/lib/types';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback'; // Import the new component
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const product = await getProductById(params.id);
@@ -38,19 +38,14 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
       </Button>
       <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
         <div className="aspect-square relative rounded-lg overflow-hidden shadow-xl">
-          <Image
-            src={product.imageUrl ? product.imageUrl.trim() : '/placeholder-image.png'}
+          <ImageWithFallback
+            initialSrc={product.imageUrl}
             alt={product.name}
-            fill
+            fill={true}
             sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
             data-ai-hint={product['data-ai-hint'] || "product image"}
-            onError={(e) => {
-              // Fallback for broken images
-              e.currentTarget.srcset = '/placeholder-image.png';
-              e.currentTarget.src = '/placeholder-image.png';
-            }}
           />
         </div>
         <div>

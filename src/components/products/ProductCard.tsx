@@ -1,10 +1,10 @@
 
-import Image from 'next/image';
 import Link from 'next/link';
 import type { Product } from '@/lib/types';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback'; // Import the new component
 
 interface ProductCardProps {
   product: Product;
@@ -16,18 +16,13 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardHeader className="p-0">
         <Link href={`/products/${product.id}`} className="block group">
           <div className="aspect-[4/3] relative w-full">
-            <Image
-              src={product.imageUrl ? product.imageUrl.trim() : '/placeholder-image.png'}
+            <ImageWithFallback
+              initialSrc={product.imageUrl}
               alt={product.name}
-              fill
+              fill={true}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               data-ai-hint={product['data-ai-hint'] || "product image"}
-              onError={(e) => {
-                // Fallback for broken images
-                e.currentTarget.srcset = '/placeholder-image.png';
-                e.currentTarget.src = '/placeholder-image.png';
-              }}
             />
           </div>
         </Link>

@@ -12,9 +12,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { PlusCircle, Edit } from 'lucide-react';
-import Image from 'next/image';
 import { DeleteProductButton } from './_components/DeleteProductButton';
 import type { Category } from '@/lib/types';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback'; // Import the new component
 
 export const metadata = {
   title: 'Manage Products - Yunafa Admin',
@@ -53,18 +53,13 @@ export default async function AdminProductsPage() {
               {products.map((product) => (
                 <TableRow key={product.id}>
                   <TableCell>
-                    <Image
-                      src={product.imageUrl ? product.imageUrl.trim() : '/placeholder-image.png'}
+                    <ImageWithFallback
+                      initialSrc={product.imageUrl}
                       alt={product.name}
                       width={50}
                       height={50}
                       className="rounded object-cover aspect-square"
                       data-ai-hint={product['data-ai-hint'] || "product image"}
-                      onError={(e) => {
-                        // Fallback for broken images
-                        e.currentTarget.srcset = '/placeholder-image.png';
-                        e.currentTarget.src = '/placeholder-image.png';
-                      }}
                     />
                   </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>

@@ -1,6 +1,5 @@
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { getCarouselItems } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { PlusCircle, Edit } from 'lucide-react';
 import { DeleteCarouselItemButton } from './_components/DeleteCarouselItemButton';
+import { ImageWithFallback } from '@/components/common/ImageWithFallback'; // Import the new component
 
 export const metadata = {
   title: 'Manage Carousel - Yunafa Admin',
@@ -48,18 +48,13 @@ export default async function AdminCarouselPage() {
               {carouselItems.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
-                    <Image
-                      src={item.imageUrl ? item.imageUrl.trim() : '/placeholder-image.png'}
+                    <ImageWithFallback
+                      initialSrc={item.imageUrl}
                       alt={item.title}
                       width={80}
                       height={80}
                       className="rounded object-cover aspect-square"
                       data-ai-hint={item.dataAiHint || "carousel image"}
-                      onError={(e) => {
-                        // Fallback for broken images
-                        e.currentTarget.srcset = '/placeholder-image.png';
-                        e.currentTarget.src = '/placeholder-image.png';
-                      }}
                     />
                   </TableCell>
                   <TableCell className="font-medium">{item.title}</TableCell>
