@@ -29,11 +29,7 @@ export default async function HomePage() {
       
       <section id="browse-categories">
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Browse by Category</h2>
-        {categories.length > 0 ? (
-          <CategoryList categories={categories} />
-        ) : (
-          <p className="text-center text-muted-foreground">No categories available at the moment.</p>
-        )}
+        <CategoryList categories={categories} />
       </section>
 
       <HomePageCarousel items={carouselItems} /> {/* Pass items as props */}
