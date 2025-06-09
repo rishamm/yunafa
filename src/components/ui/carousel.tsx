@@ -279,20 +279,21 @@ export const BlurImage = ({
   'data-ai-hint': dataAiHint, 
   ...rest
 }: BlurImageProps) => {
-  const [imgSrc, setImgSrc] = useState(src ? src.trim() : '/placeholder-image.png');
+  const placeholderUrl = "https://placehold.co/600x800.png"; // Default placeholder
+  const [currentSrc, setCurrentSrc] = useState(src ? src.trim() : placeholderUrl);
 
   useEffect(() => {
-    setImgSrc(src ? src.trim() : '/placeholder-image.png');
-  }, [src]);
+    setCurrentSrc(src ? src.trim() : placeholderUrl);
+  }, [src]); // Removed placeholderUrl from deps as it's constant within the component scope
 
   const handleError = () => {
-    setImgSrc('/placeholder-image.png'); // Fallback to a local placeholder
+    setCurrentSrc(placeholderUrl); 
   };
 
   return (
     <img
       {...rest}
-      src={imgSrc}
+      src={currentSrc}
       alt={alt}
       data-ai-hint={dataAiHint} 
       className={cn(
