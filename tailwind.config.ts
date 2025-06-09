@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Maniac', 'sans-serif'], // Updated to Maniac
-        headline: ['Maniac', 'serif'], // Updated to Maniac
+        body: ['Batusa', 'sans-serif'], 
+        headline: ['Batusa', 'serif'], 
         code: ['monospace'],
       },
       colors: {

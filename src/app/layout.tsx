@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Removed Google Font links for Inter and Playfair Display */}
+        <link href="https://fonts.cdnfonts.com/css/batusa" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         {children}

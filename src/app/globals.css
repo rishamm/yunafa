@@ -3,13 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-  @font-face {
-    font-family: 'Maniac';
-    src: url('/fonts/Maniac-Regular.woff2') format('woff2'); /* Adjust path if your filename is different */
-    font-weight: normal;
-    font-style: normal;
-  }
-
   :root {
     --background: 0 0% 94.1%; /* #F0F0F0 */
     --foreground: 240 6% 20%; 
