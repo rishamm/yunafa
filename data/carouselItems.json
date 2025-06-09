@@ -1,0 +1,34 @@
+[
+  {
+    "id": "car1",
+    "title": "Timeless Elegance",
+    "category": "Luxury Watches",
+    "content": "Discover watches that are a testament to craftsmanship and precision. Each piece is a work of art.",
+    "imageUrl": "https://images.unsplash.com/photo-1616583936499-d4116e7e2e76?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "dataAiHint": "luxury watch"
+  },
+  {
+    "id": "car2",
+    "title": "Sparkling Designs",
+    "category": "Fine Jewelry",
+    "content": "Adorn yourself with jewelry that tells a story. Exquisite designs for every occasion.",
+    "imageUrl": "http://images.unsplash.com/photo-1657367144402-73ed741837dc?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZXRobmljJTIwJTVDZmFzaGlvbnxlbnwwfHwwfHx8MA%3D%3D",
+    "dataAiHint": "ethnic fashion"
+  },
+  {
+    "id": "car3",
+    "title": "Handcrafted Beauty",
+    "category": "Artisanal Decor",
+    "content": "Elevate your space with unique decor items, handcrafted by skilled artisans.",
+    "imageUrl": "https://placehold.co/600x800.png",
+    "dataAiHint": "home decor"
+  },
+  {
+    "id": "car4",
+    "title": "Exquisite Tastes",
+    "category": "Gourmet Delights",
+    "content": "Indulge in a curated selection of gourmet foods and rare culinary ingredients.",
+    "imageUrl": "https://placehold.co/600x800.png",
+    "dataAiHint": "gourmet food"
+  }
+]
