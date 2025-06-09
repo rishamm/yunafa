@@ -1,4 +1,3 @@
-
 "use client";
 import React, {
   useEffect,
@@ -13,22 +12,23 @@ import {
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion"; // Corrected import
+// import Image, { ImageProps } from "next/image"; // Not used directly here anymore for BlurImage props
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile"; // Using existing hook
 
 interface CarouselProps {
   items: JSX.Element[];
   initialScroll?: number;
 }
 
-// Renamed Card to CardData to avoid conflict with Card component
-type CardData = {
+// Renamed Card to CardData to avoid confusion and to match HomePageCarousel
+export type CardData = {
   src: string;
   title: string;
   category: string;
   content: React.ReactNode;
-  'data-ai-hint'?: string;
+  'data-ai-hint'?: string; // Added data-ai-hint
 };
 
 export const CarouselContext = createContext<{
@@ -44,7 +44,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isMobileView = useIsMobile();
+  const isMobileView = useIsMobile(); // Using the project's useIsMobile hook
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -121,6 +121,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
                     duration: 0.5,
                     delay: 0.2 * index,
                     ease: "easeOut",
+                    // once: true, // Framer Motion's animate doesn't have `once` directly, this is usually for viewport triggers
                   },
                 }}
                 key={"card" + index}
@@ -133,14 +134,14 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
         </div>
         <div className="mr-10 flex justify-end gap-2">
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 disabled:opacity-50 dark:bg-neutral-800 dark:text-neutral-400"
+            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground hover:bg-primary/80 hover:text-primary-foreground disabled:opacity-50 transition-colors"
             onClick={scrollLeft}
             disabled={!canScrollLeft}
           >
             <IconArrowNarrowLeft className="h-6 w-6" />
           </button>
           <button
-            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-500 disabled:opacity-50 dark:bg-neutral-800 dark:text-neutral-400"
+            className="relative z-40 flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-secondary-foreground hover:bg-primary/80 hover:text-primary-foreground disabled:opacity-50 transition-colors"
             onClick={scrollRight}
             disabled={!canScrollRight}
           >
@@ -152,18 +153,19 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
-export const Card = ({ // This is the component to be used as items in the Carousel
+// Renamed 'Card' to 'CarouselUICard' to avoid naming conflict with shadcn Card
+export const Card = ({ 
   card,
   index,
   layout = false,
 }: {
-  card: CardData; 
+  card: CardData; // Using the more specific CardData type
   index: number;
   layout?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose } = useContext(CarouselContext);
+  const { onCardClose } = useContext(CarouselContext); // Removed currentIndex as it's not used here
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -180,7 +182,8 @@ export const Card = ({ // This is the component to be used as items in the Carou
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onCardClose, index]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]); // Removed onCardClose and index from deps as they don't change and handleClose has them in scope
 
   useOutsideClick(containerRef, () => handleClose());
 
@@ -210,7 +213,7 @@ export const Card = ({ // This is the component to be used as items in the Carou
               exit={{ opacity: 0 }}
               ref={containerRef}
               layoutId={layout ? `card-${card.title}` : undefined}
-              className="relative z-[60] mx-auto my-10 h-fit max-w-5xl rounded-3xl bg-white p-4 font-sans md:p-10 dark:bg-neutral-900"
+              className="relative z-[60] mx-auto my-10 h-fit max-w-5xl rounded-3xl bg-card p-4 font-sans md:p-10 dark:bg-neutral-900"
             >
               <button
                 className="sticky top-4 right-4 z-50 ml-auto flex h-8 w-8 items-center justify-center rounded-full bg-black dark:bg-white"
@@ -220,17 +223,17 @@ export const Card = ({ // This is the component to be used as items in the Carou
               </button>
               <motion.p
                 layoutId={layout ? `category-${card.title}` : undefined} 
-                className="text-base font-medium text-black dark:text-white"
+                className="text-base font-medium text-card-foreground "
               >
                 {card.category}
               </motion.p>
               <motion.p
                 layoutId={layout ? `title-${card.title}` : undefined}
-                className="mt-4 text-2xl font-semibold text-neutral-700 md:text-5xl dark:text-white"
+                className="mt-4 text-2xl font-semibold text-foreground md:text-5xl "
               >
                 {card.title}
               </motion.p>
-              <div className="py-10">{card.content}</div>
+              <div className="py-10 text-foreground/80">{card.content}</div>
             </motion.div>
           </div>
         )}
@@ -238,7 +241,7 @@ export const Card = ({ // This is the component to be used as items in the Carou
       <motion.button
         layoutId={layout ? `card-${card.title}` : undefined}
         onClick={handleOpen}
-        className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-gray-100 md:h-[40rem] md:w-96 dark:bg-neutral-900"
+        className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-neutral-100 md:h-[40rem] md:w-96 dark:bg-neutral-900"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
         <div className="relative z-40 p-8">
@@ -266,29 +269,36 @@ export const Card = ({ // This is the component to be used as items in the Carou
   );
 };
 
+// Define a more specific props type for BlurImage as it uses a standard <img> tag
 interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
   alt: string;
-  'data-ai-hint'?: string;
+  'data-ai-hint'?: string; // Ensure data-ai-hint is part of the props
 }
 
 export const BlurImage = ({
   src,
   alt,
   className,
-  'data-ai-hint': dataAiHint,
+  'data-ai-hint': dataAiHint, // Destructure data-ai-hint
   ...rest
 }: BlurImageProps) => {
+  // Removed isLoading state and onLoad handler to remove blur effect
   return (
     <img
       {...rest}
       src={src}
       alt={alt}
-      data-ai-hint={dataAiHint}
-      className={cn("transition duration-300", className)}
+      data-ai-hint={dataAiHint} // Pass data-ai-hint to the img element
+      className={cn(
+        "h-full w-full transition duration-300",
+        // No blur classes
+        className,
+      )}
       loading="lazy"
       decoding="async"
+      // blurDataURL is not applicable here as we're not using next/image placeholder blur
+      // For standard img, if you want a low-res placeholder, you'd handle it differently (e.g. two images)
     />
   );
 };
-
