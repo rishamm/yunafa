@@ -26,7 +26,7 @@ export async function Header() {
     <header className="bg-card sticky top-0 z-50 border-b">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         <Link href="/" aria-label="Yunafa Home">
-          <Logo height={30} />
+          <Logo height={21} />
         </Link>
         <nav className="hidden md:flex items-center space-x-6">
           {navLinks.map((link) => (
