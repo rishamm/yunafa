@@ -3,8 +3,7 @@
 
 import { Carousel, Card as CarouselUICard } from "@/components/ui/carousel";
 import type { CardData } from "@/components/ui/carousel"; 
-import React, { useEffect, useState } from "react";
-// getCarouselItems is no longer fetched here, data comes via props
+import React from "react"; // Removed useEffect, useState
 import type { CarouselItem as CarouselItemType } from "@/lib/types"; 
 import { Skeleton } from "@/components/ui/skeleton"; 
 
@@ -13,25 +12,11 @@ interface HomePageCarouselProps {
 }
 
 export function HomePageCarousel({ items }: HomePageCarouselProps) {
-  // Removed internal useState for items and loading. Data is now passed via props.
-  // This makes the component simpler and reliant on its parent for data.
+  // items is guaranteed to be CarouselItemType[] by the parent page.tsx
+  // If items array is empty, it means "no carousels loaded" from the data source.
 
-  // Still show skeleton if items are not yet available (e.g. parent is loading)
-  // or if items array is empty initially before parent passes them.
-  // However, since HomePage (parent) is a server component, items should always be populated or empty.
-  // The skeleton part is more for client-side fetching patterns, but we can keep a simplified version.
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // If items are passed, we are not loading.
-    // This effect helps if there's any brief delay or if items prop could change.
-    if (items && items.length >= 0) { // Check items.length >= 0 to handle empty array correctly
-      setIsLoading(false);
-    }
-  }, [items]);
-
-
-  if (isLoading && (!items || items.length === 0)) { // Show skeleton only if truly no items yet and loading
+  if (!items || items.length === 0) { 
+    // Display skeletons if no items are available.
     return (
       <section className="py-12">
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
@@ -48,15 +33,7 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
     );
   }
 
-  if (!items || !items.length) {
-    return (
-       <section className="py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
-        <p className="text-center text-muted-foreground">No collections to display at the moment.</p>
-      </section>
-    );
-  }
-
+  // If items exist, map them to CarouselUICard components
   const carouselUiItems = items.map((item, index) => (
     <CarouselUICard
       key={item.id || index} 
@@ -72,10 +49,11 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
     />
   ));
 
+  // Render the Carousel with the items
   return (
     <section className="py-12">
       <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
-      {carouselUiItems.length > 0 ? <Carousel items={carouselUiItems} /> : <p className="text-center text-muted-foreground">No collections to display.</p>}
+      <Carousel items={carouselUiItems} />
     </section>
   );
 }
