@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Logo } from '@/components/icons/Logo';
 import { Button } from '@/components/ui/button';
@@ -16,8 +17,9 @@ export async function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/our-story', label: 'Our Story' },
+    { href: '/blog', label: 'Blogs' },
     { href: '/contact', label: 'Contact' },
-    // Admin link removed as per request
   ];
 
   return (
