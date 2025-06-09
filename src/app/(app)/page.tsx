@@ -14,7 +14,7 @@ export default async function HomePage() {
     <div className="space-y-16">
       <section className="text-center py-12 md:py-20 bg-gradient-to-br from-primary/10 via-background to-accent/10 rounded-lg shadow-inner">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-primary">
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
             Welcome to Yunafa
           </h1>
           <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-2xl mx-auto">
@@ -72,3 +72,4 @@ export default async function HomePage() {
     </div>
   );
 }
+
