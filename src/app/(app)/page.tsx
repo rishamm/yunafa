@@ -11,8 +11,8 @@ export default async function HomePage() {
   const categories: Category[] = await getCategories(); 
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
-  const titleComponent = (
-    <>
+  const heroTextContent = (
+    <div className="max-w-5xl mx-auto text-center">
       <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
         Welcome to Yunafa
       </h1>
@@ -22,12 +22,18 @@ export default async function HomePage() {
       <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
         <Link href="#home-carousel">Explore Collection</Link>
       </Button>
-    </>
+    </div>
   );
 
   return (
-    <div className="space-y-16">
-      <ContainerScroll titleComponent={titleComponent}>
+    <div className="space-y-12 md:space-y-20"> {/* Adjusted spacing */}
+      {/* Static Hero Text Section */}
+      <section className="pt-12 pb-8 md:pt-20 md:pb-10"> {/* Adjusted padding */}
+        {heroTextContent}
+      </section>
+
+      {/* ContainerScroll Animation */}
+      <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <Image
             src="https://placehold.co/1200x800.png"
@@ -35,12 +41,12 @@ export default async function HomePage() {
             fill
             className="object-cover rounded-2xl"
             data-ai-hint="luxury lifestyle"
-            priority // Good to add priority for LCP element if this is high on the page
+            priority
           />
         </div>
       </ContainerScroll>
       
-      <section id="home-carousel">
+      <section id="home-carousel" className="pt-8 md:pt-12"> {/* Added top padding to space from scroll animation */}
         <HomePageCarousel items={carouselItems} />
       </section>
 
