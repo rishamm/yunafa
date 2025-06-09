@@ -1,3 +1,4 @@
+
 import { getProducts, getCategories } from '@/lib/data';
 import { ProductList } from '@/components/products/ProductList';
 import { CategoryList } from '@/components/categories/CategoryList';
@@ -63,7 +64,7 @@ export default async function HomePage() {
               alt="Artisanal products" 
               fill
               className="object-cover"
-              data-ai-hint="artisanal products"
+              data-ai-hint="fashion boutique"
             />
           </div>
         </div>

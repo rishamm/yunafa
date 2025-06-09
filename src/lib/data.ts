@@ -1,3 +1,4 @@
+
 import type { Product, Category } from './types';
 
 let categories: Category[] = [
@@ -10,9 +11,9 @@ let categories: Category[] = [
 let products: Product[] = [
   { id: '1', name: 'ChronosMaster Elite', description: 'A masterpiece of horological engineering, featuring a platinum case and sapphire crystal.', price: 12500, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['1'], tags: ['watch', 'luxury', 'platinum'], "data-ai-hint": "luxury watch" },
   { id: '2', name: 'Seraphina Diamond Necklace', description: 'An enchanting necklace adorned with ethically sourced diamonds, set in 18k white gold.', price: 8800, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['2'], tags: ['necklace', 'diamond', 'gold'], "data-ai-hint": "diamond necklace" },
-  { id: '3', name: 'Azure Ceramic Vase', description: 'A stunning hand-thrown ceramic vase with a unique azure glaze, perfect for contemporary homes.', price: 350, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['3'], tags: ['vase', 'ceramic', 'decor'], "data-ai-hint": "ceramic vase"  },
-  { id: '4', name: 'Vintage Leather Armchair', description: 'A classic armchair upholstered in rich, patinated leather. Timeless comfort and style.', price: 2200, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['3'], tags: ['furniture', 'leather', 'vintage'], "data-ai-hint": "leather armchair" },
-  { id: '5', name: 'Organic Truffle Oil Set', description: 'A selection of the finest organic truffle oils, sourced from Italian artisans.', price: 120, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['4'], tags: ['gourmet', 'truffle', 'organic'], "data-ai-hint": "truffle oil" },
+  { id: '3', name: 'Azure Ceramic Vase', description: 'A stunning hand-thrown ceramic vase with a unique azure glaze, perfect for contemporary homes.', price: 350, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['3'], tags: ['vase', 'ceramic', 'decor'], "data-ai-hint": "blue dress"  },
+  { id: '4', name: 'Vintage Leather Armchair', description: 'A classic armchair upholstered in rich, patinated leather. Timeless comfort and style.', price: 2200, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['3'], tags: ['furniture', 'leather', 'vintage'], "data-ai-hint": "leather jacket" },
+  { id: '5', name: 'Organic Truffle Oil Set', description: 'A selection of the finest organic truffle oils, sourced from Italian artisans.', price: 120, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['4'], tags: ['gourmet', 'truffle', 'organic'], "data-ai-hint": "knit sweater" },
   { id: '6', name: 'Silk Scarf "Impression"', description: 'A luxurious silk scarf featuring an abstract impressionist design. Hand-rolled edges.', price: 280, imageUrl: 'https://placehold.co/600x400.png', categoryIds: ['2'], tags: ['scarf', 'silk', 'fashion'], "data-ai-hint": "silk scarf" },
 ];
 
