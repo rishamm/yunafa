@@ -11,12 +11,12 @@ interface LogoProps {
  */
 export function Logo({ height = 150, className }: LogoProps) {
   // Estimated aspect ratio (width / height) of the core logo content from the provided image
-  const aspectRatio = 2.75; // Increased from 2.25
+  const aspectRatio = 2.75; // Increased from 2.5
   const width = Math.round(height * aspectRatio);
 
   return (
     <Image
-      src="/logo.jpg"
+      src="/logo.jpg" // Changed from logo.png back to logo.jpg as per user's file content
       alt="Yunafa Logo"
       width={width}
       height={height}
