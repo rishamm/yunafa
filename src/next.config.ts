@@ -1,8 +1,6 @@
+import type {NextConfig} from 'next';
 
-
-// Removed: import type {NextConfig} from 'next';
-
-const nextConfig = { // Removed :NextConfig type annotation
+const nextConfig: NextConfig = {
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
@@ -25,14 +23,14 @@ const nextConfig = { // Removed :NextConfig type annotation
         pathname: '/**',
       },
       { 
-        protocol: 'http', // Prefer https, but allow http if necessary for existing links
+        protocol: 'http',
         hostname: 'images.unsplash.com',
         port: '',
         pathname: '/**',
       },
       {
         protocol: 'https',
-        hostname: 'plus.unsplash.com',
+        hostname: 'plus.unsplash.com', // Added plus.unsplash.com
         port: '',
         pathname: '/**',
       },
