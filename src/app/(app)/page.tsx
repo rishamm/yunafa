@@ -1,6 +1,6 @@
 
-
-import { getCategories } from '@/lib/data';
+import { getCategories, getCarouselItems } from '@/lib/data'; // Added getCarouselItems
+import type { Category, CarouselItem } from '@/lib/types'; // Added CarouselItem type
 import { CategoryList } from '@/components/categories/CategoryList';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -8,7 +8,8 @@ import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 
 export default async function HomePage() {
-  const categories = await getCategories();
+  const categories: Category[] = await getCategories();
+  const carouselItems: CarouselItem[] = await getCarouselItems(); // Fetch carousel items
 
   return (
     <div className="space-y-16">
@@ -35,7 +36,7 @@ export default async function HomePage() {
         )}
       </section>
 
-      <HomePageCarousel />
+      <HomePageCarousel items={carouselItems} /> {/* Pass items as props */}
 
        <section className="py-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">

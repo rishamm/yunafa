@@ -1,38 +1,37 @@
 
-"use client"; // Keep this if hooks like useState/useEffect are used, or for interactivity
+"use client"; 
 
 import { Carousel, Card as CarouselUICard } from "@/components/ui/carousel";
-import type { CardData } from "@/components/ui/carousel"; // Import the type
+import type { CardData } from "@/components/ui/carousel"; 
 import React, { useEffect, useState } from "react";
-import { getCarouselItems } from "@/lib/data"; // Fetch dynamic data
-import type { CarouselItem as CarouselItemType } from "@/lib/types"; // CMS item type
-import { Skeleton } from "@/components/ui/skeleton"; // For loading state
+// getCarouselItems is no longer fetched here, data comes via props
+import type { CarouselItem as CarouselItemType } from "@/lib/types"; 
+import { Skeleton } from "@/components/ui/skeleton"; 
 
-// This component now needs to be async if we fetch data directly,
-// or it needs to receive data as props, or use a client-side fetch.
-// For simplicity with `getCarouselItems` being async, we'll make a wrapper or fetch on client.
+interface HomePageCarouselProps {
+  items: CarouselItemType[]; // Accept items as a prop
+}
 
-// Client component to handle fetching and rendering
-export function HomePageCarousel() {
-  const [items, setItems] = useState<CarouselItemType[]>([]);
-  const [loading, setLoading] = useState(true);
+export function HomePageCarousel({ items }: HomePageCarouselProps) {
+  // Removed internal useState for items and loading. Data is now passed via props.
+  // This makes the component simpler and reliant on its parent for data.
+
+  // Still show skeleton if items are not yet available (e.g. parent is loading)
+  // or if items array is empty initially before parent passes them.
+  // However, since HomePage (parent) is a server component, items should always be populated or empty.
+  // The skeleton part is more for client-side fetching patterns, but we can keep a simplified version.
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const fetchedItems = await getCarouselItems();
-        setItems(fetchedItems);
-      } catch (error) {
-        console.error("Failed to load carousel items:", error);
-        // Optionally set some error state here
-      } finally {
-        setLoading(false);
-      }
+    // If items are passed, we are not loading.
+    // This effect helps if there's any brief delay or if items prop could change.
+    if (items && items.length >= 0) { // Check items.length >= 0 to handle empty array correctly
+      setIsLoading(false);
     }
-    loadData();
-  }, []);
+  }, [items]);
 
-  if (loading) {
+
+  if (isLoading && (!items || items.length === 0)) { // Show skeleton only if truly no items yet and loading
     return (
       <section className="py-12">
         <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Collections</h2>
@@ -60,23 +59,23 @@ export function HomePageCarousel() {
 
   const carouselUiItems = items.map((item, index) => (
     <CarouselUICard
-      key={item.id || index} // Use item.id if available
+      key={item.id || index} 
       card={{ 
         src: item.imageUrl,
         title: item.title,
         category: item.category,
-        content: <p>{item.content}</p>, // Wrap string content in a P tag
+        content: <p>{item.content}</p>, 
         'data-ai-hint': item.dataAiHint || item.category.toLowerCase(),
       }}
       index={index}
-      layout // Enable layout animation
+      layout 
     />
   ));
 
   return (
     <section className="py-12">
       <h2 className="text-3xl font-bold mb-8 text-center font-headline">Featured Collections</h2>
-      {carouselUiItems.length > 0 ? <Carousel items={carouselUiItems} /> : <p className="text-center text-muted-foreground">Loading collections...</p>}
+      {carouselUiItems.length > 0 ? <Carousel items={carouselUiItems} /> : <p className="text-center text-muted-foreground">No collections to display.</p>}
     </section>
   );
 }
