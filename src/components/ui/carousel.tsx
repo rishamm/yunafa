@@ -163,7 +163,7 @@ export const Card = ({ // This is the component to be used as items in the Carou
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose } = useContext(CarouselContext); // Removed currentIndex as it wasn't used
+  const { onCardClose } = useContext(CarouselContext);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -180,7 +180,7 @@ export const Card = ({ // This is the component to be used as items in the Carou
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open]); // Removed index from dependency array as onCardClose is stable
+  }, [open, onCardClose, index]);
 
   useOutsideClick(containerRef, () => handleClose());
 
@@ -279,21 +279,16 @@ export const BlurImage = ({
   'data-ai-hint': dataAiHint,
   ...rest
 }: BlurImageProps) => {
-  const [isLoading, setLoading] = useState(true);
   return (
     <img
       {...rest}
       src={src}
       alt={alt}
       data-ai-hint={dataAiHint}
-      className={cn(
-        "transition duration-300",
-        isLoading ? "blur-sm" : "blur-0",
-        className
-      )}
-      onLoad={() => setLoading(false)}
+      className={cn("transition duration-300", className)}
       loading="lazy"
       decoding="async"
     />
   );
 };
+
