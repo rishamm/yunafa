@@ -26,7 +26,7 @@ export default async function HomePage() {
   );
 
   const collectionsHeadingElement = (
-    <div className="flex-shrink-0 h-full flex items-center justify-center px-4 md:px-8"> {/* Container for the vertical text */}
+    <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4"> {/* Container for the vertical text */}
       <div className="h-80 md:h-[40rem] flex items-center"> {/* Explicit height to match carousel cards */}
         <h2
           className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase origin-center"
