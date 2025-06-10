@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { StickyBanner } from "@/components/ui/sticky-banner"; // Added import
 
 export default async function HomePage() {
   const categories: Category[] = await getCategories(); // Not used directly here, but good for context
@@ -61,6 +62,24 @@ export default async function HomePage() {
             </div>
         </section>
       </div>
+
+      {/* Sticky Banner Section - Added Here */}
+      <section className="relative flex h-[60vh] w-full flex-col overflow-y-auto my-12 md:my-20 bg-background rounded-lg shadow-lg">
+        <StickyBanner className="bg-accent text-accent-foreground">
+          <p className="mx-auto max-w-[90%] drop-shadow-md">
+            Limited Time Offer: Free Express Shipping on all orders over $150!{' '}
+            <Link href="/#home-carousel" className="font-semibold underline hover:text-accent-foreground/80 transition-colors">
+              Shop the Collection
+            </Link>
+          </p>
+        </StickyBanner>
+        {/* Dummy Content for scrolling demonstration */}
+        <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
+          <div className="h-96 w-full rounded-lg bg-muted/50" />
+          <div className="h-96 w-full rounded-lg bg-muted/50" />
+          <div className="h-96 w-full rounded-lg bg-muted/50" />
+        </div>
+      </section>
 
       {/* Carousel Section with leading Collections heading */}
       <section id="home-carousel" className="py-10 md:py-16">
