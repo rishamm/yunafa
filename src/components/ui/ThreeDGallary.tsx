@@ -68,39 +68,43 @@ const galleryItemsData: GalleryItem[] = [
 export function ThreeDGallary() {
   return (
     <div
-      className="w-full overflow-y-auto overflow-x-hidden bg-[linear-gradient(to_right,black_25%,#1d1515_50%,black_75%)]"
-      style={{
-        perspective: '1200px',
-        perspectiveOrigin: 'center center',
-      }}
+      className={cn(
+        'w-full h-[70vh] bg-[linear-gradient(to_right,black_25%,#1d1515_50%,black_75%)] overflow-hidden',
+      )}
     >
-      {galleryItemsData.map((item) => (
-        <div
-          key={item.id}
-          className={cn(
-            'w-full h-[100px]', // Each box has a fixed height
-            'transform-preserve-3d', // Equivalent to transform-style: preserve-3d
-            item.type === 'box1' ?
-              'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] origin-[right_center]' :
-              'bg-gradient-to-l from-white from-70% to-[#b9b0b0] [transform:translateX(50%)_rotateY(-65deg)] origin-[left_center]'
-          )}
-        >
-          {item.imageUrl && (
-            <div className="relative w-full h-full">
-              <Image
-                src={item.imageUrl}
-                alt={item.altText || 'Gallery image'}
-                fill
-                className="object-contain" // Changed to object-contain
-                data-ai-hint={item.dataAiHint || 'gallery image'}
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-          )}
-        </div>
-      ))}
+      <div
+        className="h-full w-full overflow-y-auto overflow-x-hidden"
+        style={{
+          perspective: '1200px',
+          perspectiveOrigin: 'center center',
+        }}
+      >
+        {galleryItemsData.map((item) => (
+          <div
+            key={item.id}
+            className={cn(
+              'w-full h-[100px]', 
+              'transform-preserve-3d', 
+              item.type === 'box1' ?
+                'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] origin-[right_center]' :
+                'bg-gradient-to-l from-white from-70% to-[#b9b0b0] [transform:translateX(50%)_rotateY(-65deg)] origin-[left_center]'
+            )}
+          >
+            {item.imageUrl && (
+              <div className="relative w-full h-full">
+                <Image
+                  src={item.imageUrl}
+                  alt={item.altText || 'Gallery image'}
+                  fill
+                  className="object-contain"
+                  data-ai-hint={item.dataAiHint || 'gallery image'}
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
-
-    
