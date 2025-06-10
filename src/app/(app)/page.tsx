@@ -48,15 +48,19 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Vertical Collections Heading */}
-      <section className="flex justify-center items-center py-10 md:py-16">
-        <h2 className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase">
-          Collections
-        </h2>
-      </section>
+      {/* Collections and Carousel Parallel Section */}
+      <section className="flex flex-row items-center gap-6 md:gap-12 py-10 md:py-16">
+        {/* Vertical Collections Heading */}
+        <div className="flex-shrink-0 px-4 md:px-0"> {/* Added padding for smaller screens if text is too close to edge */}
+          <h2 className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase">
+            Collections
+          </h2>
+        </div>
 
-      <section id="home-carousel" className="pt-4 md:pt-8"> {/* Adjusted top padding */}
-        <HomePageCarousel items={carouselItems} />
+        {/* Carousel Section */}
+        <div id="home-carousel" className="flex-1 min-w-0"> {/* flex-1 to take remaining space, min-w-0 to prevent overflow issues with flex children */}
+          <HomePageCarousel items={carouselItems} />
+        </div>
       </section>
 
        <section className="py-12">
