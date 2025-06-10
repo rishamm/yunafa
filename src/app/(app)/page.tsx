@@ -7,7 +7,7 @@ import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { StickyBanner } from "@/components/ui/sticky-banner";
-import { ThreeDGallary } from '@/components/ui/ThreeDGallary'; // Added import
+import { ThreeDGallary } from '@/components/ui/ThreeDGallary';
 
 export default async function HomePage() {
   const categories: Category[] = await getCategories(); // Not used directly here, but good for context
@@ -64,8 +64,13 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Sticky Banner Section - Added Here */}
+      {/* Sticky Banner Section */}
       <section className="relative flex h-[60vh] w-full flex-col overflow-y-auto my-12 md:my-20 bg-background rounded-lg ">
+        <StickyBanner className="bg-primary text-primary-foreground">
+          <p className="mx-0 max-w-[90%] drop-shadow-md">
+            Grand Opening: Enjoy 15% off on your first order! Use code YUNAFA15.
+          </p>
+        </StickyBanner>
         {/* Dummy Content for scrolling demonstration */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
           <div className="h-96 w-full rounded-lg bg-muted/50" />
@@ -105,8 +110,8 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 3D Gallery Section */}
-      <section className=" flex justify-center items-center flex-col">
+      {/* 3D Gallery Section - Full Width */}
+      <section className="py-12 md:py-20"> {/* Added vertical padding */}
         <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">
           Gallery Showcase
         </h2>
