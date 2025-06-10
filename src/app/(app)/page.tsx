@@ -6,13 +6,15 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { StickyBanner } from "@/components/ui/sticky-banner"; // Added import
 
 export default async function HomePage() {
   const categories: Category[] = await getCategories(); // Not used directly here, but good for context
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
   const heroTextContent = (
-    <div className="max-w-5xl mx-auto text-center h-[80rem]">
+    // This div is positioned absolutely by its parent
+    <div className="max-w-5xl mx-auto text-center h-auto"> {/* Adjusted height to auto, parent controls positioning */}
       <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
         Welcome to Yunafa
       </h1>
@@ -26,8 +28,8 @@ export default async function HomePage() {
   );
 
   const collectionsHeadingElement = (
-    <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4"> {/* Container for the vertical text */}
-      <div className="h-80 md:h-[40rem] flex items-center"> {/* Explicit height to match carousel cards */}
+    <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4">
+      <div className="h-80 md:h-[40rem] flex items-center">
         <h2
           className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase origin-center"
         >
@@ -39,15 +41,12 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-12 md:space-y-20 flex flex-col ">
-      {/* Hero Section with ContainerScroll Background */}
-      <section className="absolute h-60  top-0 left-0 w-full  z-10 flex flex-col items-center justify-start pt-20 md:pt-40">
-          {heroTextContent}
-        </section>
-      <div className=" flex flex-col">
+      {/* Hero Section with ContainerScroll Background - RELATIVE positioning for absolute children */}
+      <div className="relative flex flex-col items-center justify-start pt-20 md:pt-40"> {/* Parent for overlay */}
         <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
           <div className="relative w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1661264265506-9468782b35c1?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDkzfHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
+              src="https://images.unsplash.com/photo-1644429909407-85e23c35a95d?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjQ1fHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
               alt="Yunafa Collection Showcase"
               fill
               className="object-cover bg-top rounded-2xl"
@@ -56,16 +55,39 @@ export default async function HomePage() {
             />
           </div>
         </ContainerScroll>
-
-       
+        {/* Absolutely positioned hero text on top */}
+        <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center pt-10 md:pt-20 z-10 pointer-events-none">
+            <div className="pointer-events-auto"> {/* Allow interaction with hero text content */}
+                 {heroTextContent}
+            </div>
+        </section>
       </div>
+
+      {/* Sticky Banner Section */}
+      <section className="w-full px-4 md:px-0"> {/* Added padding for smaller screens, removed for md+ to allow full-width feel if desired */}
+        <div className="relative flex h-[60vh] w-full flex-col overflow-y-auto border rounded-lg shadow-md bg-card">
+          <StickyBanner className="bg-primary text-primary-foreground">
+            <p className="mx-auto max-w-[90%] text-center drop-shadow-md">
+              Special Announcement: Yunafa&apos;s New Collection Just Dropped!{" "}
+              <Link href="#home-carousel" className="font-semibold transition duration-200 hover:underline">
+                Explore Now
+              </Link>
+            </p>
+          </StickyBanner>
+          <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
+            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
+            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
+            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
+          </div>
+        </div>
+      </section>
 
       {/* Carousel Section with leading Collections heading */}
       <section id="home-carousel" className="py-10 md:py-16">
         <HomePageCarousel items={carouselItems} leadingElement={collectionsHeadingElement} />
       </section>
 
-       <section className="container mx-auto px-4 py-12"> {/* Added container and padding here for about section */}
+       <section className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 font-headline">About Yunafa</h2>
