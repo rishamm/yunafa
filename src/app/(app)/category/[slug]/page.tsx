@@ -26,7 +26,7 @@ export default async function CategoryPage({ params }: { params: { slug: string 
   const products = await getProductsByCategoryId(category.id);
 
   return (
-    <div>
+    <div className="container mx-auto px-4">
        <Button variant="outline" asChild className="mb-8">
         <Link href="/">
           <ChevronLeft className="mr-2 h-4 w-4" /> All Categories
