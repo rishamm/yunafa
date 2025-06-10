@@ -103,8 +103,8 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 
           <div
             className={cn(
-              "flex flex-row justify-start gap-4 pl-4",
-              "mx-auto max-w-7xl", 
+              "flex flex-row justify-start gap-4 pl-4"
+              // Removed "mx-auto max-w-7xl"
             )}
           >
             {items.map((item, index) => (
@@ -306,3 +306,4 @@ export const BlurImage = ({
     />
   );
 };
+
