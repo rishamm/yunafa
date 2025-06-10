@@ -28,7 +28,7 @@ export default async function HomePage() {
   return (
     <div className="space-y-12 md:space-y-20">
       {/* Hero Section with ContainerScroll Background */}
-      <div className="relative">
+      <div className="relative"> {/* Parent for relative positioning */}
         <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
           <div className="relative w-full h-full">
             <Image
@@ -48,7 +48,14 @@ export default async function HomePage() {
         </section>
       </div>
 
-      <section id="home-carousel" className="pt-8 md:pt-12">
+      {/* Vertical Collections Heading */}
+      <section className="flex justify-center items-center py-10 md:py-16">
+        <h2 className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase">
+          Collections
+        </h2>
+      </section>
+
+      <section id="home-carousel" className="pt-4 md:pt-8"> {/* Adjusted top padding */}
         <HomePageCarousel items={carouselItems} />
       </section>
 

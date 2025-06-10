@@ -5,7 +5,7 @@ import { Carousel, Card as CarouselUICard } from "@/components/ui/carousel";
 import type { CardData } from "@/components/ui/carousel"; 
 import React from "react"; 
 import type { CarouselItem as CarouselItemType } from "@/lib/types"; 
-import Link from "next/link";
+// Removed Link import as it's not used
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
@@ -30,10 +30,10 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
   if (!items || items.length === 0) {
     return (
       <section className="py-12">
-        <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
+        {/* Removed h2 heading from here */}
         <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
           <div className="flex flex-row justify-start gap-4 pl-4">
-            {[...Array(4)].map((_, index) => ( // Changed from 3 to 4
+            {[...Array(4)].map((_, index) => ( 
                <motion.div
                 key={`skeleton-${index}`}
                 className="rounded-3xl"
@@ -80,7 +80,7 @@ export function HomePageCarousel({ items }: HomePageCarouselProps) {
 
   return (
     <section className="py-12">
-      <h2 className="text-3xl font-bold mb-8 text-center font-headline">Collections</h2>
+      {/* Removed h2 heading from here */}
       <Carousel items={carouselUiItems} />
     </section>
   );
