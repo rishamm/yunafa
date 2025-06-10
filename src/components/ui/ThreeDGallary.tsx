@@ -73,7 +73,7 @@ export function ThreeDGallary() {
       )}
     >
       <div
-        className="w-full max-h-[70vh] overflow-y-auto overflow-x-hidden"
+        className="w-full max-h-[70vh] overflow-y-auto overflow-x-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
           perspective: '1200px',
           perspectiveOrigin: 'center center',
