@@ -65,15 +65,7 @@ export default async function HomePage() {
       </div>
 
       {/* Sticky Banner Section - Added Here */}
-      <section className="relative flex h-[60vh] w-full flex-col overflow-y-auto my-12 md:my-20 bg-background rounded-lg shadow-lg">
-        <StickyBanner className="bg-accent text-accent-foreground">
-          <p className="mx-auto max-w-[90%] drop-shadow-md">
-            Limited Time Offer: Free Express Shipping on all orders over $150!{' '}
-            <Link href="/#home-carousel" className="font-semibold underline hover:text-accent-foreground/80 transition-colors">
-              Shop the Collection
-            </Link>
-          </p>
-        </StickyBanner>
+      <section className="relative flex h-[60vh] w-full flex-col overflow-y-auto my-12 md:my-20 bg-background rounded-lg ">
         {/* Dummy Content for scrolling demonstration */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
           <div className="h-96 w-full rounded-lg bg-muted/50" />
@@ -114,7 +106,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3D Gallery Section */}
-      <section className="py-12 md:py-20">
+      <section className="py-12 md:py-20 flex justify-center items-center flex-col">
         <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">
           Gallery Showcase
         </h2>
