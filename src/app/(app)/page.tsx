@@ -1,6 +1,6 @@
 
-import { getCategories, getCarouselItems } from '@/lib/data'; // Added getCarouselItems
-import type { Category, CarouselItem } from '@/lib/types'; // Added CarouselItem type
+import { getCategories, getCarouselItems } from '@/lib/data';
+import type { Category, CarouselItem } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 
 export default async function HomePage() {
-  const categories: Category[] = await getCategories();
+  const categories: Category[] = await getCategories(); // Not used directly here, but good for context
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
   const heroTextContent = (
@@ -25,10 +25,22 @@ export default async function HomePage() {
     </div>
   );
 
+  const collectionsHeadingElement = (
+    <div className="flex-shrink-0 h-full flex items-center justify-center px-4 md:px-8"> {/* Container for the vertical text */}
+      <div className="h-80 md:h-[40rem] flex items-center"> {/* Explicit height to match carousel cards */}
+        <h2
+          className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase origin-center"
+        >
+          Collections
+        </h2>
+      </div>
+    </div>
+  );
+
   return (
     <div className="space-y-12 md:space-y-20">
       {/* Hero Section with ContainerScroll Background */}
-      <div className="relative"> {/* Parent for relative positioning */}
+      <div className="relative">
         <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
           <div className="relative w-full h-full">
             <Image
@@ -42,25 +54,14 @@ export default async function HomePage() {
           </div>
         </ContainerScroll>
 
-        {/* Static Hero Text Section - Overlaid */}
         <section className="absolute top-0 left-0 w-full h-full z-10 flex flex-col items-center justify-start pt-20 md:pt-40">
           {heroTextContent}
         </section>
       </div>
 
-      {/* Collections and Carousel Parallel Section */}
-      <section className="flex flex-row items-center gap-6 md:gap-12 py-10 md:py-16">
-        {/* Vertical Collections Heading */}
-        <div className="flex-shrink-0 px-4 md:px-0"> {/* Added padding for smaller screens if text is too close to edge */}
-          <h2 className="transform -rotate-90 whitespace-nowrap text-3xl md:text-4xl font-bold font-headline text-foreground tracking-widest uppercase">
-            Collections
-          </h2>
-        </div>
-
-        {/* Carousel Section */}
-        <div id="home-carousel" className="flex-1 min-w-0"> {/* flex-1 to take remaining space, min-w-0 to prevent overflow issues with flex children */}
-          <HomePageCarousel items={carouselItems} />
-        </div>
+      {/* Carousel Section with leading Collections heading */}
+      <section id="home-carousel" className="py-10 md:py-16">
+        <HomePageCarousel items={carouselItems} leadingElement={collectionsHeadingElement} />
       </section>
 
        <section className="py-12">
