@@ -5,18 +5,14 @@ import Image from 'next/image';
 import type React from 'react';
 import { cn } from '@/lib/utils';
 
-// Define a type for gallery items if you want to pass them as props later
 interface GalleryItem {
   id: string | number;
-  type: 'box1' | 'box2'; // 'box1' for right-origin, 'box2' for left-origin
+  type: 'box1' | 'box2'; 
   imageUrl?: string;
   altText?: string;
   dataAiHint?: string;
 }
 
-// For now, we'll use a hardcoded structure based on the example
-// 'box1' items lean "inward" from the right
-// 'box2' items lean "inward" from the left
 const galleryItemsData: GalleryItem[] = [
   { id: 1, type: 'box1' },
   {
@@ -43,39 +39,38 @@ const galleryItemsData: GalleryItem[] = [
 export function ThreeDGallary() {
   return (
     <div
-      className="grid justify-items-center min-h-screen w-full overflow-y-auto overflow-x-hidden bg-gradient-to-r from-black from-25% via-[#1d1515] to-black to-75%"
+      className="grid justify-items-center min-h-screen w-full overflow-y-auto overflow-x-hidden bg-[linear-gradient(to_right,black_25%,#1d1515_50%,black_75%)]"
       style={{
         perspective: '600px',
         perspectiveOrigin: 'center center',
       }}
     >
-      <div className="w-full"> {/* Content wrapper to allow internal scrolling if needed */}
-        {galleryItemsData.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              'w-full h-[300px]', // Common styles for all boxes
-              '[transform-style:preserve-3d]',
-              item.type === 'box1' ? 
-                'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] origin-[right_center]' :
-                'bg-gradient-to-l from-white from-70% to-[#b9b0b0] [transform:translateX(50%)_rotateY(-65deg)] origin-[left_center]'
-            )}
-          >
-            {item.imageUrl && (
-              <div className="relative w-full h-full">
-                <Image
-                  src={item.imageUrl}
-                  alt={item.altText || 'Gallery image'}
-                  fill
-                  className="object-contain" // Use contain to see the whole image within the skewed box
-                  data-ai-hint={item.dataAiHint || 'gallery image'}
-                  sizes="(max-width: 768px) 100vw, 50vw" // Provide some basic sizes
-                />
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
+      {/* Removed intermediate w-full div, boxes are direct children */}
+      {galleryItemsData.map((item) => (
+        <div
+          key={item.id}
+          className={cn(
+            'w-full h-[300px]', // Using w-full for robustness within layouts
+            'transform-preserve-3d', // Standard Tailwind class for transform-style: preserve-3d
+            item.type === 'box1' ? 
+              'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] origin-[right_center]' :
+              'bg-gradient-to-l from-white from-70% to-[#b9b0b0] [transform:translateX(50%)_rotateY(-65deg)] origin-[left_center]'
+          )}
+        >
+          {item.imageUrl && (
+            <div className="relative w-full h-full">
+              <Image
+                src={item.imageUrl}
+                alt={item.altText || 'Gallery image'}
+                fill
+                className="object-contain" 
+                data-ai-hint={item.dataAiHint || 'gallery image'}
+                sizes="(max-width: 768px) 100vw, 50vw" 
+              />
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
