@@ -96,13 +96,19 @@
 }
 
 @layer base {
-  * {
-    @apply border-border;
+  html {
+    /* Removed height: 100% and overflow: hidden from here for Next.js compatibility */
+    /* Component-specific full-height/overflow will be handled by the component itself or its page layout */
   }
   body {
     @apply bg-background text-foreground font-body;
+    /* Removed height: 100%; overflow-x: hidden; overflow-y: scroll; from here */
+    /* These are better handled by Next.js default layout or specific page/component needs */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
+  }
+  * {
+    @apply border-border;
   }
 }
