@@ -106,7 +106,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3D Gallery Section */}
-      <section className="py-12 md:py-20 flex justify-center items-center flex-col">
+      <section className=" flex justify-center items-center flex-col">
         <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">
           Gallery Showcase
         </h2>
