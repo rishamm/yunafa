@@ -12,7 +12,7 @@ export default async function HomePage() {
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
   const heroTextContent = (
-    <div className="max-w-5xl mx-auto text-center">
+    <div className="max-w-5xl mx-auto text-center h-[80rem]">
       <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
         Welcome to Yunafa
       </h1>
@@ -38,25 +38,26 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="space-y-12 md:space-y-20">
+    <div className="space-y-12 md:space-y-20 flex flex-col ">
       {/* Hero Section with ContainerScroll Background */}
-      <div className="relative">
+      <section className="absolute h-60  top-0 left-0 w-full  z-10 flex flex-col items-center justify-start pt-20 md:pt-40">
+          {heroTextContent}
+        </section>
+      <div className=" flex flex-col">
         <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
           <div className="relative w-full h-full">
             <Image
-              src="https://images.unsplash.com/photo-1644429909407-85e23c35a95d?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjQ1fHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
+              src="https://images.unsplash.com/photo-1661264265506-9468782b35c1?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NDkzfHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
               alt="Yunafa Collection Showcase"
               fill
-              className="object-cover rounded-2xl"
+              className="object-cover bg-top rounded-2xl"
               data-ai-hint="fashion landscape"
               priority
             />
           </div>
         </ContainerScroll>
 
-        <section className="absolute top-0 left-0 w-full h-full z-10 flex flex-col items-center justify-start pt-20 md:pt-40">
-          {heroTextContent}
-        </section>
+       
       </div>
 
       {/* Carousel Section with leading Collections heading */}
