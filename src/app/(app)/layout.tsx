@@ -1,5 +1,7 @@
+
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 
 export default function AppLayout({
   children,
@@ -8,6 +10,7 @@ export default function AppLayout({
 }) {
   return (
     <>
+      <AnnouncementBar />
       <Header />
       <main className="flex-grow py-8 px-4">
         {children}

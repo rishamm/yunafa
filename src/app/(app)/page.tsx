@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
-import { StickyBanner } from "@/components/ui/sticky-banner"; // Added import
 
 export default async function HomePage() {
   const categories: Category[] = await getCategories(); // Not used directly here, but good for context
@@ -62,25 +61,6 @@ export default async function HomePage() {
             </div>
         </section>
       </div>
-
-      {/* Sticky Banner Section */}
-      <section className="w-full px-4 md:px-0"> {/* Added padding for smaller screens, removed for md+ to allow full-width feel if desired */}
-        <div className="relative flex h-[60vh] w-full flex-col overflow-y-auto border rounded-lg shadow-md bg-card">
-          <StickyBanner className="bg-primary text-primary-foreground">
-            <p className="mx-auto max-w-[90%] text-center drop-shadow-md">
-              Special Announcement: Yunafa&apos;s New Collection Just Dropped!{" "}
-              <Link href="#home-carousel" className="font-semibold transition duration-200 hover:underline">
-                Explore Now
-              </Link>
-            </p>
-          </StickyBanner>
-          <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
-            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
-            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
-            <div className="h-96 w-full animate-pulse rounded-lg bg-muted" />
-          </div>
-        </div>
-      </section>
 
       {/* Carousel Section with leading Collections heading */}
       <section id="home-carousel" className="py-10 md:py-16">
