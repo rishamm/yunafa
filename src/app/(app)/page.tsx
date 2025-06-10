@@ -44,11 +44,11 @@ export default async function HomePage() {
         <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
           <div className="relative w-full h-full">
             <Image
-              src="https://placehold.co/1200x800.png"
+              src="https://images.unsplash.com/photo-1644429909407-85e23c35a95d?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjQ1fHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
               alt="Yunafa Collection Showcase"
               fill
               className="object-cover rounded-2xl"
-              data-ai-hint="luxury lifestyle"
+              data-ai-hint="fashion landscape"
               priority
             />
           </div>
@@ -64,7 +64,7 @@ export default async function HomePage() {
         <HomePageCarousel items={carouselItems} leadingElement={collectionsHeadingElement} />
       </section>
 
-       <section className="py-12">
+       <section className="container mx-auto px-4 py-12"> {/* Added container and padding here for about section */}
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 font-headline">About Yunafa</h2>
