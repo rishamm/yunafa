@@ -96,14 +96,10 @@
 }
 
 @layer base {
-  html {
-    /* Removed height: 100% and overflow: hidden from here for Next.js compatibility */
-    /* Component-specific full-height/overflow will be handled by the component itself or its page layout */
-  }
+  /* Default Next.js/Tailwind body styling is generally preferred */
+  /* Avoid global height/overflow manipulations unless for very specific full-page effects not managed by layouts */
   body {
     @apply bg-background text-foreground font-body;
-    /* Removed height: 100%; overflow-x: hidden; overflow-y: scroll; from here */
-    /* These are better handled by Next.js default layout or specific page/component needs */
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
