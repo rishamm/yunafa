@@ -12,7 +12,7 @@ export default function AppLayout({
     <>
       <AnnouncementBar />
       <Header />
-      <main className="flex-grow py-8 px-4">
+      <main className="flex-grow py-8 ">
         {children}
       </main>
       <Footer />

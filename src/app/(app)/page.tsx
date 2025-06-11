@@ -64,14 +64,17 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Sticky Banner Section */}
-      <section className="relative flex h-[60vh] w-full flex-col overflow-y-auto my-12 md:my-20 bg-background rounded-lg ">
-        <StickyBanner className="bg-primary text-primary-foreground">
+      {/* Sticky Banner Section - Removed h-[60vh] and overflow-y-auto */}
+      <section className="relative flex w-full flex-col my-12 md:my-20 bg-background rounded-lg ">
+        <StickyBanner className="bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-lg">
           <p className="mx-0 max-w-[90%] drop-shadow-md">
-            Grand Opening: Enjoy 15% off on your first order! Use code YUNAFA15.
+            ✨ Yunafa&apos;s Exclusive Summer Collection is Here! ✨
+            <Link href="#home-carousel" className="ml-2 font-semibold underline hover:text-primary-foreground/80 transition-colors">
+              Discover Now
+            </Link>
           </p>
         </StickyBanner>
-        {/* Dummy Content for scrolling demonstration */}
+        {/* Dummy Content for scrolling demonstration, contributes to main page scroll height */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
           <div className="h-96 w-full rounded-lg bg-muted/50" />
           <div className="h-96 w-full rounded-lg bg-muted/50" />
@@ -111,7 +114,7 @@ export default async function HomePage() {
       </section>
 
       {/* 3D Gallery Section - Full Width */}
-      <section className="py-12 md:py-20"> {/* Added vertical padding */}
+      <section>
         <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">
           Gallery Showcase
         </h2>
