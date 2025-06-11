@@ -27,11 +27,17 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https', // Corrected from 'httpshttps'
+        protocol: 'https', 
         hostname: 'plus.unsplash.com',
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'zoric.studio',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };

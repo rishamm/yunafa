@@ -5,9 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: 'Yunafa - Luxurious Finds',
   description: 'Discover unique and luxurious products at Yunafa.',
-  // Removed explicit icons entry.
-  // Next.js will automatically use an icon file (e.g., favicon.ico, icon.png)
-  // if it's placed in the src/app/ directory.
 };
 
 export default function RootLayout({
@@ -18,8 +15,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Next.js will inject metadata links here. */}
         <link href="https://fonts.cdnfonts.com/css/batusa" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased flex flex-col min-h-screen">
         {children}

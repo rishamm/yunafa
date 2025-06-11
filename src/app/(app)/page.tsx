@@ -6,11 +6,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
-// StickyBanner import removed as it's not directly used in the new section's logic on page.tsx
-// It's used within the component it was moved from, if it's still relevant there.
+import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
+
 
 export default async function HomePage() {
-  const categories: Category[] = await getCategories(); // Not used directly here, but good for context
+  const categories: Category[] = await getCategories(); 
   const carouselItems: CarouselItem[] = await getCarouselItems();
 
   const collectionsHeadingElement = (
@@ -27,9 +27,10 @@ export default async function HomePage() {
 
   return (
     <div className="space-y-12 md:space-y-20 flex flex-col ">
-      <div className='h-screen'>
-        hekkk
-      </div>
+      
+      <section className="parallax-swiper-outer-wrap">
+        <ParallaxSwiper />
+      </section>
       
       <HeroScrollSection />
 

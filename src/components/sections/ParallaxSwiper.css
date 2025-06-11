@@ -1,0 +1,194 @@
+/* Component-specific styles for ParallaxSwiper */
+.parallax-swiper-outer-wrap {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right bottom, #2a1f30 50%, #383d44 50%);
+}
+
+.parallax-swiper-container {
+  height: 80vh;
+  width: 90vw;
+  position: relative;
+}
+
+.parallax-swiper-container .swiper {
+  height: 100%;
+  width: 100%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+}
+
+.parallax-swiper-slide .swiper-image-half { /* Renamed from swiper-image for clarity */
+  width: 50%;
+  height: 100%;
+}
+
+.parallax-swiper-slide .swiper-image-inner {
+  background-size: cover;
+  background-position: center center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: hsla(0, 0%, 0%, 0.2);
+  background-blend-mode: overlay;
+}
+
+/* Background images will be applied via inline styles or specific classes in the component */
+.parallax-swiper-slide .bg-swiper-image-one { background-image: url(https://zoric.studio/codepen/swiper-1.jpg); }
+.parallax-swiper-slide .bg-swiper-image-two { background-image: url(https://zoric.studio/codepen/swiper-2.jpg); }
+.parallax-swiper-slide .bg-swiper-image-three { background-image: url(https://zoric.studio/codepen/swiper-3.jpg); }
+.parallax-swiper-slide .bg-swiper-image-four { background-image: url(https://zoric.studio/codepen/swiper-4.jpg); }
+.parallax-swiper-slide .bg-swiper-image-five { background-image: url(https://zoric.studio/codepen/swiper-5.jpg); }
+.parallax-swiper-slide .bg-swiper-image-six { background-image: url(https://zoric.studio/codepen/swiper-6.jpg); }
+
+
+.parallax-swiper-slide .swiper-image-inner.swiper-image-left {
+  padding: 4rem;
+}
+
+.parallax-swiper-slide .swiper-image-left {
+  filter: sepia(100%);
+  transition: all 1s linear;
+  transition-delay: 1s;
+}
+
+.parallax-swiper-slide.swiper-slide-active .swiper-image-left {
+  filter: sepia(0%);
+}
+
+.parallax-swiper-slide .swiper-image-inner.swiper-image-right {
+  filter: hue-rotate(-60deg);
+  transition: all 1s linear;
+  transition-delay: 1s;
+  background-color: hsla(0, 0%, 0%, 0.5);
+  background-blend-mode: multiply;
+}
+.parallax-swiper-slide.swiper-slide-active .swiper-image-right {
+  filter: hue-rotate(90deg);
+}
+
+
+.parallax-swiper-slide h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  color: #fff;
+  align-self: flex-start;
+  margin: 0 0 auto 0;
+  font-size: 4.5rem;
+  line-height: 1;
+  transition: all .8s cubic-bezier(0.215, 0.61, 0.355, 1) 1.1s;
+  transform: translate3d(-20%, 0, 0);
+  opacity: 0;
+}
+
+.parallax-swiper-slide h1 span.emphasis {
+  font-weight: 700;
+  font-style: italic;
+  opacity: 0;
+  transition: all .8s cubic-bezier(0.215, 0.61, 0.355, 1) 1.2s;
+  transform: translate3d(-20%, 0, 0);
+  display: inline-block;
+}
+
+.parallax-swiper-slide h1 span:not(.emphasis) {
+  font-size: 3.5rem;
+}
+
+.parallax-swiper-slide .subtitle-custom { /* Renamed from h1 + p */
+  font-family: 'Cormorant SC', serif;
+  font-size: 14px;
+  letter-spacing: 2px;
+  margin: 0;
+  line-height: 1;
+  margin-bottom: auto;
+  align-self: flex-end;
+  text-transform: uppercase;
+  transition: all .8s cubic-bezier(0.215, 0.61, 0.355, 1) 1.3s;
+  transform: translate3d(-20%, 0, 0);
+  opacity: 0;
+  font-weight: 500;
+  color: #fff;
+  padding-right: 8rem;
+}
+
+.parallax-swiper-slide p.paragraph {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  color: #fff;
+  width: 100%;
+  max-width: 350px;
+  text-align: justify;
+  font-size: 1.2rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: all .6s cubic-bezier(0.215, 0.61, 0.355, 1) 1.4s;
+  transform: translate3d(-20%, 0, 0);
+}
+
+.parallax-swiper-slide.swiper-slide-active h1,
+.parallax-swiper-slide.swiper-slide-active p.paragraph,
+.parallax-swiper-slide.swiper-slide-active h1 span.emphasis,
+.parallax-swiper-slide.swiper-slide-active .subtitle-custom {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+/* Custom Swiper Pagination Styles */
+.parallax-swiper-container .swiper-pagination-bullet {
+  width: 14px !important;
+  height: 14px !important;
+  display: inline-block !important;
+  background: #fff !important;
+  opacity: 0.4 !important;
+  margin: 5px 0 !important; /* For vertical pagination */
+}
+
+.parallax-swiper-container .swiper-pagination-bullet-active {
+  opacity: 1 !important;
+  background: #fff !important;
+}
+
+.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-bullets,
+.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-custom {
+  right: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-bullets .swiper-pagination-bullet {
+    display: block !important;
+}
+
+
+/* Media Queries */
+@media screen and (max-width: 1280px) {
+  .parallax-swiper-slide h1 { font-size: 3.9rem; }
+  .parallax-swiper-slide h1 span:not(.emphasis) { font-size: 2.9rem; }
+  .parallax-swiper-slide .subtitle-custom { font-size: 13px; }
+  .parallax-swiper-slide p.paragraph { font-size: 1rem; line-height: 1.3; }
+}
+
+@media screen and (max-width: 960px) {
+  .parallax-swiper-slide h1 { font-size: 3.5rem; }
+  .parallax-swiper-slide h1 span:not(.emphasis) { font-size: 2.5rem; }
+  .parallax-swiper-slide p.paragraph { max-width: 90%; }
+}
+
+@media screen and (max-width: 640px) {
+  .parallax-swiper-container {
+    height: 86vh;
+    width: 96vw;
+  }
+  .parallax-swiper-slide h1 {
+    font-size: 3.2rem;
+    align-self: center;
+  }
+  .parallax-swiper-slide h1 span:not(.emphasis) { font-size: 2.1rem; }
+  .parallax-swiper-slide p.paragraph { max-width: 94%; }
+  .parallax-swiper-slide .swiper-image-inner.swiper-image-left { padding: 2rem; }
+  .parallax-swiper-slide .subtitle-custom { padding-right: 2rem; }
+}
