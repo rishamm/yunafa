@@ -7,7 +7,6 @@ import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { StickyBanner } from "@/components/ui/sticky-banner";
-import { ThreeDGallary } from '@/components/ui/ThreeDGallary';
 
 export default async function HomePage() {
   const categories: Category[] = await getCategories(); // Not used directly here, but good for context
@@ -127,15 +126,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* 3D Gallery Section - Full Width */}
-      <section>
-        <h2 className="text-3xl md:text-4xl font-bold font-headline text-center mb-10">
-          Gallery Showcase
-        </h2>
-        <ThreeDGallary />
-      </section>
     </div>
   );
 }
-
