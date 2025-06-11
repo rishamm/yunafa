@@ -64,16 +64,36 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Sticky Banner Section - Removed h-[60vh] and overflow-y-auto */}
+      {/* Sticky Banner Section */}
       <section className="relative flex w-full flex-col my-12 md:my-20 bg-background rounded-lg ">
-        <StickyBanner className="bg-secondary text-secondary-foreground">
-          <p>✨ Yunafa&apos;s Special: Free Express Shipping on All Orders Over $150! ✨</p>
-        </StickyBanner>
-        {/* Dummy Content for scrolling demonstration, contributes to main page scroll height */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
-          <div className="h-96 w-full rounded-lg bg-muted/50" />
-          <div className="h-96 w-full rounded-lg bg-muted/50" />
-          <div className="h-96 w-full rounded-lg bg-muted/50" />
+          <div className="relative w-full h-[180px] rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1567419099214-0dd03b43e8de?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTY3fHx3b21lbiUyMGZhc2hpb24lMjBsYW5kc2NhcGUlMjBpbWFnZXxlbnwwfHwwfHx8MA%3D%3D"
+              alt="Fashion Banner 1"
+              fill
+              className="object-cover"
+              data-ai-hint="fashion style"
+            />
+          </div>
+          <div className="relative w-full h-[180px] rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1509319117193-57bab727e09d?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NTV8fHdvbWVuJTIwZmFzaGlvbiUyMGxhbmRzY2FwZSUyMGltYWdlfGVufDB8fDB8fHww"
+              alt="Fashion Banner 2"
+              fill
+              className="object-cover"
+              data-ai-hint="model lifestyle"
+            />
+          </div>
+          <div className="relative w-full h-[180px] rounded-lg overflow-hidden shadow-lg">
+            <Image
+              src="https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NzV8fHdvbWVuJTIwZmFzaGlvbiUyMGxhbmRzY2FwZSUyMGltYWdlfGVufDB8fDB8fHww"
+              alt="Fashion Banner 3"
+              fill
+              className="object-cover"
+              data-ai-hint="urban fashion"
+            />
+          </div>
         </div>
       </section>
 
@@ -118,3 +138,4 @@ export default async function HomePage() {
     </div>
   );
 }
+

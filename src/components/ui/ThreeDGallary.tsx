@@ -75,7 +75,7 @@ export function ThreeDGallary() {
       <div
         className="w-full max-h-[70vh] overflow-y-auto overflow-x-hidden [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         style={{
-          perspective: '1200px',
+          perspective: '600px',
           perspectiveOrigin: 'center center',
         }}
       >
@@ -83,7 +83,7 @@ export function ThreeDGallary() {
           <div
             key={item.id}
             className={cn(
-              'w-full h-[100px]',
+              'w-full h-[360px]',
               'transform-preserve-3d',
               item.type === 'box1' ?
                 'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] origin-[right_center]' :
@@ -96,7 +96,7 @@ export function ThreeDGallary() {
                   src={item.imageUrl}
                   alt={item.altText || 'Gallery image'}
                   fill
-                  className="object-contain"
+                  className="object-fit"
                   data-ai-hint={item.dataAiHint || 'gallery image'}
                   sizes="(max-width: 768px) 100vw, 50vw"
                 />
