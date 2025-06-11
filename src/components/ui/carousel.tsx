@@ -259,7 +259,7 @@ export const Card = ({
           src={card.src}
           alt={card.title}
           className="absolute inset-0 z-10 h-full w-full object-cover"
-          data-ai-hint={card['data-ai-hint']}
+          data-ai-hint={card['data-ai-hint'] || "carousel image"}
         />
       </motion.button>
     </>
@@ -271,7 +271,6 @@ interface BlurImageProps {
   alt: string;
   className?: string;
   'data-ai-hint'?: string;
-  // Removed other img attributes as NextImage has its own set of props
 }
 
 export const BlurImage = ({
@@ -280,15 +279,25 @@ export const BlurImage = ({
   className,
   'data-ai-hint': dataAiHint,
 }: BlurImageProps) => {
-  const placeholderUrl = "https://placehold.co/384x640.png"; // Adjusted for md:w-96 md:h-[40rem]
-  const [currentSrc, setCurrentSrc] = useState(src ? src.trim() : placeholderUrl);
+  // Default Unsplash URL for portrait-oriented carousel items
+  const defaultUnsplashUrl = "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=384&h=640&fit=crop&q=60";
+  const [currentSrc, setCurrentSrc] = useState(src ? src.trim() : defaultUnsplashUrl);
+  const [currentHint, setCurrentHint] = useState(dataAiHint || (src?.trim() ? alt.substring(0,20) : "fashion shopping"));
+
 
   useEffect(() => {
-    setCurrentSrc(src ? src.trim() : placeholderUrl);
-  }, [src]);
+    const newSrc = src ? src.trim() : defaultUnsplashUrl;
+    setCurrentSrc(newSrc);
+    if (!src?.trim()) {
+      setCurrentHint("fashion shopping"); // Default hint for the Unsplash fallback
+    } else {
+      setCurrentHint(dataAiHint || alt.substring(0,20) );
+    }
+  }, [src, dataAiHint, alt]);
 
   const handleError = () => {
-    setCurrentSrc(placeholderUrl);
+    setCurrentSrc(defaultUnsplashUrl);
+    setCurrentHint("fashion shopping"); // Hint for when the image fails and shows the Unsplash fallback
   };
 
   return (
@@ -298,14 +307,12 @@ export const BlurImage = ({
       fill
       sizes="(max-width: 767px) 224px, 384px" // Corresponds to w-56 and md:w-96
       className={cn(
-        "transition duration-300", // object-cover is already on the className prop passed in
+        "transition duration-300", 
         className,
       )}
       onError={handleError}
-      data-ai-hint={dataAiHint}
-      priority={false} // Carousel images are typically not LCP
+      data-ai-hint={currentHint}
+      priority={false} 
     />
   );
 };
-
-    

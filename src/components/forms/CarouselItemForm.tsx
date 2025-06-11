@@ -27,7 +27,9 @@ const formSchema = z.object({
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   imageUrl: z.preprocess(
     (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png')
+     .or(z.string().startsWith('https://images.unsplash.com')) // Allow unsplash
+     .or(z.string().startsWith('https://placehold.co')) // Still allow for explicit placeholder if needed
   ),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
@@ -49,9 +51,9 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
     defaultValues: {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
-      imageUrl: carouselItem?.imageUrl?.trim() || 'https://placehold.co/600x800.png',
+      imageUrl: carouselItem?.imageUrl?.trim() || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60',
       content: carouselItem?.content || '',
-      dataAiHint: carouselItem?.dataAiHint || '',
+      dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
     },
   });
 
@@ -128,9 +130,9 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
             <FormItem>
               <FormLabel>Image URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://placehold.co/600x800.png" {...field} />
+                <Input placeholder="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60" {...field} />
               </FormControl>
-              <FormDescription>Provide a direct URL to an image. Use placeholder e.g., https://placehold.co/600x800.png</FormDescription>
+              <FormDescription>Provide a direct URL to an image. Uses Unsplash for default.</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -155,7 +157,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
             <FormItem>
               <FormLabel>AI Hint (Optional)</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., fashion model" {...field} />
+                <Input placeholder="e.g., fashion shopping" {...field} />
               </FormControl>
               <FormDescription>Keywords for AI image search if the image needs replacing (max 2 words).</FormDescription>
               <FormMessage />

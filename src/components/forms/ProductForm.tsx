@@ -32,7 +32,9 @@ const formSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number'),
   imageUrl: z.preprocess(
     (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png')
+     .or(z.string().startsWith('https://images.unsplash.com')) // Allow unsplash
+     .or(z.string().startsWith('https://placehold.co')) // Still allow for explicit placeholder if needed
   ),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
   tags: z.string().optional(), 
@@ -61,10 +63,10 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
       name: product?.name || '',
       description: product?.description || '',
       price: product?.price || 0,
-      imageUrl: product?.imageUrl?.trim() || 'https://placehold.co/600x400.png',
+      imageUrl: product?.imageUrl?.trim() || 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&h=400&fit=crop&q=60',
       categoryIds: product?.categoryIds || [],
       tags: product?.tags?.join(', ') || '',
-      'data-ai-hint': product?.['data-ai-hint'] || '',
+      'data-ai-hint': product?.['data-ai-hint'] || 'storefront items',
     },
   });
 
@@ -256,9 +258,9 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
                 <FormItem>
                   <FormLabel>Image URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://placehold.co/600x400.png" {...field} />
+                    <Input placeholder="https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&h=400&fit=crop&q=60" {...field} />
                   </FormControl>
-                   <FormDescription>Use placeholder e.g., https://placehold.co/600x400.png</FormDescription>
+                   <FormDescription>Uses Unsplash for default.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -270,7 +272,7 @@ export function ProductForm({ product, allCategories }: ProductFormProps) {
                 <FormItem>
                   <FormLabel>AI Hint (Optional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., fashion model" {...field} />
+                    <Input placeholder="e.g., storefront items" {...field} />
                   </FormControl>
                   <FormDescription>Keywords for AI image search if the image needs replacing (max 2 words).</FormDescription>
                   <FormMessage />

@@ -28,14 +28,26 @@ export function ImageWithFallback({
 }: ImageWithFallbackProps) {
   
   const getPlaceholderUrl = useCallback(() => {
+    const basePortraitUrl = "https://images.unsplash.com/photo-1483985988355-763728e1935b"; // shopping bags
+    const baseLandscapeUrl = "https://images.unsplash.com/photo-1472851294608-062f824d29cc"; // storefront
+
     if (props.fill) {
-      return `https://placehold.co/600x400.png`;
+      // Default to landscape for fill, common aspect ratio for general placeholders
+      return `${baseLandscapeUrl}?w=600&h=400&fit=crop&q=60`;
     }
     // If not fill, props.width and props.height are guaranteed by types
-    return `https://placehold.co/${props.width}x${props.height}.png`;
-  }, [props.fill, (props as {width?: number}).width, (props as {height?: number}).height]); // useCallback dependencies
+    const w = (props as {width: number}).width;
+    const h = (props as {height: number}).height;
+    if (h > w) { // Portrait
+      return `${basePortraitUrl}?w=${w}&h=${h}&fit=crop&q=60`;
+    } else { // Landscape or square
+      return `${baseLandscapeUrl}?w=${w}&h=${h}&fit=crop&q=60`;
+    }
+  }, [props.fill, (props as {width?: number}).width, (props as {height?: number}).height]);
   
   const [currentSrc, setCurrentSrc] = useState(initialSrc?.trim() || getPlaceholderUrl());
+  const [currentHint, setCurrentHint] = useState(props['data-ai-hint'] || (initialSrc?.trim() ? alt.substring(0,20) : "placeholder image"));
+
 
   // Destructure specific props for the dependency array
   const { fill } = props;
@@ -44,12 +56,33 @@ export function ImageWithFallback({
   const height = 'height' in props ? props.height : undefined;
 
   useEffect(() => {
-    setCurrentSrc(initialSrc?.trim() || getPlaceholderUrl());
-  }, [initialSrc, fill, width, height, getPlaceholderUrl]);
+    const newSrc = initialSrc?.trim() || getPlaceholderUrl();
+    setCurrentSrc(newSrc);
+    if (!initialSrc?.trim()) {
+        // Determine hint based on aspect ratio if using placeholder
+        let placeholderHint = "placeholder image";
+        if (!fill && width && height) {
+            placeholderHint = height > width ? "fashion abstract" : "store abstract";
+        } else if (fill) {
+            placeholderHint = "abstract background"; // generic for fill
+        }
+        setCurrentHint(placeholderHint);
+    } else {
+        setCurrentHint(props['data-ai-hint'] || alt.substring(0,20));
+    }
+  }, [initialSrc, fill, width, height, getPlaceholderUrl, props['data-ai-hint'], alt]);
 
 
   const handleError = () => {
     setCurrentSrc(getPlaceholderUrl());
+    // Determine hint based on aspect ratio when error occurs
+    let placeholderHint = "placeholder image";
+    if (!fill && width && height) {
+        placeholderHint = height > width ? "fashion abstract" : "store abstract";
+    } else if (fill) {
+        placeholderHint = "abstract background";
+    }
+    setCurrentHint(placeholderHint);
   };
 
   if (props.fill) {
@@ -62,7 +95,8 @@ export function ImageWithFallback({
         priority={props.priority}
         className={className}
         onError={handleError}
-        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height'>)}
+        data-ai-hint={currentHint}
+        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height' | 'data-ai-hint'>)}
       />
     );
   } else {
@@ -75,9 +109,9 @@ export function ImageWithFallback({
         height={props.height}
         className={className}
         onError={handleError}
-        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height'>)}
+        data-ai-hint={currentHint}
+        {...(props as Omit<typeof props, 'fill' | 'sizes' | 'priority' | 'width' | 'height' | 'data-ai-hint'>)}
       />
     );
   }
 }
-

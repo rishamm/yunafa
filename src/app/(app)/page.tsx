@@ -66,6 +66,9 @@ export default async function HomePage() {
 
       {/* Sticky Banner Section - Removed h-[60vh] and overflow-y-auto */}
       <section className="relative flex w-full flex-col my-12 md:my-20 bg-background rounded-lg ">
+        <StickyBanner className="bg-secondary text-secondary-foreground">
+          <p>✨ Yunafa&apos;s Special: Free Express Shipping on All Orders Over $150! ✨</p>
+        </StickyBanner>
         {/* Dummy Content for scrolling demonstration, contributes to main page scroll height */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
           <div className="h-96 w-full rounded-lg bg-muted/50" />
@@ -95,8 +98,8 @@ export default async function HomePage() {
           </div>
           <div className="rounded-lg overflow-hidden shadow-xl aspect-video relative">
             <Image
-              src="https://placehold.co/800x600.png"
-              alt="Artisanal products"
+              src="https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=800&h=600&fit=crop&q=60"
+              alt="Artisanal products display in a boutique"
               fill
               className="object-cover"
               data-ai-hint="fashion boutique"
