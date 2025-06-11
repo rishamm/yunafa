@@ -27,6 +27,8 @@
 .parallax-swiper-slide .swiper-image-half { /* Renamed from swiper-image for clarity */
   width: 50%;
   height: 100%;
+  flex-shrink: 0; /* Added to prevent shrinking */
+  flex-basis: 50%; /* Added to explicitly set base size */
 }
 
 .parallax-swiper-slide .swiper-image-inner {
