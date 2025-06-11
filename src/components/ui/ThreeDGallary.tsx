@@ -69,17 +69,16 @@ export function ThreeDGallary() {
   return (
     <div
       className={cn(
-        'w-full overflow-hidden',
-        'bg-[linear-gradient(to_right,black_25%,#1d1515_50%,black_75%)]'
+        'w-full overflow-hidden' // Removed background gradient
       )}
     >
       <div
         className={cn(
-            "w-full max-h-[70vh] overflow-y-auto overflow-x-hidden",
+            "w-full max-h-[70vh] overflow-y-auto", // This div handles scrolling
             "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
         style={{
-          perspective: '1200px',
+          perspective: '600px',
           perspectiveOrigin: 'center center',
         }}
       >
@@ -95,7 +94,7 @@ export function ThreeDGallary() {
             )}
           >
             {item.imageUrl && (
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full overflow-hidden"> {/* Added overflow-hidden here */}
                 <Image
                   src={item.imageUrl}
                   alt={item.altText || 'Gallery image'}
