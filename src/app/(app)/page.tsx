@@ -28,12 +28,12 @@ export default async function HomePage() {
   return (
     <div className="space-y-12 md:space-y-20 flex flex-col ">
       
+      <HeroScrollSection />
+
       <section className="parallax-swiper-outer-wrap">
         <ParallaxSwiper />
       </section>
       
-      <HeroScrollSection />
-
       {/* Sticky Banner Section - Now directly using Image components */}
       <section className="relative flex w-full flex-col my-12 md:my-20 bg-background rounded-lg ">
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
