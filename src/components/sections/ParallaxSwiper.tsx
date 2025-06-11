@@ -3,12 +3,11 @@
 
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Parallax, Pagination, Mousewheel } from 'swiper/modules'; // Removed EffectSlide
+import { Parallax, Pagination, Mousewheel } from 'swiper/modules';
 
 // Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/pagination';
-// import 'swiper/css/effect-slide'; // Already removed as problematic
 import 'swiper/css/parallax'; // Ensure parallax styles are imported
 
 // Import custom styles for this component
@@ -45,15 +44,17 @@ export function ParallaxSwiper() {
   return (
     <div className="parallax-swiper-container">
       <Swiper
-        modules={[Parallax, Pagination, Mousewheel]} // Removed EffectSlide
+        modules={[Parallax, Pagination, Mousewheel]}
         direction="vertical"
-        loop={true}
-        pagination={{ clickable: true, el: '.swiper-pagination-customized' }} // Use a custom class for pagination el
+        loop={false} // Changed from true to false
+        pagination={{ clickable: true, el: '.swiper-pagination-customized' }}
         grabCursor={true}
         speed={1000}
         parallax={true}
-        effect="slide" // This effect should work with core Swiper
-        mousewheel={true}
+        effect="slide"
+        mousewheel={{
+          releaseOnEdges: true, // Added to allow scrolling past ends
+        }}
         className="h-full w-full" // Swiper instance takes full height/width of its container
       >
         {slidesData.map((slide) => (
