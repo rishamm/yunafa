@@ -69,12 +69,12 @@ export function ThreeDGallary() {
   return (
     <div
       className={cn(
-        'w-full overflow-hidden' // Removed background gradient
+        'w-full overflow-hidden' // Removed background gradient, let parent control background
       )}
     >
       <div
         className={cn(
-            "w-full max-h-[70vh] overflow-y-auto", // This div handles scrolling
+            "w-full max-h-[70vh] overflow-y-auto",
             "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         )}
         style={{
@@ -94,15 +94,17 @@ export function ThreeDGallary() {
             )}
           >
             {item.imageUrl && (
-              <div className="relative w-full h-full overflow-hidden"> {/* Added overflow-hidden here */}
-                <Image
-                  src={item.imageUrl}
-                  alt={item.altText || 'Gallery image'}
-                  fill
-                  className="object-contain -rotate-90"
-                  data-ai-hint={item.dataAiHint || 'gallery image'}
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
+              <div className="relative w-full h-full overflow-hidden"> {/* Ensures image clipping */}
+                <div className="absolute inset-0 transform -rotate-90 origin-center">
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.altText || 'Gallery image'}
+                    fill
+                    className="object-contain" 
+                    data-ai-hint={item.dataAiHint || 'gallery image'}
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
               </div>
             )}
           </div>
