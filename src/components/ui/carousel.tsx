@@ -7,15 +7,16 @@ import React, {
   createContext,
   useContext,
 } from "react";
+import NextImage from 'next/image'; // Import NextImage
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
   IconX,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion"; 
+import { AnimatePresence, motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/use-outside-click";
-import { useIsMobile } from "@/hooks/use-mobile"; 
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface CarouselProps {
   items: JSX.Element[];
@@ -27,7 +28,7 @@ export type CardData = {
   title: string;
   category: string;
   content: React.ReactNode;
-  'data-ai-hint'?: string; 
+  'data-ai-hint'?: string;
 };
 
 export const CarouselContext = createContext<{
@@ -43,7 +44,7 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
   const [canScrollRight, setCanScrollRight] = React.useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const isMobileView = useIsMobile(); 
+  const isMobileView = useIsMobile();
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -74,9 +75,9 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
 
   const handleCardClose = (index: number) => {
     if (carouselRef.current) {
-      const cardWidth = isMobileView ? 230 : 384; 
-      const gap = isMobileView ? 4 : 8; 
-      const scrollPosition = (cardWidth + gap) * (index + 1); 
+      const cardWidth = isMobileView ? 230 : 384;
+      const gap = isMobileView ? 4 : 8;
+      const scrollPosition = (cardWidth + gap) * (index + 1);
       carouselRef.current.scrollTo({
         left: scrollPosition,
         behavior: "smooth",
@@ -104,7 +105,6 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
           <div
             className={cn(
               "flex flex-row justify-start gap-4 pl-4"
-              // Removed "mx-auto max-w-7xl"
             )}
           >
             {items.map((item, index) => (
@@ -151,18 +151,18 @@ export const Carousel = ({ items, initialScroll = 0 }: CarouselProps) => {
   );
 };
 
-export const Card = ({ 
+export const Card = ({
   card,
   index,
   layout = false,
 }: {
-  card: CardData; 
+  card: CardData;
   index: number;
   layout?: boolean;
 }) => {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { onCardClose } = useContext(CarouselContext); 
+  const { onCardClose } = useContext(CarouselContext);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -180,7 +180,7 @@ export const Card = ({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]); 
+  }, [open]);
 
   useOutsideClick(containerRef, () => handleClose());
 
@@ -219,7 +219,7 @@ export const Card = ({
                 <IconX className="h-6 w-6 text-neutral-100 dark:text-neutral-900" />
               </button>
               <motion.p
-                layoutId={layout ? `category-${card.title}` : undefined} 
+                layoutId={layout ? `category-${card.title}` : undefined}
                 className="text-base font-medium text-card-foreground "
               >
                 {card.category}
@@ -243,7 +243,7 @@ export const Card = ({
         <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
         <div className="relative z-40 p-8">
           <motion.p
-            layoutId={layout ? `category-${card.category}` : undefined} 
+            layoutId={layout ? `category-${card.category}` : undefined}
             className="text-left font-sans text-sm font-medium text-white md:text-base"
           >
             {card.category}
@@ -266,44 +266,46 @@ export const Card = ({
   );
 };
 
-interface BlurImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+interface BlurImageProps {
   src: string;
   alt: string;
-  'data-ai-hint'?: string; 
+  className?: string;
+  'data-ai-hint'?: string;
+  // Removed other img attributes as NextImage has its own set of props
 }
 
 export const BlurImage = ({
   src,
   alt,
   className,
-  'data-ai-hint': dataAiHint, 
-  ...rest
+  'data-ai-hint': dataAiHint,
 }: BlurImageProps) => {
-  const placeholderUrl = "https://placehold.co/600x800.png"; // Default placeholder
+  const placeholderUrl = "https://placehold.co/384x640.png"; // Adjusted for md:w-96 md:h-[40rem]
   const [currentSrc, setCurrentSrc] = useState(src ? src.trim() : placeholderUrl);
 
   useEffect(() => {
     setCurrentSrc(src ? src.trim() : placeholderUrl);
-  }, [src]); // Removed placeholderUrl from deps as it's constant within the component scope
+  }, [src]);
 
   const handleError = () => {
-    setCurrentSrc(placeholderUrl); 
+    setCurrentSrc(placeholderUrl);
   };
 
   return (
-    <img
-      {...rest}
+    <NextImage
       src={currentSrc}
       alt={alt}
-      data-ai-hint={dataAiHint} 
+      fill
+      sizes="(max-width: 767px) 224px, 384px" // Corresponds to w-56 and md:w-96
       className={cn(
-        "h-full w-full transition duration-300",
+        "transition duration-300", // object-cover is already on the className prop passed in
         className,
       )}
-      loading="lazy"
-      decoding="async"
       onError={handleError}
+      data-ai-hint={dataAiHint}
+      priority={false} // Carousel images are typically not LCP
     />
   );
 };
 
+    

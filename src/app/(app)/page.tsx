@@ -66,14 +66,6 @@ export default async function HomePage() {
 
       {/* Sticky Banner Section - Removed h-[60vh] and overflow-y-auto */}
       <section className="relative flex w-full flex-col my-12 md:my-20 bg-background rounded-lg ">
-        <StickyBanner className="bg-gradient-to-b from-primary to-primary/80 text-primary-foreground shadow-lg">
-          <p className="mx-0 max-w-[90%] drop-shadow-md">
-            ✨ Yunafa&apos;s Exclusive Summer Collection is Here! ✨
-            <Link href="#home-carousel" className="ml-2 font-semibold underline hover:text-primary-foreground/80 transition-colors">
-              Discover Now
-            </Link>
-          </p>
-        </StickyBanner>
         {/* Dummy Content for scrolling demonstration, contributes to main page scroll height */}
         <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-10 py-8 px-4">
           <div className="h-96 w-full rounded-lg bg-muted/50" />
