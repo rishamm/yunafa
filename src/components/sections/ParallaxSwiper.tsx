@@ -46,26 +46,26 @@ export function ParallaxSwiper() {
       <Swiper
         modules={[Parallax, Pagination, Mousewheel]}
         direction="vertical"
-        loop={false} // Changed from true to false
+        loop={false}
         pagination={{ clickable: true, el: '.swiper-pagination-customized' }}
         grabCursor={true}
         speed={1000}
         parallax={true}
         effect="slide"
         mousewheel={{
-          releaseOnEdges: true, // Added to allow scrolling past ends
+          releaseOnEdges: true,
         }}
         className="h-full w-full" // Swiper instance takes full height/width of its container
       >
         {slidesData.map((slide) => (
           <SwiperSlide key={slide.id} className="parallax-swiper-slide flex !bg-transparent">
-            <div className="swiper-image-half" data-swiper-parallax-y="-20%">
+            <div className="swiper-image-half" data-swiper-parallax-y="-10%">
               <div className={`swiper-image-inner swiper-image-left ${slide.leftImageClass}`}>
                 <h1 data-swiper-parallax-x="-200">{slide.title}</h1>
                 <p className="subtitle-custom" data-swiper-parallax-x="-100">{slide.subtitle}</p>
               </div>
             </div>
-            <div className="swiper-image-half" data-swiper-parallax-y="35%">
+            <div className="swiper-image-half" data-swiper-parallax-y="15%">
               <div className={`swiper-image-inner swiper-image-right ${slide.rightImageClass}`}>
                 <p className="paragraph" data-swiper-parallax-x="-100">{slide.paragraph}</p>
               </div>
