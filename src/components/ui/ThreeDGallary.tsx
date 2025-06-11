@@ -95,12 +95,12 @@ export function ThreeDGallary() {
           >
             {item.imageUrl && (
               <div className="relative w-full h-full overflow-hidden">
-                <div className="absolute inset-0 transform -rotate-90 origin-center">
+                <div className="absolute inset-0 transform origin-left">
                   <Image
                     src={item.imageUrl}
                     alt={item.altText || 'Gallery image'}
                     fill
-                    className="object-cover"
+                    className="object-cover -rotate-90  "
                     data-ai-hint={item.dataAiHint || 'gallery image'}
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
