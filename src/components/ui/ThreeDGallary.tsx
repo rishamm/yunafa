@@ -69,7 +69,7 @@ export function ThreeDGallary() {
   return (
     <div
       className={cn(
-        'w-full overflow-hidden' // Removed background gradient, let parent control background
+        'w-full overflow-hidden'
       )}
     >
       <div
@@ -86,7 +86,7 @@ export function ThreeDGallary() {
           <div
             key={item.id}
             className={cn(
-              'w-full h-[360px]', 
+              'w-full h-[360px]',
               'transform-preserve-3d',
               item.type === 'box1' ?
                 'bg-gradient-to-r from-white from-70% to-[#b9b0b0] [transform:translateX(-50%)_rotateY(65deg)] [transform-origin:right_center]' :
@@ -94,13 +94,13 @@ export function ThreeDGallary() {
             )}
           >
             {item.imageUrl && (
-              <div className="relative w-full h-full overflow-hidden"> {/* Ensures image clipping */}
+              <div className="relative w-full h-full overflow-hidden">
                 <div className="absolute inset-0 transform -rotate-90 origin-center">
                   <Image
                     src={item.imageUrl}
                     alt={item.altText || 'Gallery image'}
                     fill
-                    className="object-contain" 
+                    className="object-cover"
                     data-ai-hint={item.dataAiHint || 'gallery image'}
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
