@@ -34,7 +34,7 @@ export const ContainerScroll = ({
   const rotate = useTransform(scrollYProgress, [0, 1], [96.666, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   const headerTranslateY = useTransform(scrollYProgress, [0, 1], [0, -100]); // Header moves up
-  const cardTranslateY = useTransform(scrollYProgress, [0, 1], [0, 75]); // Card moves down (opposite)
+  const cardTranslateY = useTransform(scrollYProgress, [0, 1], [0, -75]); // Card moves upwards
 
   return (
     <div
