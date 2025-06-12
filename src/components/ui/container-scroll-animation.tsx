@@ -31,8 +31,8 @@ export const ContainerScroll = ({
 
   const scaleDimensions = () => {
     if (isMobile) return [0.7, 0.9];
-    if (isVeryLargeScreen) return [0.85, 1.0]; // Starts a bit larger on very large screens
-    return [0.8, 1.0]; // Medium desktop
+    if (isVeryLargeScreen) return [0.85, 1.0]; 
+    return [0.8, 1.0]; 
   };
 
   const rotate = useTransform(scrollYProgress, [0, 1], [89.65, 0]);
@@ -41,17 +41,17 @@ export const ContainerScroll = ({
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, -60] : [0, -100]
+    isMobile ? [0, -60] : [0, -100] 
   );
   
   const cardTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
     isMobile
-      ? [0, -75] // Mobile: card moves 75px up
+      ? [0, -75] 
       : isVeryLargeScreen
-      ? [0, 10]   // Very Large Desktop (>1440px): card moves 10px down
-      : [0, -40]  // Medium Desktop (<=1440px): card moves 40px up
+      ? [0, -20]  // Changed from [0, 10] to [0, -20] for very large screens
+      : [0, -40]  
   );
 
 
@@ -120,3 +120,4 @@ export const Card = ({
     </motion.div>
   );
 };
+
