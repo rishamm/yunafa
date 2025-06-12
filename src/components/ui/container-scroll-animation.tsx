@@ -20,7 +20,7 @@ export const ContainerScroll = ({
   React.useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(window.innerWidth <= 768);
-      setIsVeryLargeScreen(window.innerWidth > 1440);
+      setIsVeryLargeScreen(window.innerWidth > 1440); // Check for screens > 1440px
     };
     checkScreenSize();
     window.addEventListener("resize", checkScreenSize);
@@ -31,19 +31,21 @@ export const ContainerScroll = ({
 
   const scaleDimensions = () => {
     if (isMobile) return [0.7, 0.9];
-    if (isVeryLargeScreen) return [0.85, 1.0];
+    if (isVeryLargeScreen) return [0.85, 1.0]; // Slightly larger start for very large screens
     return [0.8, 1.0]; // For medium desktop
   };
 
   const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
 
+  // Adjusted headerTranslateY for mobile vs desktop
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, -60] : [0, -100] // -60 for mobile, -100 for desktop
+    isMobile ? [0, -60] : [0, -100]
   );
 
+  // Adjusted cardTranslateY with a new breakpoint for very large screens
   const cardTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
