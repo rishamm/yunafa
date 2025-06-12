@@ -30,28 +30,28 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [1, 1.023];
-    if (isVeryLargeScreen) return [1, 1.2]; //large
-    return [1, 1.2]; 
+    if (isMobile) return [0.7, 0.9]; // mobile: starts smaller, ends a bit smaller than full
+    if (isVeryLargeScreen) return [0.85, 1.0]; // very large: starts larger, ends at full
+    return [0.8, 1.0]; // medium desktop: default
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [0, 92.784321]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, 0] : [0, -100] 
+    isMobile ? [0, -60] : [0, -100] 
   );
   
   const cardTranslateY = useTransform(
     scrollYProgress,
-    [0, 0],
+    [0, 1],
     isMobile
-      ? [0, 0] 
+      ? [0, -75] 
       : isVeryLargeScreen
-      ? [0, 0]  
-      : [0, 0]  
+      ? [0, -20]  // Moves 20px up on very large screens
+      : [0, -40]  // Moves 40px up on medium desktop screens
   );
 
 
@@ -61,7 +61,7 @@ export const ContainerScroll = ({
       ref={containerRef}
     >
       <div
-        className="pt-10 md:pt-40 w-full relative"
+        className="pt-12 md:pt-44 w-full relative" // Increased top padding here
         style={{
           perspective: "1200px",
         }}
@@ -87,7 +87,7 @@ export const Header = ({
       style={{
         translateY: translate,
       }}
-      className="div w-full mx-auto text-center" 
+      className="w-full mx-auto text-center" // Corrected className
     >
       {titleComponent}
     </motion.div>
@@ -112,7 +112,7 @@ export const Card = ({
         scale: scale,
         translateY: translateY,
       }}
-      className="-mt-12 h-[30rem] md:h-[40rem] w-full  shadow-2xl"
+      className="-mt-10 h-[30rem] md:h-[40rem] w-full shadow-2xl" // Reduced negative top margin
     >
       <div className=" h-full w-full overflow-hidden   md:p-0 ">
         {children}
@@ -120,4 +120,3 @@ export const Card = ({
     </motion.div>
   );
 };
-

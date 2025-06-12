@@ -21,7 +21,7 @@ export function HeroScrollSection() {
   );
 
   // IMPORTANT: Ensure 'hero-video.mp4' is the correct filename in your public folder.
-  const videoFileName = 'hero-video.mp4';
+  const videoFileName = 'hero.mp4';
 
   return (
     <div className="relative flex flex-col justify-start pt-20 md:pt-40">
