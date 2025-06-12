@@ -30,28 +30,28 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [0.7, 0.9];
-    if (isVeryLargeScreen) return [0.85, 1.0]; 
-    return [0.8, 1.0]; 
+    if (isMobile) return [1, 1.023];
+    if (isVeryLargeScreen) return [1, 1.2]; //large
+    return [1, 1.2]; 
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [89.65, 0]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [0, 92.784321]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
   
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, -60] : [0, -100] 
+    isMobile ? [0, 0] : [0, -100] 
   );
   
   const cardTranslateY = useTransform(
     scrollYProgress,
-    [0, 1],
+    [0, 0],
     isMobile
-      ? [0, -75] 
+      ? [0, 0] 
       : isVeryLargeScreen
-      ? [0, -20]  // Changed from [0, 10] to [0, -20] for very large screens
-      : [0, -40]  
+      ? [0, 0]  
+      : [0, 0]  
   );
 
 
@@ -63,7 +63,7 @@ export const ContainerScroll = ({
       <div
         className="pt-10 md:pt-40 w-full relative"
         style={{
-          perspective: "600px",
+          perspective: "1200px",
         }}
       >
         <Header translate={headerTranslateY} titleComponent={titleComponent} />
@@ -112,9 +112,9 @@ export const Card = ({
         scale: scale,
         translateY: translateY,
       }}
-      className="-mt-12 h-[30rem] md:h-[40rem] w-full rounded-[30px] shadow-2xl"
+      className="-mt-12 h-[30rem] md:h-[40rem] w-full  shadow-2xl"
     >
-      <div className=" h-full w-full overflow-hidden rounded-2xl md:rounded-2xl md:p-0 ">
+      <div className=" h-full w-full overflow-hidden   md:p-0 ">
         {children}
       </div>
     </motion.div>
