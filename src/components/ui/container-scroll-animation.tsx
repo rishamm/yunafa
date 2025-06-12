@@ -30,9 +30,9 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [0.7, 0.9]; // mobile: starts smaller, ends a bit smaller than full
-    if (isVeryLargeScreen) return [0.85, 1.0]; // very large: starts larger, ends at full
-    return [0.8, 1.0]; // medium desktop: default
+    if (isMobile) return [0.7, 0.9]; 
+    if (isVeryLargeScreen) return [0.85, 1.0]; 
+    return [0.8, 1.0]; 
   };
 
   const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
@@ -50,8 +50,8 @@ export const ContainerScroll = ({
     isMobile
       ? [0, -75] 
       : isVeryLargeScreen
-      ? [0, -20]  // Moves 20px up on very large screens
-      : [0, -40]  // Moves 40px up on medium desktop screens
+      ? [0, -20]
+      : [0, -40]
   );
 
 
@@ -61,7 +61,7 @@ export const ContainerScroll = ({
       ref={containerRef}
     >
       <div
-        className="pt-12 md:pt-44 w-full relative" // Increased top padding here
+        className="pt-10 md:pt-40 w-full relative" // Reverted: was pt-12 md:pt-44
         style={{
           perspective: "1200px",
         }}
@@ -87,7 +87,7 @@ export const Header = ({
       style={{
         translateY: translate,
       }}
-      className="w-full mx-auto text-center" // Corrected className
+      className="div w-full mx-auto text-center max-w-lg" // Reverted: was "w-full mx-auto text-center"
     >
       {titleComponent}
     </motion.div>
@@ -112,7 +112,7 @@ export const Card = ({
         scale: scale,
         translateY: translateY,
       }}
-      className="-mt-10 h-[30rem] md:h-[40rem] w-full shadow-2xl" // Reduced negative top margin
+      className="-mt-12 h-[30rem] md:h-[40rem] w-full shadow-2xl" // Reverted: was -mt-10
     >
       <div className=" h-full w-full overflow-hidden   md:p-0 ">
         {children}
