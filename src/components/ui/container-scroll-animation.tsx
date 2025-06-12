@@ -31,13 +31,14 @@ export const ContainerScroll = ({
     return isMobile ? [0.7, 0.9] : [0.8, 1.2];
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [96.7, 0]);
-  const scale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-  const translate = useTransform(scrollYProgress, [0, 0], [0, -100]); // Adjusted translate for more initial visibility
+  const rotate = useTransform(scrollYProgress, [0, 1], [96.666, 0]);
+  const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
+  const headerTranslateY = useTransform(scrollYProgress, [0, 1], [0, -100]); // Header moves up
+  const cardTranslateY = useTransform(scrollYProgress, [0, 1], [0, 75]); // Card moves down (opposite)
 
   return (
     <div
-      className="flex items-center justify-center relative p-2 md:p-20" // This padding defines the bounds for the "full-width" card
+      className="flex items-center justify-center relative p-2"
       ref={containerRef}
     >
       <div
@@ -46,8 +47,8 @@ export const ContainerScroll = ({
           perspective: "600px",
         }}
       >
-        <Header translate={translate} titleComponent={titleComponent} />
-        <Card rotate={rotate} translate={translate} scale={scale}>
+        <Header translate={headerTranslateY} titleComponent={titleComponent} />
+        <Card rotate={rotate} scale={cardScale} translateY={cardTranslateY}>
           {children}
         </Card>
       </div>
@@ -67,7 +68,7 @@ export const Header = ({
       style={{
         translateY: translate,
       }}
-      className="div max-w-5xl mx-auto text-center" // Header text remains centered and max-width
+      className="div max-w-5xl mx-auto text-center" 
     >
       {titleComponent}
     </motion.div>
@@ -77,26 +78,27 @@ export const Header = ({
 export const Card = ({
   rotate,
   scale,
+  translateY,
   children,
-  // translate prop is passed but not used in the original code, keeping it for now
 }: {
   rotate: MotionValue<number>;
   scale: MotionValue<number>;
-  translate: MotionValue<number>; 
+  translateY: MotionValue<number>;
   children: React.ReactNode;
 }) => {
   return (
     <motion.div
       style={{
         rotateX: rotate,
-      
-       
+        scale: scale,
+        translateY: translateY,
       }}
-      className="-mt-12 h-[30rem] md:h-[40rem] w-full   rounded-[30px] shadow-2xl" // Removed max-w-5xl and mx-auto
+      className="-mt-12 h-[30rem] md:h-[40rem] w-full rounded-[30px] shadow-2xl"
     >
-      <div className=" h-full w-full  overflow-hidden rounded-2xl  md:rounded-2xl md:p-0 ">
+      <div className=" h-full w-full overflow-hidden rounded-2xl md:rounded-2xl md:p-0 ">
         {children}
       </div>
     </motion.div>
   );
 };
+

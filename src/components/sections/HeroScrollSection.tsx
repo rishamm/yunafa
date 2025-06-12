@@ -24,7 +24,7 @@ export function HeroScrollSection() {
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <Image
-            src="https://plus.unsplash.com/premium_photo-1683143646131-92a439faca4d?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8d29tZW4lMjBmYXNoaW9uJTIwbGFuZHNjYXBlJTIwaW1hZ2V8ZW58MHx8MHx8fDA%3D"
+            src="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Yunafa Collection Showcase"
             fill
             className="object-cover bg-top rounded-2xl"

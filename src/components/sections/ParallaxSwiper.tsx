@@ -23,7 +23,7 @@ const slidesData = [
     rightImageHint: 'street style',
     title: <>A <span className="emphasis">Breath</span>. <br /><span>Of Fresh Air.</span></>,
     subtitle: 'Chapter I, page XV',
-    paragraph: "A Prophet sat in the market-place and told the fortunes of all who cared to engage his services. Suddenly there came running up one who told him that his house had been broken into by thieves, and that they had made off with everything they could lay hands on."
+    paragraph: ""
   },
   {
     id: 2,
@@ -33,7 +33,7 @@ const slidesData = [
     rightImageHint: 'fashion accessories',
     title: <>The <span className="emphasis">Drop</span>. <br /><span>Of Eternal life.</span></>,
     subtitle: 'Chapter II, page VII',
-    paragraph: "A thirsty Crow found a Pitcher with some water in it, but so little was there that, try as she might, she could not reach it with her beak, and it seemed as though she would die of thirst within sight of the remedy."
+    paragraph: ""
   },
   {
     id: 3,
@@ -65,7 +65,7 @@ export function ParallaxSwiper() {
       >
         {slidesData.map((slide) => (
           <SwiperSlide key={slide.id} className="parallax-swiper-slide flex !bg-transparent">
-            <div className="swiper-image-half" data-swiper-parallax-y="-10%">
+            <div className="swiper-image-half" data-swiper-parallax-y="0%">
               <div 
                 className="swiper-image-inner swiper-image-left" 
                 style={{ backgroundImage: `url(${slide.leftImageUrl})` }}
@@ -75,7 +75,7 @@ export function ParallaxSwiper() {
                 <p className="subtitle-custom" data-swiper-parallax-x="-100">{slide.subtitle}</p>
               </div>
             </div>
-            <div className="swiper-image-half" data-swiper-parallax-y="15%">
+            <div className="swiper-image-half" data-swiper-parallax-y="50%">
               <div 
                 className="swiper-image-inner swiper-image-right" 
                 style={{ backgroundImage: `url(${slide.rightImageUrl})` }}

@@ -26,7 +26,7 @@ export default async function HomePage() {
   );
 
   return (
-    <div className="space-y-12 md:space-y-20 flex flex-col ">
+    <div className="space-y-12 md:space-y-20 flex flex-col overflow-hidden ">
       
       <HeroScrollSection />
 

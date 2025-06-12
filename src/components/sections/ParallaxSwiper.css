@@ -6,11 +6,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(to right bottom, #2a1f30 50%, #383d44 50%);
+  background: white;
 }
 
 .parallax-swiper-container {
-  height: 80vh;
+  height: 84vh;
   width: 100%; /* Changed from 90vw to 100% */
   position: relative;
 }
@@ -53,19 +53,19 @@
 }
 
 .parallax-swiper-slide .swiper-image-left {
-  filter: sepia(100%);
+  filter: grayscale(100%);
   transition: all 1s linear;
-  transition-delay: 0.3s; /* Reduced delay */
+  transition-delay: 0.6s; /* Reduced delay */
 }
 
 .parallax-swiper-slide.swiper-slide-active .swiper-image-left {
-  filter: sepia(0%);
+  filter: grayscale(0%);
 }
 
 .parallax-swiper-slide .swiper-image-inner.swiper-image-right {
   filter: hue-rotate(-60deg);
   transition: all 1s linear;
-  transition-delay: 0.3s; /* Reduced delay */
+  transition-delay: 0.9s; /* Reduced delay */
   background-color: hsla(0, 0%, 0%, 0.5);
   background-blend-mode: multiply;
 }
