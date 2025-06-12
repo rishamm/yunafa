@@ -1,4 +1,6 @@
 
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
@@ -18,7 +20,7 @@ export function HeroScrollSection() {
     </div>
   );
 
-  // IMPORTANT: Replace 'hero-video.mp4' with the actual filename of your video in the public folder.
+  // IMPORTANT: Ensure 'hero-video.mp4' is the correct filename in your public folder.
   const videoFileName = 'hero-video.mp4';
 
   return (
@@ -26,13 +28,14 @@ export function HeroScrollSection() {
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
+            key={videoFileName} // Adding a key can help React differentiate if src changes
             src={`/${videoFileName}`}
             autoPlay
             loop
             muted
-            playsInline
-            className="object-cover w-full h-full bg-top"
-            poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Optional: poster image while video loads
+            playsInline // Important for iOS autoplay
+            className="object-cover w-full h-full bg-top rounded-2xl" // Added rounded-2xl
+            poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Poster image while video loads
           >
             Your browser does not support the video tag.
           </video>
