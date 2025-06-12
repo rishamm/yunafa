@@ -28,17 +28,19 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    return isMobile ? [0.7, 0.9] : [0.8, 1.2];
+    return isMobile ? [0.7, 0.9] : [0.8, 1];
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [96.666, 0]);
+  const rotate = useTransform(scrollYProgress, [0, 1], [89.65, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
-  const headerTranslateY = useTransform(scrollYProgress, [0, 1], [0, -100]); // Header moves up
-  const cardTranslateY = useTransform(scrollYProgress, [0, 1], [0, -75]); // Card moves upwards
+  const headerTranslateY = useTransform(scrollYProgress, [0, 1], [0, -100]); 
+  // Adjusting cardTranslateY: less upward movement for desktop
+  const cardTranslateY = useTransform(scrollYProgress, [0, 1], isMobile ? [0, -75] : [0, -40]);
+
 
   return (
     <div
-      className="flex items-center justify-center relative p-2"
+      className="flex items-center justify-center relative p-2 min-h-[60vh] md:min-h-[80vh]"
       ref={containerRef}
     >
       <div
@@ -91,7 +93,7 @@ export const Card = ({
       style={{
         rotateX: rotate,
         scale: scale,
-        translateY: translateY,
+        translateY: translateY, // Apply translateY here
       }}
       className="-mt-12 h-[30rem] md:h-[40rem] w-full rounded-[30px] shadow-2xl"
     >
