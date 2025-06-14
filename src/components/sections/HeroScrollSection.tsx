@@ -34,7 +34,8 @@ export function HeroScrollSection() {
             loop
             muted
             playsInline // Important for iOS autoplay
-            className="object-cover w-full h-full bg-top rounded-2xl" // Added rounded-2xl
+            className="object-cover w-full h-full bg-top 
+            " // Added rounded-2xl
             poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Poster image while video loads
           >
             Your browser does not support the video tag.

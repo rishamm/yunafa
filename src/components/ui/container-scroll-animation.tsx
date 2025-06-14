@@ -30,19 +30,19 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [0.7, 0.9];
-    if (isVeryLargeScreen) return [0.85, 1.0]; // Slightly larger start for very large screens
-    return [0.8, 1.0]; // For medium desktop
+    if (isMobile) return [1, 1];
+    if (isVeryLargeScreen) return [1, 0.75]; // Slightly larger start for very large screens
+    return [1, 0.75]; // For medium desktop
   };
 
-  const rotate = useTransform(scrollYProgress, [0, 1], [20, 0]);
+  const rotate = useTransform(scrollYProgress, [1, 0], [93.899, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
 
   // Adjusted headerTranslateY for mobile vs desktop
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, -60] : [0, -100]
+    isMobile ? [0, -50] : [0, -100]
   );
 
   // Adjusted cardTranslateY with a new breakpoint for very large screens
@@ -50,10 +50,10 @@ export const ContainerScroll = ({
     scrollYProgress,
     [0, 1],
     isMobile
-      ? [0, -75] // Mobile: card moves 75px up
+      ? [0, -25] // Mobile: card moves 75px up
       : isVeryLargeScreen
-      ? [0, -20] // Very Large Desktop (>1440px): card moves 20px up
-      : [0, -40] // Medium Desktop (<=1440px): card moves 40px up
+      ? [0, -10] // Very Large Desktop (>1440px): card moves 20px up
+      : [0, -9] // Medium Desktop (<=1440px): card moves 40px up
   );
 
 

@@ -88,10 +88,15 @@ export default {
             height: '0',
           },
         },
+        'marquee-left': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' }, // Moves by half the total width due to duplicated content
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'marquee-left': 'marquee-left 25s linear infinite',
       },
     },
   },
