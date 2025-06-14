@@ -17,8 +17,8 @@ export async function Header() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
+    { href: '/#home-carousel', label: 'Collections' }, // Changed from Blogs to Collections
     { href: '/our-story', label: 'Our Story' },
-    { href: '/blog', label: 'Blogs' },
     { href: '/contact', label: 'Contact' },
   ];
 
