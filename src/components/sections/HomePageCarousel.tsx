@@ -1,9 +1,7 @@
 
 "use client";
 
-import { Carousel, Card as CarouselUICard } from "@/components/ui/carousel";
-// CardData is not explicitly used here but is part of CarouselUICard's props
-// import type { CardData } from "@/components/ui/carousel";
+import { Carousel, Card as CarouselUICard, type CardData } from "@/components/ui/carousel";
 import React from "react";
 import type { CarouselItem as CarouselItemType } from "@/lib/types";
 import { Button } from "@/components/ui/button";
@@ -31,23 +29,33 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
   let itemsForUiCarousel: React.ReactNode[];
 
   if (hasActualItems) {
-    itemsForUiCarousel = items.map((item, index) => (
-      <CarouselUICard
-        key={item.id || `carousel-card-${index}`}
-        card={{
-          src: item.imageUrl,
-          title: item.title,
-          category: item.category,
-          content: <p>{item.content}</p>,
-          'data-ai-hint': item.dataAiHint || item.category.toLowerCase(),
-        }}
-        index={index} // This is the logical 0-based index for the card itself
-        layout
-      />
-    ));
+    itemsForUiCarousel = items.map((item, index) => {
+      const cardData: CardData = {
+        src: item.imageUrl, // This is imageUrl, will be used as poster if videoSrc is present
+        title: item.title,
+        category: item.category,
+        content: <p>{item.content}</p>,
+        'data-ai-hint': item.dataAiHint || item.category.toLowerCase(),
+      };
+
+      // Assign videoSrc for the first two cards
+      // Ensure your video files are in the /public folder
+      if (index === 0 && items.length > 0) { 
+        cardData.videoSrc = '/carousel-video-1.mp4'; // Video for the first card
+      } else if (index === 1 && items.length > 1) { 
+        cardData.videoSrc = '/carousel-video-2.mp4'; // Video for the second card
+      }
+
+      return (
+        <CarouselUICard
+          key={item.id || `carousel-card-${index}`}
+          card={cardData}
+          index={index} 
+          layout
+        />
+      );
+    });
   } else {
-    // Prepare skeleton cards if no actual items
-    // The number of skeletons can adjust based on whether a leadingElement is present
     const skeletonCount = leadingElement ? 3 : 4;
     itemsForUiCarousel = [...Array(skeletonCount)].map((_, index) => (
       <CarouselItemSkeleton key={`skeleton-for-ui-${index}`} />
@@ -56,14 +64,11 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
 
   const finalAssembly: React.ReactNode[] = [];
   if (leadingElement) {
-    // The Carousel component will wrap this in a motion.div with key="card0"
     finalAssembly.push(leadingElement);
   }
   finalAssembly.push(...itemsForUiCarousel);
 
-  // Fallback for when JS might be disabled or initial load before hydration/items are processed by Carousel component
-  // This block is less critical if Carousel handles empty `finalAssembly` well or if `finalAssembly` always has skeletons.
-  if (finalAssembly.length === 0 && !leadingElement) { // Only show this very basic skeleton if truly nothing to show
+  if (finalAssembly.length === 0 && !leadingElement) { 
      return (
       <section>
         <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
@@ -79,7 +84,6 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
           </div>
         </div>
          <div className="mr-10 flex justify-end gap-2">
-          {/* Placeholder buttons, actual buttons are inside <Carousel /> */}
           <Button variant="secondary" className="relative z-40 h-10 w-10" disabled>...</Button>
           <Button variant="secondary" className="relative z-40 h-10 w-10" disabled>...</Button>
         </div>

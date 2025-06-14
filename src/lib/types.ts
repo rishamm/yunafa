@@ -1,3 +1,4 @@
+
 export interface Category {
   id: string;
   name: string;
@@ -23,4 +24,5 @@ export interface CarouselItem {
   imageUrl: string;
   content: string; // Stored as simple text/string from CMS
   dataAiHint?: string;
+  videoSrc?: string; // Added for video support
 }

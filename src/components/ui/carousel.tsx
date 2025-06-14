@@ -24,7 +24,8 @@ interface CarouselProps {
 }
 
 export type CardData = {
-  src: string;
+  src: string; // Will be imageUrl for images, or posterUrl for videos
+  videoSrc?: string; // Optional: path to video file
   title: string;
   category: string;
   content: React.ReactNode;
@@ -255,64 +256,83 @@ export const Card = ({
             {card.title}
           </motion.p>
         </div>
-        <BlurImage
-          src={card.src}
+        <CardMedia
+          src={card.src} // This is imageUrl / posterUrl
+          videoSrc={card.videoSrc} // This is the new videoSrc
           alt={card.title}
           className="absolute inset-0 z-10 h-full w-full object-cover"
-          data-ai-hint={card['data-ai-hint'] || "carousel image"}
+          data-ai-hint={card['data-ai-hint']}
         />
       </motion.button>
     </>
   );
 };
 
-interface BlurImageProps {
-  src: string;
+interface CardMediaProps {
+  src: string; // imageUrl (for images) or posterUrl (for videos)
+  videoSrc?: string; // Path to video file
   alt: string;
   className?: string;
   'data-ai-hint'?: string;
 }
 
-export const BlurImage = ({
-  src,
+export const CardMedia = ({
+  src, // This is the imageUrl from CardData, used as poster if videoSrc is present
+  videoSrc,
   alt,
   className,
   'data-ai-hint': dataAiHint,
-}: BlurImageProps) => {
-  // Default Unsplash URL for portrait-oriented carousel items
-  const defaultUnsplashUrl = "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=384&h=640&fit=crop&q=60";
-  const [currentSrc, setCurrentSrc] = useState(src ? src.trim() : defaultUnsplashUrl);
-  const [currentHint, setCurrentHint] = useState(dataAiHint || (src?.trim() ? alt.substring(0,20) : "fashion shopping"));
+}: CardMediaProps) => {
+  if (videoSrc) {
+    return (
+      <video
+        key={videoSrc} // Add key for potential src changes
+        src={videoSrc}
+        poster={src} // src (original imageUrl) acts as the poster
+        autoPlay
+        loop
+        muted
+        playsInline
+        className={cn("absolute inset-0 z-10 h-full w-full object-cover", className)}
+        // data-ai-hint is not directly applicable to video tags in the same way as images for generation
+      />
+    );
+  } else {
+    // Fallback to image rendering if videoSrc is not provided
+    const defaultUnsplashUrl = "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=384&h=640&fit=crop&q=60";
+    const [currentImgSrc, setCurrentImgSrc] = useState(src ? src.trim() : defaultUnsplashUrl);
+    const [currentHint, setCurrentHint] = useState(dataAiHint || (src?.trim() ? alt.substring(0,20) : "fashion shopping"));
 
+    useEffect(() => {
+      // This effect should only run if it's meant to be an image (no videoSrc)
+      const newSrc = src ? src.trim() : defaultUnsplashUrl;
+      setCurrentImgSrc(newSrc);
+      if (!src?.trim()) {
+        setCurrentHint("fashion shopping");
+      } else {
+        setCurrentHint(dataAiHint || alt.substring(0,20));
+      }
+    }, [src, dataAiHint, alt]);
 
-  useEffect(() => {
-    const newSrc = src ? src.trim() : defaultUnsplashUrl;
-    setCurrentSrc(newSrc);
-    if (!src?.trim()) {
-      setCurrentHint("fashion shopping"); // Default hint for the Unsplash fallback
-    } else {
-      setCurrentHint(dataAiHint || alt.substring(0,20) );
-    }
-  }, [src, dataAiHint, alt]);
+    const handleImageError = () => {
+      setCurrentImgSrc(defaultUnsplashUrl);
+      setCurrentHint("fashion shopping");
+    };
 
-  const handleError = () => {
-    setCurrentSrc(defaultUnsplashUrl);
-    setCurrentHint("fashion shopping"); // Hint for when the image fails and shows the Unsplash fallback
-  };
-
-  return (
-    <NextImage
-      src={currentSrc}
-      alt={alt}
-      fill
-      sizes="(max-width: 767px) 224px, 384px" // Corresponds to w-56 and md:w-96
-      className={cn(
-        "transition duration-300", 
-        className,
-      )}
-      onError={handleError}
-      data-ai-hint={currentHint}
-      priority={false} 
-    />
-  );
+    return (
+      <NextImage
+        src={currentImgSrc}
+        alt={alt}
+        fill
+        sizes="(max-width: 767px) 224px, 384px" // Corresponds to w-56 and md:w-96
+        className={cn(
+          "transition duration-300",
+          className,
+        )}
+        onError={handleImageError}
+        data-ai-hint={currentHint}
+        priority={false}
+      />
+    );
+  }
 };
