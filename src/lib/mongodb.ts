@@ -34,7 +34,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     try {
       // Ping the database to check if connection is still alive
       await cached.client.db('admin').command({ ping: 1 });
-      console.log("MongoDB: Using cached connection.");
+      console.log("MongoDB: Using cached connection (ping successful).");
       return { client: cached.client, db: cached.db };
     } catch (e) {
       // Connection lost, clear cache and reconnect
@@ -69,3 +69,4 @@ export async function getCollection<T extends Document>(collectionName: string):
   const { db } = await connectToDatabase();
   return db.collection<T>(collectionName);
 }
+
