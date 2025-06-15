@@ -21,27 +21,23 @@ import type { CarouselItem } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useTransition } from 'react';
+import Image from 'next/image';
 
+// Schema for form values, including File objects
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
-  imageUrl: z.preprocess(
-    (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL for the image or video poster. Example: https://example.com/image.png')
-     .or(z.string().startsWith('https://images.unsplash.com'))
-     .or(z.string().startsWith('https://placehold.co'))
-  ),
-  videoSrc: z.preprocess(
-    (val) => (typeof val === 'string' && val.trim() === '' ? null : val), // Treat empty string as null
-    z.string()
-      .refine(val => val.startsWith('http') || val.startsWith('/'), {
-        message: 'Must be a valid URL (e.g., https://...) or a local path (e.g., /my-video.mp4)',
-      })
-      .optional()
-      .nullable()
-  ),
+  imageUrlFile: z.custom<File>((val) => val instanceof File, {
+    message: "A poster image file is required.",
+  }).optional(), // Optional in form, required for create in action
+  videoFile: z.custom<File>((val) => val instanceof File, {
+    message: "Please upload a video file.",
+  }).optional().nullable(),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
+  // Store existing URLs to display and to know if a new file was uploaded
+  currentImageUrl: z.string().optional(),
+  currentVideoSrc: z.string().optional().nullable(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
@@ -54,45 +50,83 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [imagePreview, setImagePreview] = React.useState<string | null>(carouselItem?.imageUrl || null);
+  const [videoFileName, setVideoFileName] = React.useState<string | null>(carouselItem?.videoSrc ? 'Existing video' : null);
+
 
   const form = useForm<CarouselItemFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
-      imageUrl: carouselItem?.imageUrl?.trim() || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60',
-      videoSrc: carouselItem?.videoSrc || null,
       content: carouselItem?.content || '',
       dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
+      imageUrlFile: undefined,
+      videoFile: undefined,
+      currentImageUrl: carouselItem?.imageUrl,
+      currentVideoSrc: carouselItem?.videoSrc,
     },
   });
+
+  const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      form.setValue('imageUrlFile', file);
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      form.setValue('imageUrlFile', undefined);
+      setImagePreview(carouselItem?.imageUrl || null); // Revert to original if file removed
+    }
+  };
+
+  const handleVideoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      form.setValue('videoFile', file);
+      setVideoFileName(file.name);
+    } else {
+      form.setValue('videoFile', undefined);
+      setVideoFileName(carouselItem?.videoSrc ? 'Existing video' : null);
+    }
+  };
 
   async function onSubmit(values: CarouselItemFormValues) {
     startTransition(async () => {
       const formData = new FormData();
-      Object.entries(values).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
-        } else if (key === 'videoSrc' && value === null) {
-          // Explicitly do not append if null, or handle as server expects for deletion/clearing
-        }
-      });
+      formData.append('title', values.title);
+      formData.append('category', values.category);
+      formData.append('content', values.content);
+      if (values.dataAiHint) {
+        formData.append('dataAiHint', values.dataAiHint);
+      }
 
-      // Ensure videoSrc is either a string or not present if it's null/undefined
-      // FormData converts null to "null", so we might need to handle this specifically
-      // if the action expects absence of the field vs. a "null" string.
-      // For now, String(value) will convert null to "null".
-      // If `videoSrc` is truly optional and `null` means "not set",
-      // the action and data layers should handle "null" string appropriately or
-      // the field should be conditionally appended.
+      // Append files if they are provided
+      if (values.imageUrlFile instanceof File) {
+        formData.append('imageUrlFile', values.imageUrlFile);
+      } else if (carouselItem?.imageUrl && !values.imageUrlFile) {
+        // If editing and no new image file, pass the current URL
+        // This helps the action know not to expect a new file to process for image
+         formData.append('currentImageUrl', carouselItem.imageUrl);
+      }
 
-      const action = carouselItem ? updateCarouselItemAction(carouselItem.id, formData) : createCarouselItemAction(formData);
+
+      if (values.videoFile instanceof File) {
+        formData.append('videoFile', values.videoFile);
+      } else if (carouselItem?.videoSrc && !values.videoFile) {
+        // If editing and no new video file, pass the current URL
+         formData.append('currentVideoSrc', carouselItem.videoSrc);
+      }
+
+
+      const action = carouselItem
+        ? updateCarouselItemAction(carouselItem.id, formData)
+        : createCarouselItemAction(formData);
       const result = await action;
 
       if (result.success) {
         toast({
           title: carouselItem ? 'Carousel Item Updated' : 'Carousel Item Created',
-          description: result.message,
+          description: result.message || "Action successful. Note: Firebase Storage upload logic is pending.",
         });
         router.push('/admin/carousel');
         router.refresh();
@@ -143,44 +177,56 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
+          name="imageUrlFile"
+          render={() => ( // field is not directly used for file input control
             <FormItem>
-              <FormLabel>Image URL / Video Poster URL</FormLabel>
+              <FormLabel>Poster Image File</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60" 
-                  {...field} 
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageFileChange}
                 />
               </FormControl>
-              <FormDescription>Required. Direct URL to an image (or poster for video). Uses Unsplash for default.</FormDescription>
+              <FormDescription>Required. This image will be used as the poster. (Max 2MB recommended)</FormDescription>
+              {imagePreview && (
+                <div className="mt-2">
+                  <Image src={imagePreview} alt="Poster preview" width={100} height={100} className="rounded object-cover" />
+                </div>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
-          name="videoSrc"
-          render={({ field }) => (
+          name="videoFile"
+          render={() => ( // field is not directly used for file input control
             <FormItem>
-              <FormLabel>Video Source URL/Path (Optional)</FormLabel>
+              <FormLabel>Video File (Optional)</FormLabel>
               <FormControl>
-                <Input 
-                  placeholder="/videos/my-video.mp4 or https://example.com/video.mp4" 
-                  {...field} 
-                  value={field.value ?? ''} // Handle null for input value
+                <Input
+                  type="file"
+                  accept="video/*"
+                  onChange={handleVideoFileChange}
                 />
               </FormControl>
               <FormDescription>
-                Provide a direct URL to a video or a path to a video in your `/public` folder (e.g., `/videos/main-promo.mp4`). 
-                If provided, the Image URL above will be used as its poster.
+                Optional. If provided, this video will be used. The poster image above will be its preview. (Max 10MB recommended)
               </FormDescription>
+              {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
+              {carouselItem?.videoSrc && !videoFileName && (
+                <p className="text-sm text-muted-foreground mt-1">Currently using existing video: <a href={carouselItem.videoSrc} target="_blank" rel="noopener noreferrer" className="underline">{carouselItem.videoSrc}</a></p>
+              )}
               <FormMessage />
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="content"
@@ -199,11 +245,11 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           name="dataAiHint"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>AI Hint (Optional)</FormLabel>
+              <FormLabel>AI Hint for Poster (Optional)</FormLabel>
               <FormControl>
                 <Input placeholder="e.g., fashion shopping" {...field} />
               </FormControl>
-              <FormDescription>Keywords for AI image search if the image/poster needs replacing (max 2 words).</FormDescription>
+              <FormDescription>Keywords for AI image search if the poster needs replacing (max 2 words).</FormDescription>
               <FormMessage />
             </FormItem>
           )}
