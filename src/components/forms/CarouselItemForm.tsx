@@ -73,7 +73,12 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         content: carouselItem.content,
         videoSrc: carouselItem.videoSrc || '',
       });
-      setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') || carouselItem.videoSrc.startsWith('/') ? 'Remote/Linked Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
+      if (carouselItem.videoSrc) {
+        setVideoFileName(carouselItem.videoSrc.startsWith('http') || carouselItem.videoSrc.startsWith('/') ? 'Remote/Linked Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video');
+      } else {
+        setVideoFileName(null);
+      }
+      setVideoFile(null); // Reset file on item change
     } else {
       form.reset({ 
         title: '',
@@ -82,6 +87,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         videoSrc: '',
       });
       setVideoFileName(null);
+      setVideoFile(null); // Reset file for new item
     }
   }, [carouselItem, form, allCategories]);
 
@@ -91,7 +97,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     setVideoFile(file);
     setVideoFileName(file ? file.name : null);
     if (file) {
-        form.setValue('videoSrc', '');
+        form.setValue('videoSrc', ''); // Clear the videoSrc URL field if a file is selected
     }
   };
 
@@ -111,33 +117,40 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
       toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
       return data.fileUrl;
     } catch (error: any) {
-      toast({ title: 'Sufy Upload Error', description: error.message, variant: 'destructive' });
+      // Toast will be handled in onSubmit
+      console.error('Sufy Upload Error:', error.message);
       return null;
     }
   };
 
   async function onSubmit(values: CarouselItemFormValues) {
-    setIsUploading(true);
-    
-    let finalVideoSrc: string | null | undefined = values.videoSrc; 
-    if (videoFile) { 
+    let finalVideoSrc: string | null | undefined = undefined;
+
+    if (videoFile) {
+      // User uploaded a new file
+      setIsUploading(true);
       const uploadedVideoUrl = await uploadFileToSufy(videoFile);
+      setIsUploading(false);
       if (uploadedVideoUrl) {
         finalVideoSrc = uploadedVideoUrl;
       } else {
-        setIsUploading(false); 
-        return; 
+        // Upload failed, stop submission
+        toast({ title: 'Upload Failed', description: 'Video could not be uploaded. Please try again or use a URL.', variant: 'destructive' });
+        return;
       }
-    } else if (values.videoSrc === '' && !videoFile && carouselItem?.videoSrc) { 
-      finalVideoSrc = null; 
+    } else if (values.videoSrc && values.videoSrc.trim() !== '') {
+      // No file uploaded, but a URL is provided in the form
+      finalVideoSrc = values.videoSrc.trim();
+    } else {
+      // No file uploaded, and no URL provided (or it's empty/whitespace)
+      // This means the user wants to remove any existing video or not set one
+      finalVideoSrc = null;
     }
-
+    
     const submissionData = {
       ...values,
       videoSrc: finalVideoSrc,
     };
-    
-    setIsUploading(false);
 
     startTransition(async () => {
       const actionFormData = new FormData();
@@ -149,9 +162,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         }
       });
       
-      if (carouselItem?.id && carouselItem.videoSrc) {
-         actionFormData.append('originalVideoSrc', carouselItem.videoSrc);
-      }
+      // No need to pass originalVideoSrc, the new finalVideoSrc handles removal if null.
 
       const action = carouselItem
         ? updateCarouselItemAction(carouselItem.id, actionFormData)
@@ -196,7 +207,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               <FormItem className="md:col-span-1">
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., Summer Collection" {...field} />
+                  <Input placeholder="e.g., Summer Collection" {...field} disabled={isSubmitting} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,7 +219,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
             render={({ field }) => (
               <FormItem className="md:col-span-1">
                 <FormLabel>Category</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
@@ -240,11 +251,12 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
                     htmlFor="videoFile-input" 
                     className={cn(
                       buttonVariants({ variant: "outline" }), 
-                      "cursor-pointer flex items-center justify-center gap-2" 
+                      "cursor-pointer flex items-center justify-center gap-2",
+                      isSubmitting && "cursor-not-allowed opacity-50"
                     )}
                   >
                     <UploadCloud className="h-4 w-4" />
-                    <span>{videoFileName || "Choose Video File"}</span>
+                    <span>{videoFile ? videoFile.name : (videoFileName || "Choose Video File")}</span>
                   </label>
                   <Input
                     id="videoFile-input"
@@ -257,9 +269,9 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
                 </div>
               </FormControl>
               <FormDescription className="mt-2">
-                Upload a new video. Takes precedence over URL.
+                Upload a new video. Overrides URL if selected.
               </FormDescription>
-              <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage> 
+              <FormMessage>{form.formState.errors.videoSrc?.message && !videoFile ? form.formState.errors.videoSrc.message : ''}</FormMessage> 
             </FormItem>
 
             <div className="text-center text-muted-foreground font-semibold self-center py-4 md:py-0 md:mt-8 ">
@@ -272,12 +284,12 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               render={({ field }) => (
                 <FormItem className='flex flex-col'>
                   <FormLabel>Video Source URL (Optional)</FormLabel>
-                  <FormControl  >
+                  <FormControl>
                     <Input 
                       placeholder="e.g., /videos/my-video.mp4 or https://example.com/video.mp4" 
                       {...field} 
                       value={field.value ?? ''} 
-                      disabled={isSubmitting || !!videoFile}
+                      disabled={isSubmitting || !!videoFile} // Disable if file is selected
                       onChange={(e) => {
                         field.onChange(e); 
                         if (e.target.value && !videoFile) { 
@@ -306,7 +318,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               <FormItem className="md:col-span-2">
                 <FormLabel>Content</FormLabel>
                 <FormControl>
-                  <Textarea placeholder="Short description or content for the card..." {...field} rows={4} />
+                  <Textarea placeholder="Short description or content for the card..." {...field} rows={4} disabled={isSubmitting}/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -326,3 +338,5 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     </Form>
   );
 }
+
+    
