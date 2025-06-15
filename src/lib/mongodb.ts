@@ -34,10 +34,11 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     try {
       // Ping the database to check if connection is still alive
       await cached.client.db('admin').command({ ping: 1 });
+      console.log("Using cached MongoDB connection.");
       return { client: cached.client, db: cached.db };
     } catch (e) {
       // Connection lost, clear cache and reconnect
-      console.warn('MongoDB connection lost, attempting to reconnect...', e);
+      console.warn('MongoDB cached connection ping failed, attempting to reconnect...', e);
       cached.client = null;
       cached.db = null;
     }
@@ -45,6 +46,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
 
   if (!cached.client) {
     try {
+      console.log("Attempting new MongoDB connection to URI:", uri.substring(0, uri.indexOf('@') > 0 ? uri.indexOf('@') : 30) + "..." ); // Log URI safely
       client = new MongoClient(uri);
       await client.connect();
       cached.client = client;
@@ -57,6 +59,7 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
   
   db = cached.client.db(dbName);
   cached.db = db;
+  console.log(`Connected to MongoDB database: ${dbName}`);
 
   return { client: cached.client, db: cached.db };
 }
