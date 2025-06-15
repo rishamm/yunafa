@@ -231,16 +231,16 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
             )}
           />
           
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_auto_minmax(0,2fr)] items-center gap-x-4 gap-y-4 md:gap-y-0">
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,max-content)_auto_minmax(0,2fr)] items-center gap-x-4 gap-y-4 md:gap-y-0">
             <FormItem>
               <FormLabel>Video File (Optional)</FormLabel>
               <FormControl>
-                <div>
+                <div className="inline-block"> {/* Added inline-block here */}
                   <label 
                     htmlFor="videoFile-input" 
                     className={cn(
                       buttonVariants({ variant: "outline" }), 
-                      "cursor-pointer flex items-center justify-center gap-2" // Removed w-full
+                      "cursor-pointer flex items-center justify-center gap-2" 
                     )}
                   >
                     <UploadCloud className="h-4 w-4" />
@@ -325,3 +325,5 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     </Form>
   );
 }
+
+    
