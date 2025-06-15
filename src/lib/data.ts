@@ -22,6 +22,7 @@ export async function getCategories(): Promise<Category[]> {
   try {
     const collection = await getCollection<Category>('categories');
     const categoriesRaw = await collection.find({}).sort({ name: 1 }).toArray();
+    // Removed problematic log: console.log(collection,categoriesRaw)
     console.log(`Fetched ${categoriesRaw.length} raw category documents.`);
     if (categoriesRaw.length > 0) {
         console.log("First raw category document sample:", JSON.stringify(categoriesRaw[0], null, 2));
