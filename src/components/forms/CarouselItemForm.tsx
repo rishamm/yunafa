@@ -22,22 +22,16 @@ import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useTransition } from 'react';
 import Image from 'next/image';
+import React from 'react'; // Added for useState
 
-// Schema for form values, including File objects
+// Schema for form values, expects URLs/paths now
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
-  imageUrlFile: z.custom<File>((val) => val instanceof File, {
-    message: "A poster image file is required.",
-  }).optional(), // Optional in form, required for create in action
-  videoFile: z.custom<File>((val) => val instanceof File, {
-    message: "Please upload a video file.",
-  }).optional().nullable(),
+  imageUrl: z.string().url('Image URL must be a valid URL (e.g., https://example.com/image.png or /images/poster.jpg).').or(z.string().startsWith('/')),
+  videoSrc: z.string().url('Video Source must be a valid URL or path (e.g., https://example.com/video.mp4 or /videos/promo.mp4).').or(z.string().startsWith('/')).optional().nullable(),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
-  // Store existing URLs to display and to know if a new file was uploaded
-  currentImageUrl: z.string().optional(),
-  currentVideoSrc: z.string().optional().nullable(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
@@ -50,8 +44,8 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  // Preview state is only for display if an imageUrl is already present
   const [imagePreview, setImagePreview] = React.useState<string | null>(carouselItem?.imageUrl || null);
-  const [videoFileName, setVideoFileName] = React.useState<string | null>(carouselItem?.videoSrc ? 'Existing video' : null);
 
 
   const form = useForm<CarouselItemFormValues>({
@@ -60,64 +54,38 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
       content: carouselItem?.content || '',
+      imageUrl: carouselItem?.imageUrl || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=400&fit=crop&q=60', // default placeholder
+      videoSrc: carouselItem?.videoSrc || '',
       dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
-      imageUrlFile: undefined,
-      videoFile: undefined,
-      currentImageUrl: carouselItem?.imageUrl,
-      currentVideoSrc: carouselItem?.videoSrc,
     },
   });
 
-  const handleImageFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      form.setValue('imageUrlFile', file);
-      setImagePreview(URL.createObjectURL(file));
+  // Update image preview if imageUrl field changes
+  const watchedImageUrl = form.watch('imageUrl');
+  React.useEffect(() => {
+    if (watchedImageUrl && (watchedImageUrl.startsWith('http') || watchedImageUrl.startsWith('/'))) {
+      setImagePreview(watchedImageUrl);
     } else {
-      form.setValue('imageUrlFile', undefined);
-      setImagePreview(carouselItem?.imageUrl || null); // Revert to original if file removed
+      setImagePreview(null); // Clear preview if URL is invalid or empty
     }
-  };
+  }, [watchedImageUrl]);
 
-  const handleVideoFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      form.setValue('videoFile', file);
-      setVideoFileName(file.name);
-    } else {
-      form.setValue('videoFile', undefined);
-      setVideoFileName(carouselItem?.videoSrc ? 'Existing video' : null);
-    }
-  };
 
   async function onSubmit(values: CarouselItemFormValues) {
     startTransition(async () => {
       const formData = new FormData();
-      formData.append('title', values.title);
-      formData.append('category', values.category);
-      formData.append('content', values.content);
-      if (values.dataAiHint) {
-        formData.append('dataAiHint', values.dataAiHint);
-      }
-
-      // Append files if they are provided
-      if (values.imageUrlFile instanceof File) {
-        formData.append('imageUrlFile', values.imageUrlFile);
-      } else if (carouselItem?.imageUrl && !values.imageUrlFile) {
-        // If editing and no new image file, pass the current URL
-        // This helps the action know not to expect a new file to process for image
-         formData.append('currentImageUrl', carouselItem.imageUrl);
-      }
-
-
-      if (values.videoFile instanceof File) {
-        formData.append('videoFile', values.videoFile);
-      } else if (carouselItem?.videoSrc && !values.videoFile) {
-        // If editing and no new video file, pass the current URL
-         formData.append('currentVideoSrc', carouselItem.videoSrc);
-      }
-
-
+      // Append all values from the form. Zod schema ensures they are strings.
+      Object.entries(values).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          formData.append(key, String(value));
+        } else if (key === 'videoSrc' && (value === null || value === '')) {
+          // Ensure empty videoSrc is handled explicitly if schema allows nullable
+          // For FormData, it might be better to not append if value is truly null/empty
+          // However, our action schema handles optional/nullable string
+           formData.append(key, ''); // Send as empty string, action will handle it
+        }
+      });
+      
       const action = carouselItem
         ? updateCarouselItemAction(carouselItem.id, formData)
         : createCarouselItemAction(formData);
@@ -126,7 +94,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       if (result.success) {
         toast({
           title: carouselItem ? 'Carousel Item Updated' : 'Carousel Item Created',
-          description: result.message || "Action successful. Note: Firebase Storage upload logic is pending.",
+          description: result.message || "Action successful.",
         });
         router.push('/admin/carousel');
         router.refresh();
@@ -180,18 +148,18 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
 
         <FormField
           control={form.control}
-          name="imageUrlFile"
-          render={() => ( // field is not directly used for file input control
+          name="imageUrl"
+          render={({ field }) => (
             <FormItem>
-              <FormLabel>Poster Image File</FormLabel>
+              <FormLabel>Image URL / Video Poster URL</FormLabel>
               <FormControl>
                 <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageFileChange}
+                  type="text"
+                  placeholder="https://example.com/image.png or /images/poster.jpg"
+                  {...field}
                 />
               </FormControl>
-              <FormDescription>Required. This image will be used as the poster. (Max 2MB recommended)</FormDescription>
+              <FormDescription>Required. Publicly accessible URL or path to an image in your /public folder.</FormDescription>
               {imagePreview && (
                 <div className="mt-2">
                   <Image src={imagePreview} alt="Poster preview" width={100} height={100} className="rounded object-cover" />
@@ -204,24 +172,23 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
 
         <FormField
           control={form.control}
-          name="videoFile"
-          render={() => ( // field is not directly used for file input control
+          name="videoSrc"
+          render={({ field }) => ( // field is not directly used for file input control
             <FormItem>
-              <FormLabel>Video File (Optional)</FormLabel>
+              <FormLabel>Video Source URL/Path (Optional)</FormLabel>
               <FormControl>
                 <Input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleVideoFileChange}
+                  type="text"
+                  placeholder="https://example.com/video.mp4 or /videos/promo.mp4"
+                  {...field}
+                  // Ensure value is '' if null/undefined for controlled input
+                  value={field.value ?? ''}
                 />
               </FormControl>
               <FormDescription>
-                Optional. If provided, this video will be used. The poster image above will be its preview. (Max 10MB recommended)
+                Optional. Publicly accessible URL or path to a video in your /public folder.
+                The image above will be used as its poster.
               </FormDescription>
-              {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
-              {carouselItem?.videoSrc && !videoFileName && (
-                <p className="text-sm text-muted-foreground mt-1">Currently using existing video: <a href={carouselItem.videoSrc} target="_blank" rel="noopener noreferrer" className="underline">{carouselItem.videoSrc}</a></p>
-              )}
               <FormMessage />
             </FormItem>
           )}
