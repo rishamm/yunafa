@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import {
   Form,
   FormControl,
@@ -28,13 +28,14 @@ import type { CarouselItem, Category } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useState, useTransition, useEffect, ChangeEvent } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, UploadCloud } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const sufyUrlPrefix = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com/';
 
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
-  category: z.string().min(1, 'Category is required.'),
+  category: z.string().min(1, 'Category is required.'), // Changed from min(3) as it's now a select
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)).optional().nullable(),
 });
@@ -58,7 +59,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: carouselItem?.title || '',
-      category: carouselItem?.category || '',
+      category: carouselItem?.category || (allCategories.length > 0 ? allCategories[0].name : ''),
       content: carouselItem?.content || '',
       videoSrc: carouselItem?.videoSrc || '',
     },
@@ -72,7 +73,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         content: carouselItem.content,
         videoSrc: carouselItem.videoSrc || '',
       });
-      setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
+      setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') || carouselItem.videoSrc.startsWith('/') ? 'Remote/Linked Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
     } else {
       form.reset({ 
         title: '',
@@ -85,11 +86,13 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
   }, [carouselItem, form, allCategories]);
 
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setFileNameVisual?: (name: string | null) => void) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setFile(file);
-    if (setFileNameVisual) {
-        setFileNameVisual(file ? file.name : null);
+    setVideoFile(file);
+    setVideoFileName(file ? file.name : null);
+    if (file) {
+        // If a file is chosen, clear the videoSrc URL input to avoid confusion
+        form.setValue('videoSrc', '');
     }
   };
 
@@ -229,53 +232,73 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
             )}
           />
           
-          <FormItem className="md:col-span-1">
-            <FormLabel>Video File (Optional)</FormLabel>
-            <FormControl>
-              <Input
-                type="file"
-                accept="video/*"
-                name="videoFile" 
-                onChange={(e) => handleFileChange(e, setVideoFile, setVideoFileName)}
-              />
-            </FormControl>
-            <FormDescription>
-              Upload a new video file. 
-              To remove an existing video, clear the "Video Source URL" field below and ensure no new video file is selected.
-            </FormDescription>
-            {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
-            <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage> {/* This is okay as it's a general message area */}
-          </FormItem>
-
-          <FormField
-            control={form.control}
-            name="videoSrc"
-            render={({ field }) => (
-              <FormItem className="md:col-span-1">
-                <FormLabel>Video Source URL (Optional)</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Leave empty if uploading a new video" 
-                    {...field} 
-                    value={field.value ?? ''} 
-                    onChange={(e) => {
-                      field.onChange(e); 
-                      if (!videoFile) { 
-                          setVideoFileName(e.target.value ? (e.target.value.startsWith('http') ? "Remote Video" : e.target.value.split('/').pop() || "Video from URL") : null);
-                      }
-                      if(e.target.value === '' && videoFile) { 
-                          setVideoFile(null);
-                      }
-                    }}
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[2fr_auto_2fr] items-center gap-x-4 gap-y-4 md:gap-y-0">
+            <FormItem>
+              <FormLabel>Video File (Optional)</FormLabel>
+              <FormControl>
+                <div>
+                  <label 
+                    htmlFor="videoFile-input" 
+                    className={cn(
+                      buttonVariants({ variant: "outline" }), 
+                      "cursor-pointer w-full flex items-center justify-center gap-2"
+                    )}
+                  >
+                    <UploadCloud className="h-4 w-4" />
+                    <span>{videoFileName || "Choose Video File"}</span>
+                  </label>
+                  <Input
+                    id="videoFile-input"
+                    type="file"
+                    accept="video/*"
+                    className="sr-only"
+                    onChange={handleFileChange}
+                    disabled={isSubmitting}
                   />
-                </FormControl>
-                <FormDescription>
-                  Current video URL. If uploading a new file, this will be overwritten.
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                </div>
+              </FormControl>
+              <FormDescription className="mt-2">
+                Upload a new video. Takes precedence over URL.
+              </FormDescription>
+              {/* FormMessage for videoSrc can appear here if schema fails, it's okay */}
+              <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage> 
+            </FormItem>
+
+            <div className="text-center text-muted-foreground font-semibold py-2 md:py-0 self-center md:mt-8">
+              OR
+            </div>
+            
+            <FormField
+              control={form.control}
+              name="videoSrc"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Video Source URL (Optional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="e.g., /videos/my-video.mp4" 
+                      {...field} 
+                      value={field.value ?? ''} 
+                      disabled={isSubmitting || !!videoFile} // Disable if a file is chosen
+                      onChange={(e) => {
+                        field.onChange(e); 
+                        if (e.target.value && !videoFile) { 
+                            setVideoFileName(e.target.value.startsWith('http') || e.target.value.startsWith('/') ? "Remote/Linked Video" : e.target.value.split('/').pop() || "Video from URL");
+                        } else if (!e.target.value && !videoFile) {
+                            setVideoFileName(null);
+                        }
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription className="mt-2">
+                    Enter a URL if not uploading a file.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
 
           <FormField
             control={form.control}
