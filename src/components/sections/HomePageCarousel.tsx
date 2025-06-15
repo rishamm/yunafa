@@ -36,21 +36,14 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
         category: item.category,
         content: <p>{item.content}</p>,
         'data-ai-hint': item.dataAiHint || item.category.toLowerCase(),
+        videoSrc: item.videoSrc, // Use videoSrc from the item data
       };
-
-      // Assign videoSrc for the first two cards
-      // Ensure your video files are in the /public folder
-      if (index === 0 && items.length > 0) { 
-        cardData.videoSrc = '/col_1.mp4'; // Video for the first card
-      } else if (index === 1 && items.length > 1) { 
-        cardData.videoSrc = '/col_2.mp4'; // Video for the second card
-      }
 
       return (
         <CarouselUICard
           key={item.id || `carousel-card-${index}`}
           card={cardData}
-          index={index} 
+          index={index}
           layout
         />
       );
@@ -68,7 +61,7 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
   }
   finalAssembly.push(...itemsForUiCarousel);
 
-  if (finalAssembly.length === 0 && !leadingElement) { 
+  if (finalAssembly.length === 0 && !leadingElement) {
      return (
       <section>
         <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
