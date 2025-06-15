@@ -21,17 +21,14 @@ import type { CarouselItem } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useState, useTransition, useEffect, ChangeEvent } from 'react';
-import Image from 'next/image';
 import { Loader2 } from 'lucide-react';
 
-// Schema for form values expects URLs AFTER upload
+// Schema for form values, now without imageUrl and dataAiHint
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  imageUrl: z.string().url('Image URL must be a valid URL.').or(z.string().startsWith('/')),
   videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).optional().nullable(),
-  dataAiHint: z.string().optional(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
@@ -45,26 +42,16 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isUploading, setIsUploading] = useState(false);
-
-  const [posterFile, setPosterFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
-
-  const [posterPreview, setPosterPreview] = useState<string | null>(null);
   const [videoFileName, setVideoFileName] = useState<string | null>(null);
   
-  const rawSufyUrlPrefixEnv = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || "https://your-bucket-name.mos.sufycloud.com/";
-  const defaultSufyUrlPrefix = rawSufyUrlPrefixEnv.endsWith('/') ? rawSufyUrlPrefixEnv : `${rawSufyUrlPrefixEnv}/`;
-
-
   const form = useForm<CarouselItemFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
       content: carouselItem?.content || '',
-      imageUrl: carouselItem?.imageUrl || `${defaultSufyUrlPrefix}placeholder-poster.jpg`,
       videoSrc: carouselItem?.videoSrc || '',
-      dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
     },
   });
 
@@ -74,55 +61,35 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
         title: carouselItem.title,
         category: carouselItem.category,
         content: carouselItem.content,
-        imageUrl: carouselItem.imageUrl,
         videoSrc: carouselItem.videoSrc || '',
-        dataAiHint: carouselItem.dataAiHint,
       });
-      setPosterPreview(carouselItem.imageUrl);
       setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
     } else {
-      // For new items, set default imageUrl and clear previews
       form.reset({ 
         title: '',
         category: '',
         content: '',
-        imageUrl: `${defaultSufyUrlPrefix}placeholder-poster.jpg`,
         videoSrc: '',
-        dataAiHint: 'fashion shopping',
       });
-      setPosterPreview(null); 
       setVideoFileName(null);
     }
-  }, [carouselItem, form, defaultSufyUrlPrefix]);
+  }, [carouselItem, form]);
 
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setPreviewVisual?: (preview: string | null) => void, setFileNameVisual?: (name: string | null) => void) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setFileNameVisual?: (name: string | null) => void) => {
     const file = e.target.files?.[0] || null;
     setFile(file);
-    if (setPreviewVisual && file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewVisual(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else if (setPreviewVisual) {
-      setPreviewVisual(null); 
-    }
-
     if (setFileNameVisual) {
         setFileNameVisual(file ? file.name : null);
     }
   };
 
   const uploadFileToSufy = async (file: File): Promise<string | null> => {
-    // This local setIsUploading is for individual file progress, not the main form submission.
-    // Consider if you need separate indicators or one global one.
-    // For now, the main form's isSubmitting will cover this.
     const tempFormData = new FormData();
     tempFormData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', { // Ensure this API route is correctly set up
+      const res = await fetch('/api/upload', {
         method: 'POST',
         body: tempFormData,
       });
@@ -139,42 +106,28 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   };
 
   async function onSubmit(values: CarouselItemFormValues) {
-    setIsUploading(true); // Indicates the overall submission process involving potential uploads
+    setIsUploading(true);
     
-    let finalImageUrl = values.imageUrl;
-    if (posterFile) { // If a new poster file was selected by the user
-      const uploadedPosterUrl = await uploadFileToSufy(posterFile);
-      if (uploadedPosterUrl) {
-        finalImageUrl = uploadedPosterUrl;
-      } else {
-        setIsUploading(false); // Stop submission if poster upload fails
-        return; 
-      }
-    }
-
-    let finalVideoSrc: string | null = values.videoSrc || null; // Default to existing or cleared value
-    if (videoFile) { // If a new video file was selected
+    let finalVideoSrc: string | null | undefined = values.videoSrc; // Use undefined to distinguish from null if not set
+    if (videoFile) { 
       const uploadedVideoUrl = await uploadFileToSufy(videoFile);
       if (uploadedVideoUrl) {
         finalVideoSrc = uploadedVideoUrl;
       } else {
-        setIsUploading(false); // Stop if video upload fails
+        setIsUploading(false); 
         return; 
       }
     } else if (values.videoSrc === '' && !videoFile && carouselItem?.videoSrc) { 
-      // If videoSrc field was explicitly cleared and no new file, it means remove existing video.
-      // Actual deletion from Sufy for old videoSrc would happen in server action if needed.
-      finalVideoSrc = null;
+      finalVideoSrc = null; // Explicitly clearing the video
     }
 
 
     const submissionData = {
       ...values,
-      imageUrl: finalImageUrl,
       videoSrc: finalVideoSrc,
     };
     
-    setIsUploading(false); // Done with file uploads part, now proceed to server action
+    setIsUploading(false);
 
     startTransition(async () => {
       const actionFormData = new FormData();
@@ -182,16 +135,12 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
         if (value !== undefined && value !== null) {
           actionFormData.append(key, String(value));
         } else if (key === 'videoSrc' && (value === null || value === '')) {
-           actionFormData.append(key, ''); // Ensure videoSrc can be explicitly emptied
+           actionFormData.append(key, ''); 
         }
       });
       
-      // Include original URLs if item exists, for comparison in server action if needed for cleanup
-      if (carouselItem?.id) {
-        actionFormData.append('originalImageUrl', carouselItem.imageUrl);
-        if (carouselItem.videoSrc) {
-            actionFormData.append('originalVideoSrc', carouselItem.videoSrc);
-        }
+      if (carouselItem?.id && carouselItem.videoSrc) {
+         actionFormData.append('originalVideoSrc', carouselItem.videoSrc);
       }
 
       const action = carouselItem
@@ -225,9 +174,6 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   }
 
   const isSubmitting = isPending || isUploading;
-  const currentImageUrlInForm = form.getValues('imageUrl');
-  const imagePreviewSrc = posterPreview || currentImageUrlInForm;
-
 
   return (
     <Form {...form}>
@@ -258,42 +204,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
             </FormItem>
           )}
         />
-
-        <FormItem>
-          <FormLabel>Poster Image</FormLabel>
-          <FormControl>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleFileChange(e, setPosterFile, setPosterPreview)}
-            />
-          </FormControl>
-          <FormDescription>Upload a new poster image. If not provided, the existing or default image will be used.</FormDescription>
-          {imagePreviewSrc && (
-            <div className="mt-2">
-              <Image 
-                src={imagePreviewSrc} 
-                alt="Poster preview" 
-                width={100} 
-                height={100} 
-                className="rounded object-cover" 
-                onError={() => {
-                  // If the intended src (local preview or form URL) fails, show a generic placeholder.
-                  // This only affects the visual preview, not the form's `imageUrl` value itself.
-                  setPosterPreview('https://placehold.co/100x100.png');
-                }}
-              />
-            </div>
-          )}
-          {/* Display error for imageUrl from Zod schema if any */}
-          <FormMessage>{form.formState.errors.imageUrl?.message}</FormMessage>
-        </FormItem>
         
-        {/* This hidden input carries the imageUrl. Its value is updated if a new poster is uploaded. */}
-        {/* No, this is not needed. `form.setValue('imageUrl', uploadedPosterUrl)` handles it if upload successful. */}
-        {/* The `values.imageUrl` passed to `onSubmit` will be the original or the new one. */}
-
-
         <FormItem>
           <FormLabel>Video File (Optional)</FormLabel>
           <FormControl>
@@ -301,15 +212,14 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
               type="file"
               accept="video/*"
               name="videoFile" 
-              onChange={(e) => handleFileChange(e, setVideoFile, undefined, setVideoFileName)}
+              onChange={(e) => handleFileChange(e, setVideoFile, setVideoFileName)}
             />
           </FormControl>
           <FormDescription>
-            Upload a new video file. The poster image above will be used as its preview. 
+            Upload a new video file. 
             To remove an existing video, clear the "Video Source URL" field below and ensure no new video file is selected.
           </FormDescription>
           {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
-           {/* Display error for videoSrc from Zod schema if any */}
            <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage>
         </FormItem>
 
@@ -323,15 +233,14 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
                 <Input 
                   placeholder="Leave empty if uploading a new video or no video" 
                   {...field} 
-                  value={field.value ?? ''} // Ensure value is not null for controlled input
+                  value={field.value ?? ''} 
                   onChange={(e) => {
-                    field.onChange(e); // Update form state
-                    if (!videoFile) { // Only update text filename display if no local file is selected
+                    field.onChange(e); 
+                    if (!videoFile) { 
                         setVideoFileName(e.target.value ? (e.target.value.startsWith('http') ? "Remote Video" : e.target.value.split('/').pop() || "Video from URL") : null);
                     }
-                    if(e.target.value === '' && videoFile) { // If URL cleared but local file exists, clear local file state too
+                    if(e.target.value === '' && videoFile) { 
                         setVideoFile(null);
-                        // videoFileName would have been updated by handleFileChange for videoFile
                     }
                   }}
                 />
@@ -345,7 +254,6 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           )}
         />
 
-
         <FormField
           control={form.control}
           name="content"
@@ -355,20 +263,6 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
               <FormControl>
                 <Textarea placeholder="Short description or content for the card..." {...field} rows={4} />
               </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="dataAiHint"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>AI Hint for Poster (Optional)</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., fashion shopping" {...field} />
-              </FormControl>
-              <FormDescription>Keywords for AI image search if the poster needs replacing (max 2 words).</FormDescription>
               <FormMessage />
             </FormItem>
           )}

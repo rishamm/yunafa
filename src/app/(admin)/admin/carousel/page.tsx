@@ -10,9 +10,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { PlusCircle, Edit } from 'lucide-react';
+import { PlusCircle, Edit, Video, VideoOff } from 'lucide-react';
 import { DeleteCarouselItemButton } from './_components/DeleteCarouselItemButton';
-import { ImageWithFallback } from '@/components/common/ImageWithFallback'; // Import the new component
 
 export const metadata = {
   title: 'Manage Carousel - Yunafa Admin',
@@ -37,29 +36,26 @@ export default async function AdminCarouselPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px]">Image</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead>Content Snippet</TableHead>
+                <TableHead className="w-[100px] text-center">Video</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {carouselItems.map((item) => (
                 <TableRow key={item.id}>
-                  <TableCell>
-                    <ImageWithFallback
-                      initialSrc={item.imageUrl}
-                      alt={item.title}
-                      width={80}
-                      height={80}
-                      className="rounded object-cover aspect-square"
-                      data-ai-hint={item.dataAiHint || "carousel image"}
-                    />
-                  </TableCell>
                   <TableCell className="font-medium">{item.title}</TableCell>
                   <TableCell className="text-muted-foreground">{item.category}</TableCell>
                   <TableCell className="text-muted-foreground max-w-sm truncate">{item.content}</TableCell>
+                  <TableCell className="text-center">
+                    {item.videoSrc ? (
+                      <Video className="h-5 w-5 mx-auto text-green-500" />
+                    ) : (
+                      <VideoOff className="h-5 w-5 mx-auto text-muted-foreground" />
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button variant="ghost" size="icon" asChild className="hover:text-primary transition-colors">
                       <Link href={`/admin/carousel/edit/${item.id}`}>

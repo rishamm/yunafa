@@ -21,8 +21,6 @@ export interface CarouselItem {
   id: string;
   title: string;
   category: string;
-  imageUrl: string;
   content: string; // Stored as simple text/string from CMS
-  dataAiHint?: string;
-  videoSrc?: string; // Added for video support
+  videoSrc?: string | null; // Video is optional, primary media if present
 }

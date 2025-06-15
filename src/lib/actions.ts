@@ -49,7 +49,7 @@ const productSchema = z.object({
     z.string().url('Must be a valid URL. Example: https://example.com/image.png')
      .or(z.string().startsWith('https://images.unsplash.com'))
      .or(z.string().startsWith('https://placehold.co'))
-     .or(z.string().startsWith(process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com')) // Allow Sufy URLs
+     .or(z.string().startsWith(process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com')) 
   ),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
   tags: z.string().transform(val => val.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)),
@@ -174,21 +174,22 @@ export async function deleteCategoryAction(id: string) {
   }
 }
 
-// Carousel Item Actions (Now expects URLs after client-side upload)
+// Carousel Item Actions
 const sufyUrlPrefix = process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com';
 const carouselItemActionSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  imageUrl: z.string().url('Image URL must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)),
-  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)).optional().nullable(),
-  dataAiHint: z.string().optional(),
+  videoSrc: z.string().url('Video Source must be a valid URL.')
+             .or(z.string().startsWith('/'))
+             .or(z.string().startsWith(sufyUrlPrefix))
+             .optional().nullable(),
 });
 
 
 export async function createCarouselItemAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { // Handle empty string or "null" string for videoSrc
+   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
     rawData.videoSrc = null;
   }
 
@@ -202,9 +203,7 @@ export async function createCarouselItemAction(formData: FormData) {
   const itemData = parsedResult.data;
   const itemToCreate: Omit<CarouselItem, 'id'> = {
     ...itemData,
-    imageUrl: itemData.imageUrl.trim(),
     videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null,
-    dataAiHint: itemData.dataAiHint || itemData.category.toLowerCase(),
   };
 
   try {
@@ -220,9 +219,11 @@ export async function createCarouselItemAction(formData: FormData) {
 
 export async function updateCarouselItemAction(id: string, formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-  if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { // Handle empty string or "null" string for videoSrc
+  if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
     rawData.videoSrc = null;
   }
+  const originalVideoSrc = formData.get('originalVideoSrc') as string | null;
+
 
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
 
@@ -234,15 +235,12 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   const itemData = parsedResult.data;
   const itemToUpdate: Partial<Omit<CarouselItem, 'id'>> = {
     ...itemData,
-    imageUrl: itemData.imageUrl.trim(),
     videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null,
-    dataAiHint: itemData.dataAiHint || itemData.category.toLowerCase(),
   };
 
   try {
-    // Here, you might want to delete the old file from S3 if imageUrl or videoSrc has changed.
-    // This would involve fetching the current item, comparing URLs, and then calling S3 delete.
-    // For simplicity, this example doesn't include that step, but it's important for production.
+    // Note: Deleting old video from Sufy if it changed/removed is handled by the form/API route logic
+    // This server action just updates the DB record.
     await dbUpdateCarouselItem(id, itemToUpdate);
     revalidatePath('/admin/carousel');
     revalidatePath(`/admin/carousel/edit/${id}`);
@@ -257,8 +255,10 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
 
 export async function deleteCarouselItemAction(id: string) {
   try {
-    // Before deleting from DB, you might want to delete the corresponding files from S3.
-    // Fetch the item, get its imageUrl and videoSrc, then delete from S3.
+    // Note: Deleting video from Sufy should ideally be handled here or by a cleanup job
+    // For simplicity, this example focuses on DB deletion.
+    // const item = await dbGetCarouselItemById(id); // You'd need a dbGetCarouselItemById
+    // if (item?.videoSrc) { /* delete from Sufy */ }
     await dbDeleteCarouselItem(id);
     revalidatePath('/admin/carousel');
     revalidatePath('/');

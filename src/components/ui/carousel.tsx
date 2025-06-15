@@ -7,7 +7,7 @@ import React, {
   createContext,
   useContext,
 } from "react";
-import NextImage from 'next/image'; // Import NextImage
+// Removed NextImage import as CardMedia will only handle video or nothing
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
@@ -24,12 +24,11 @@ interface CarouselProps {
 }
 
 export type CardData = {
-  src: string; // Will be imageUrl for images, or posterUrl for videos
-  videoSrc?: string; // Optional: path to video file
+  videoSrc?: string | null; // Optional: path to video file
   title: string;
   category: string;
   content: React.ReactNode;
-  'data-ai-hint'?: string;
+  // Removed src and data-ai-hint as they were for poster images
 };
 
 export const CarouselContext = createContext<{
@@ -241,7 +240,9 @@ export const Card = ({
         onClick={handleOpen}
         className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-neutral-100 md:h-[40rem] md:w-96 dark:bg-neutral-900"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        {card.videoSrc && ( /* Only render media if videoSrc is present */
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
+        )}
         <div className="relative z-40 p-8">
           <motion.p
             layoutId={layout ? `category-${card.category}` : undefined}
@@ -257,11 +258,9 @@ export const Card = ({
           </motion.p>
         </div>
         <CardMedia
-          src={card.src} // This is imageUrl / posterUrl
-          videoSrc={card.videoSrc} // This is the new videoSrc
-          alt={card.title}
+          videoSrc={card.videoSrc} 
+          alt={card.title} // Alt is still useful for accessibility if the video fails or for context
           className="absolute inset-0 z-10 h-full w-full object-cover"
-          data-ai-hint={card['data-ai-hint']}
         />
       </motion.button>
     </>
@@ -269,70 +268,31 @@ export const Card = ({
 };
 
 interface CardMediaProps {
-  src: string; // imageUrl (for images) or posterUrl (for videos)
-  videoSrc?: string; // Path to video file
+  videoSrc?: string | null; // Path to video file
   alt: string;
   className?: string;
-  'data-ai-hint'?: string;
 }
 
 export const CardMedia = ({
-  src, // This is the imageUrl from CardData, used as poster if videoSrc is present
   videoSrc,
   alt,
   className,
-  'data-ai-hint': dataAiHint,
 }: CardMediaProps) => {
   if (videoSrc) {
     return (
       <video
-        key={videoSrc} // Add key for potential src changes
+        key={videoSrc} 
         src={videoSrc}
-        poster={src} // src (original imageUrl) acts as the poster
+        // Removed poster attribute as we no longer manage separate poster images
         autoPlay
         loop
         muted
         playsInline
         className={cn("absolute inset-0 z-10 h-full w-full object-cover", className)}
-        // data-ai-hint is not directly applicable to video tags in the same way as images for generation
-      />
-    );
-  } else {
-    // Fallback to image rendering if videoSrc is not provided
-    const defaultUnsplashUrl = "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=384&h=640&fit=crop&q=60";
-    const [currentImgSrc, setCurrentImgSrc] = useState(src ? src.trim() : defaultUnsplashUrl);
-    const [currentHint, setCurrentHint] = useState(dataAiHint || (src?.trim() ? alt.substring(0,20) : "fashion shopping"));
-
-    useEffect(() => {
-      // This effect should only run if it's meant to be an image (no videoSrc)
-      const newSrc = src ? src.trim() : defaultUnsplashUrl;
-      setCurrentImgSrc(newSrc);
-      if (!src?.trim()) {
-        setCurrentHint("fashion shopping");
-      } else {
-        setCurrentHint(dataAiHint || alt.substring(0,20));
-      }
-    }, [src, dataAiHint, alt]);
-
-    const handleImageError = () => {
-      setCurrentImgSrc(defaultUnsplashUrl);
-      setCurrentHint("fashion shopping");
-    };
-
-    return (
-      <NextImage
-        src={currentImgSrc}
-        alt={alt}
-        fill
-        sizes="(max-width: 767px) 224px, 384px" // Corresponds to w-56 and md:w-96
-        className={cn(
-          "transition duration-300",
-          className,
-        )}
-        onError={handleImageError}
-        data-ai-hint={currentHint}
-        priority={false}
+        title={alt} // Use alt as title for video for accessibility
       />
     );
   }
+  // If no videoSrc, render nothing for media. The card will be content-focused.
+  return null; 
 };

@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 interface HomePageCarouselProps {
   items: CarouselItemType[];
-  leadingElement?: React.ReactNode; // New prop for the leading element
+  leadingElement?: React.ReactNode; 
 }
 
 function CarouselItemSkeleton() {
@@ -20,6 +20,7 @@ function CarouselItemSkeleton() {
         <Skeleton className="h-4 w-1/3 mb-2 bg-muted" /> {/* Category */}
         <Skeleton className="h-6 w-3/4 bg-muted" />      {/* Title */}
       </div>
+      {/* No skeleton for image/video area as it's conditional */}
     </div>
   );
 }
@@ -31,12 +32,11 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
   if (hasActualItems) {
     itemsForUiCarousel = items.map((item, index) => {
       const cardData: CardData = {
-        src: item.imageUrl, // This is imageUrl, will be used as poster if videoSrc is present
+        // No src (image) by default
         title: item.title,
         category: item.category,
         content: <p>{item.content}</p>,
-        'data-ai-hint': item.dataAiHint || item.category.toLowerCase(),
-        videoSrc: item.videoSrc, // Use videoSrc from the item data
+        videoSrc: item.videoSrc || undefined, // Pass videoSrc if available
       };
 
       return (
