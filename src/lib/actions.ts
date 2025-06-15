@@ -175,14 +175,16 @@ export async function deleteCategoryAction(id: string) {
 }
 
 // Carousel Item Actions
-const sufyUrlPrefix = process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com';
+const sufyUrlPrefixRaw = process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com';
+const sufyUrlPrefixValidated = sufyUrlPrefixRaw.endsWith('/') ? sufyUrlPrefixRaw : `${sufyUrlPrefixRaw}/`;
+
 const carouselItemActionSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
-  category: z.string().min(3, 'Category must be at least 3 characters.'),
+  category: z.string().min(1, 'Category is required.'), // Changed from min(3)
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   videoSrc: z.string().url('Video Source must be a valid URL.')
              .or(z.string().startsWith('/'))
-             .or(z.string().startsWith(sufyUrlPrefix))
+             .or(z.string().startsWith(sufyUrlPrefixValidated))
              .optional().nullable(),
 });
 
@@ -222,8 +224,6 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
     rawData.videoSrc = null;
   }
-  const originalVideoSrc = formData.get('originalVideoSrc') as string | null;
-
 
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
 
@@ -239,8 +239,6 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   };
 
   try {
-    // Note: Deleting old video from Sufy if it changed/removed is handled by the form/API route logic
-    // This server action just updates the DB record.
     await dbUpdateCarouselItem(id, itemToUpdate);
     revalidatePath('/admin/carousel');
     revalidatePath(`/admin/carousel/edit/${id}`);
@@ -255,10 +253,6 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
 
 export async function deleteCarouselItemAction(id: string) {
   try {
-    // Note: Deleting video from Sufy should ideally be handled here or by a cleanup job
-    // For simplicity, this example focuses on DB deletion.
-    // const item = await dbGetCarouselItemById(id); // You'd need a dbGetCarouselItemById
-    // if (item?.videoSrc) { /* delete from Sufy */ }
     await dbDeleteCarouselItem(id);
     revalidatePath('/admin/carousel');
     revalidatePath('/');

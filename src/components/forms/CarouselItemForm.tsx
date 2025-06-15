@@ -37,7 +37,7 @@ const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(1, 'Category is required.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)).optional().nullable(),
+  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix.endsWith('/') ? sufyUrlPrefix : sufyUrlPrefix + '/')).optional().nullable(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
@@ -232,7 +232,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
           />
           
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,max-content)_auto_minmax(0,2fr)] items-start gap-x-6 gap-y-4 md:gap-y-0">
-            <FormItem>
+            <FormItem className='flex flex-col'>
               <FormLabel>Video File (Optional)</FormLabel>
               <FormControl>
                 <div className="inline-block">
@@ -262,7 +262,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage> 
             </FormItem>
 
-            <div className="text-center text-muted-foreground font-semibold self-center py-4 md:py-0 md:mt-8">
+            <div className="text-center text-muted-foreground font-semibold self-center py-4 md:py-0 md:mt-8 ">
               OR
             </div>
             
@@ -270,9 +270,9 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               control={form.control}
               name="videoSrc"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='flex flex-col'>
                   <FormLabel>Video Source URL (Optional)</FormLabel>
-                  <FormControl>
+                  <FormControl  >
                     <Input 
                       placeholder="e.g., /videos/my-video.mp4 or https://example.com/video.mp4" 
                       {...field} 
@@ -286,6 +286,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
                             setVideoFileName(null);
                         }
                       }}
+                      className='w-full md:w-[30rem]'
                     />
                   </FormControl>
                   <FormDescription className="mt-2">
