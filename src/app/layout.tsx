@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 export const metadata: Metadata = {
   title: 'Yunafa - Luxurious Finds',
   description: 'Discover unique and luxurious products at Yunafa.',
+  icons: null, // Explicitly nullify icons to prevent default processing
 };
 
 export default function RootLayout({
