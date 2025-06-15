@@ -3,7 +3,6 @@
 
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
-// Firebase Admin SDK and related imports are removed
 import {
   createProduct as dbCreateProduct,
   updateProduct as dbUpdateProduct,
@@ -14,13 +13,8 @@ import {
   createCarouselItem as dbCreateCarouselItem,
   updateCarouselItem as dbUpdateCarouselItem,
   deleteCarouselItem as dbDeleteCarouselItem,
-  // getCarouselItemById is not directly used in actions but good for consistency if needed
 } from './data';
 import type { Product, Category, CarouselItem } from './types';
-
-// --- File Upload/Deletion Helpers (Removed Firebase specific ones) ---
-// Placeholder for any future generic file handling if not using Firebase
-// For now, these are not used as we revert to URL inputs.
 
 // Contact Form Inquiry
 const inquirySchema = z.object({
@@ -52,7 +46,10 @@ const productSchema = z.object({
   price: z.coerce.number().positive('Price must be a positive number'),
   imageUrl: z.preprocess(
     (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+    z.string().url('Must be a valid URL. Example: https://example.com/image.png')
+     .or(z.string().startsWith('https://images.unsplash.com'))
+     .or(z.string().startsWith('https://placehold.co'))
+     .or(z.string().startsWith(process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com')) // Allow Sufy URLs
   ),
   categoryIds: z.array(z.string()).min(1, 'At least one category is required'),
   tags: z.string().transform(val => val.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)),
@@ -177,22 +174,22 @@ export async function deleteCategoryAction(id: string) {
   }
 }
 
-// Carousel Item Actions
+// Carousel Item Actions (Now expects URLs after client-side upload)
+const sufyUrlPrefix = process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com';
 const carouselItemActionSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  imageUrl: z.string().url('Image URL must be a valid URL.').or(z.string().startsWith('/')), // Allow relative paths for public folder
-  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).optional().nullable(),
+  imageUrl: z.string().url('Image URL must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)),
+  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)).optional().nullable(),
   dataAiHint: z.string().optional(),
 });
 
 
 export async function createCarouselItemAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-  // Ensure videoSrc is correctly handled if empty or not present
-  if (rawData.videoSrc === '') {
-    delete rawData.videoSrc; // Treat empty string as undefined for optional field
+   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { // Handle empty string or "null" string for videoSrc
+    rawData.videoSrc = null;
   }
 
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
@@ -201,13 +198,12 @@ export async function createCarouselItemAction(formData: FormData) {
     console.error('Validation errors (createCarouselItemAction):', parsedResult.error.flatten().fieldErrors);
     return { success: false, error: 'Invalid carousel item data.', errors: parsedResult.error.flatten().fieldErrors };
   }
-
-  const { ...itemData } = parsedResult.data;
-
+  
+  const itemData = parsedResult.data;
   const itemToCreate: Omit<CarouselItem, 'id'> = {
     ...itemData,
     imageUrl: itemData.imageUrl.trim(),
-    videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null, // Ensure videoSrc is null if not provided or empty
+    videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null,
     dataAiHint: itemData.dataAiHint || itemData.category.toLowerCase(),
   };
 
@@ -224,9 +220,10 @@ export async function createCarouselItemAction(formData: FormData) {
 
 export async function updateCarouselItemAction(id: string, formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-  if (rawData.videoSrc === '') {
-    delete rawData.videoSrc;
+  if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { // Handle empty string or "null" string for videoSrc
+    rawData.videoSrc = null;
   }
+
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
 
   if (!parsedResult.success) {
@@ -234,8 +231,7 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
     return { success: false, error: 'Invalid carousel item data.', errors: parsedResult.error.flatten().fieldErrors };
   }
 
-  const { ...itemData } = parsedResult.data;
-  
+  const itemData = parsedResult.data;
   const itemToUpdate: Partial<Omit<CarouselItem, 'id'>> = {
     ...itemData,
     imageUrl: itemData.imageUrl.trim(),
@@ -244,6 +240,9 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   };
 
   try {
+    // Here, you might want to delete the old file from S3 if imageUrl or videoSrc has changed.
+    // This would involve fetching the current item, comparing URLs, and then calling S3 delete.
+    // For simplicity, this example doesn't include that step, but it's important for production.
     await dbUpdateCarouselItem(id, itemToUpdate);
     revalidatePath('/admin/carousel');
     revalidatePath(`/admin/carousel/edit/${id}`);
@@ -258,6 +257,8 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
 
 export async function deleteCarouselItemAction(id: string) {
   try {
+    // Before deleting from DB, you might want to delete the corresponding files from S3.
+    // Fetch the item, get its imageUrl and videoSrc, then delete from S3.
     await dbDeleteCarouselItem(id);
     revalidatePath('/admin/carousel');
     revalidatePath('/');

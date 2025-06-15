@@ -20,17 +20,17 @@ import { useToast } from '@/hooks/use-toast';
 import type { CarouselItem } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
-import { useTransition } from 'react';
+import { useState, useTransition, useEffect, ChangeEvent } from 'react';
 import Image from 'next/image';
-import React from 'react'; // Added for useState
+import { Loader2 } from 'lucide-react';
 
-// Schema for form values, expects URLs/paths now
+// Schema for form values expects URLs AFTER upload
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
-  imageUrl: z.string().url('Image URL must be a valid URL (e.g., https://example.com/image.png or /images/poster.jpg).').or(z.string().startsWith('/')),
-  videoSrc: z.string().url('Video Source must be a valid URL or path (e.g., https://example.com/video.mp4 or /videos/promo.mp4).').or(z.string().startsWith('/')).optional().nullable(),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
+  imageUrl: z.string().url('Image URL must be a valid URL.').or(z.string().startsWith('/')),
+  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).optional().nullable(),
   dataAiHint: z.string().optional(),
 });
 
@@ -44,8 +44,17 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  // Preview state is only for display if an imageUrl is already present
-  const [imagePreview, setImagePreview] = React.useState<string | null>(carouselItem?.imageUrl || null);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const [posterFile, setPosterFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+
+  const [posterPreview, setPosterPreview] = useState<string | null>(carouselItem?.imageUrl || null);
+  const [videoFileName, setVideoFileName] = useState<string | null>(
+    carouselItem?.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null
+  );
+  
+  const defaultSufyUrlPrefix = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || "https://your-bucket-name.mos.sufycloud.com/";
 
 
   const form = useForm<CarouselItemFormValues>({
@@ -54,41 +63,120 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
       content: carouselItem?.content || '',
-      imageUrl: carouselItem?.imageUrl || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=400&fit=crop&q=60', // default placeholder
+      imageUrl: carouselItem?.imageUrl || `${defaultSufyUrlPrefix}placeholder-poster.jpg`,
       videoSrc: carouselItem?.videoSrc || '',
       dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
     },
   });
 
-  // Update image preview if imageUrl field changes
-  const watchedImageUrl = form.watch('imageUrl');
-  React.useEffect(() => {
-    if (watchedImageUrl && (watchedImageUrl.startsWith('http') || watchedImageUrl.startsWith('/'))) {
-      setImagePreview(watchedImageUrl);
-    } else {
-      setImagePreview(null); // Clear preview if URL is invalid or empty
+  useEffect(() => {
+    if (carouselItem) {
+      form.reset({
+        title: carouselItem.title,
+        category: carouselItem.category,
+        content: carouselItem.content,
+        imageUrl: carouselItem.imageUrl,
+        videoSrc: carouselItem.videoSrc || '',
+        dataAiHint: carouselItem.dataAiHint,
+      });
+      setPosterPreview(carouselItem.imageUrl);
+      setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
     }
-  }, [watchedImageUrl]);
+  }, [carouselItem, form, defaultSufyUrlPrefix]);
 
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setPreview?: (preview: string | null) => void) => {
+    const file = e.target.files?.[0] || null;
+    setFile(file);
+    if (setPreview && file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else if (setPreview) {
+      setPreview(null); // Clear preview if no file
+    }
+    if (e.target.name === "videoFile" && !setPreview && setVideoFileName) { // for video file name
+        setVideoFileName(file ? file.name : null);
+    }
+  };
+
+  const uploadFile = async (file: File): Promise<string | null> => {
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Upload failed');
+      }
+      toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully.` });
+      return data.fileUrl;
+    } catch (error: any) {
+      toast({ title: 'Upload Error', description: error.message, variant: 'destructive' });
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   async function onSubmit(values: CarouselItemFormValues) {
+    setIsUploading(true); // General uploading state for the whole process
+    
+    let finalImageUrl = values.imageUrl;
+    if (posterFile) {
+      const uploadedPosterUrl = await uploadFile(posterFile);
+      if (uploadedPosterUrl) {
+        finalImageUrl = uploadedPosterUrl;
+      } else {
+        setIsUploading(false);
+        return; // Stop submission if poster upload fails
+      }
+    }
+
+    let finalVideoSrc = values.videoSrc;
+    if (videoFile) {
+      const uploadedVideoUrl = await uploadFile(videoFile);
+      if (uploadedVideoUrl) {
+        finalVideoSrc = uploadedVideoUrl;
+      } else {
+        // If poster uploaded but video fails, decide if you want to proceed or rollback
+        // For now, we'll stop.
+        setIsUploading(false);
+        return; 
+      }
+    } else if (values.videoSrc === '' && !videoFile) { // If videoSrc was cleared and no new file
+        finalVideoSrc = null;
+    }
+
+
+    const submissionData = {
+      ...values,
+      imageUrl: finalImageUrl,
+      videoSrc: finalVideoSrc,
+    };
+    
+    setIsUploading(false); // Done with file uploads if any
+
     startTransition(async () => {
-      const formData = new FormData();
-      // Append all values from the form. Zod schema ensures they are strings.
-      Object.entries(values).forEach(([key, value]) => {
+      const actionFormData = new FormData();
+      Object.entries(submissionData).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          formData.append(key, String(value));
+          actionFormData.append(key, String(value));
         } else if (key === 'videoSrc' && (value === null || value === '')) {
-          // Ensure empty videoSrc is handled explicitly if schema allows nullable
-          // For FormData, it might be better to not append if value is truly null/empty
-          // However, our action schema handles optional/nullable string
-           formData.append(key, ''); // Send as empty string, action will handle it
+           actionFormData.append(key, ''); 
         }
       });
       
       const action = carouselItem
-        ? updateCarouselItemAction(carouselItem.id, formData)
-        : createCarouselItemAction(formData);
+        ? updateCarouselItemAction(carouselItem.id, actionFormData)
+        : createCarouselItemAction(actionFormData);
       const result = await action;
 
       if (result.success) {
@@ -115,6 +203,8 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       }
     });
   }
+
+  const isSubmitting = isPending || isUploading;
 
   return (
     <Form {...form}>
@@ -146,53 +236,85 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="imageUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Image URL / Video Poster URL</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="https://example.com/image.png or /images/poster.jpg"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Required. Publicly accessible URL or path to an image in your /public folder.</FormDescription>
-              {imagePreview && (
-                <div className="mt-2">
-                  <Image src={imagePreview} alt="Poster preview" width={100} height={100} className="rounded object-cover" />
-                </div>
-              )}
-              <FormMessage />
-            </FormItem>
+        <FormItem>
+          <FormLabel>Poster Image</FormLabel>
+          <FormControl>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, setPosterFile, setPosterPreview)}
+            />
+          </FormControl>
+          <FormDescription>Upload a new poster image. If not provided, the existing or default URL will be used.</FormDescription>
+          {(posterPreview || form.getValues('imageUrl')) && (
+            <div className="mt-2">
+              <Image 
+                src={posterPreview || form.getValues('imageUrl')} 
+                alt="Poster preview" 
+                width={100} 
+                height={100} 
+                className="rounded object-cover" 
+                onError={() => {
+                  if (posterPreview) setPosterPreview(`${defaultSufyUrlPrefix}placeholder-poster.jpg`); // fallback for bad preview
+                  form.setValue('imageUrl', `${defaultSufyUrlPrefix}placeholder-poster.jpg`); // fallback for bad initial URL
+                }}
+              />
+            </div>
           )}
-        />
+          <FormMessage>{form.formState.errors.imageUrl?.message}</FormMessage>
+        </FormItem>
+        
+        {/* Hidden input to carry the imageUrl if no new file is uploaded */}
+        <input type="hidden" {...form.register('imageUrl')} />
+
+
+        <FormItem>
+          <FormLabel>Video File (Optional)</FormLabel>
+          <FormControl>
+            <Input
+              type="file"
+              accept="video/*"
+              name="videoFile" // added name for specific handling
+              onChange={(e) => handleFileChange(e, setVideoFile, undefined /* no direct preview for video file */)}
+            />
+          </FormControl>
+          <FormDescription>
+            Upload a new video file. The poster image above will be used. 
+            If not provided, the existing or default video source URL will be used. 
+            To remove an existing video, clear the "Video Source URL" field below and ensure no new video file is selected.
+          </FormDescription>
+          {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
+           <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage>
+        </FormItem>
 
         <FormField
           control={form.control}
           name="videoSrc"
-          render={({ field }) => ( // field is not directly used for file input control
+          render={({ field }) => (
             <FormItem>
-              <FormLabel>Video Source URL/Path (Optional)</FormLabel>
+              <FormLabel>Video Source URL (Optional - Advanced)</FormLabel>
               <FormControl>
-                <Input
-                  type="text"
-                  placeholder="https://example.com/video.mp4 or /videos/promo.mp4"
-                  {...field}
-                  // Ensure value is '' if null/undefined for controlled input
+                <Input 
+                  placeholder="Leave empty if uploading a new video or no video" 
+                  {...field} 
                   value={field.value ?? ''}
+                  onChange={(e) => {
+                    field.onChange(e);
+                    if (!videoFile) { // Only update text filename if no file is actively selected
+                        setVideoFileName(e.target.value ? (e.target.value.startsWith('http') ? "Remote Video" : e.target.value.split('/').pop() || "Video from URL") : null);
+                    }
+                  }}
                 />
               </FormControl>
               <FormDescription>
-                Optional. Publicly accessible URL or path to a video in your /public folder.
-                The image above will be used as its poster.
+                Current video URL. If you upload a new video file, this will be overwritten. 
+                If you don't upload a new file, this URL will be used. Clear this field to remove the video if no new file is uploaded.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
+
 
         <FormField
           control={form.control}
@@ -222,11 +344,12 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           )}
         />
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => router.back()}>
+          <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button type="submit" disabled={isPending} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            {isPending ? (carouselItem ? 'Saving...' : 'Creating...') : (carouselItem ? 'Save Changes' : 'Create Item')}
+          <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isUploading ? 'Uploading...' : (isPending ? (carouselItem ? 'Saving...' : 'Creating...') : (carouselItem ? 'Save Changes' : 'Create Item'))}
           </Button>
         </div>
       </form>
