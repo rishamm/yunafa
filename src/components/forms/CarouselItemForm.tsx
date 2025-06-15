@@ -49,10 +49,8 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
 
-  const [posterPreview, setPosterPreview] = useState<string | null>(carouselItem?.imageUrl || null);
-  const [videoFileName, setVideoFileName] = useState<string | null>(
-    carouselItem?.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null
-  );
+  const [posterPreview, setPosterPreview] = useState<string | null>(null);
+  const [videoFileName, setVideoFileName] = useState<string | null>(null);
   
   const rawSufyUrlPrefixEnv = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || "https://your-bucket-name.mos.sufycloud.com/";
   const defaultSufyUrlPrefix = rawSufyUrlPrefixEnv.endsWith('/') ? rawSufyUrlPrefixEnv : `${rawSufyUrlPrefixEnv}/`;
@@ -83,80 +81,90 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       setPosterPreview(carouselItem.imageUrl);
       setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
     } else {
-      // For new items, set default imageUrl with the potentially corrected prefix
-      form.setValue('imageUrl', `${defaultSufyUrlPrefix}placeholder-poster.jpg`);
+      // For new items, set default imageUrl and clear previews
+      form.reset({ 
+        title: '',
+        category: '',
+        content: '',
+        imageUrl: `${defaultSufyUrlPrefix}placeholder-poster.jpg`,
+        videoSrc: '',
+        dataAiHint: 'fashion shopping',
+      });
+      setPosterPreview(null); 
+      setVideoFileName(null);
     }
   }, [carouselItem, form, defaultSufyUrlPrefix]);
 
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setPreview?: (preview: string | null) => void) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setPreviewVisual?: (preview: string | null) => void, setFileNameVisual?: (name: string | null) => void) => {
     const file = e.target.files?.[0] || null;
     setFile(file);
-    if (setPreview && file) {
+    if (setPreviewVisual && file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPreview(reader.result as string);
+        setPreviewVisual(reader.result as string);
       };
       reader.readAsDataURL(file);
-    } else if (setPreview) {
-      setPreview(null); // Clear preview if no file
+    } else if (setPreviewVisual) {
+      setPreviewVisual(null); 
     }
-    if (e.target.name === "videoFile" && !setPreview && setVideoFileName) { // for video file name
-        setVideoFileName(file ? file.name : null);
+
+    if (setFileNameVisual) {
+        setFileNameVisual(file ? file.name : null);
     }
   };
 
-  const uploadFile = async (file: File): Promise<string | null> => {
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
+  const uploadFileToSufy = async (file: File): Promise<string | null> => {
+    // This local setIsUploading is for individual file progress, not the main form submission.
+    // Consider if you need separate indicators or one global one.
+    // For now, the main form's isSubmitting will cover this.
+    const tempFormData = new FormData();
+    tempFormData.append('file', file);
 
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch('/api/upload', { // Ensure this API route is correctly set up
         method: 'POST',
-        body: formData,
+        body: tempFormData,
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || 'Upload failed');
+        throw new Error(data.error || `Upload failed for ${file.name}`);
       }
-      toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully.` });
+      toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
       return data.fileUrl;
     } catch (error: any) {
-      toast({ title: 'Upload Error', description: error.message, variant: 'destructive' });
+      toast({ title: 'Sufy Upload Error', description: error.message, variant: 'destructive' });
       return null;
-    } finally {
-      setIsUploading(false);
     }
   };
 
   async function onSubmit(values: CarouselItemFormValues) {
-    setIsUploading(true); // General uploading state for the whole process
+    setIsUploading(true); // Indicates the overall submission process involving potential uploads
     
     let finalImageUrl = values.imageUrl;
-    if (posterFile) {
-      const uploadedPosterUrl = await uploadFile(posterFile);
+    if (posterFile) { // If a new poster file was selected by the user
+      const uploadedPosterUrl = await uploadFileToSufy(posterFile);
       if (uploadedPosterUrl) {
         finalImageUrl = uploadedPosterUrl;
       } else {
-        setIsUploading(false);
-        return; // Stop submission if poster upload fails
+        setIsUploading(false); // Stop submission if poster upload fails
+        return; 
       }
     }
 
-    let finalVideoSrc = values.videoSrc;
-    if (videoFile) {
-      const uploadedVideoUrl = await uploadFile(videoFile);
+    let finalVideoSrc: string | null = values.videoSrc || null; // Default to existing or cleared value
+    if (videoFile) { // If a new video file was selected
+      const uploadedVideoUrl = await uploadFileToSufy(videoFile);
       if (uploadedVideoUrl) {
         finalVideoSrc = uploadedVideoUrl;
       } else {
-        // If poster uploaded but video fails, decide if you want to proceed or rollback
-        // For now, we'll stop.
-        setIsUploading(false);
+        setIsUploading(false); // Stop if video upload fails
         return; 
       }
-    } else if (values.videoSrc === '' && !videoFile) { // If videoSrc was cleared and no new file
-        finalVideoSrc = null;
+    } else if (values.videoSrc === '' && !videoFile && carouselItem?.videoSrc) { 
+      // If videoSrc field was explicitly cleared and no new file, it means remove existing video.
+      // Actual deletion from Sufy for old videoSrc would happen in server action if needed.
+      finalVideoSrc = null;
     }
 
 
@@ -166,7 +174,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       videoSrc: finalVideoSrc,
     };
     
-    setIsUploading(false); // Done with file uploads if any
+    setIsUploading(false); // Done with file uploads part, now proceed to server action
 
     startTransition(async () => {
       const actionFormData = new FormData();
@@ -174,10 +182,18 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
         if (value !== undefined && value !== null) {
           actionFormData.append(key, String(value));
         } else if (key === 'videoSrc' && (value === null || value === '')) {
-           actionFormData.append(key, ''); 
+           actionFormData.append(key, ''); // Ensure videoSrc can be explicitly emptied
         }
       });
       
+      // Include original URLs if item exists, for comparison in server action if needed for cleanup
+      if (carouselItem?.id) {
+        actionFormData.append('originalImageUrl', carouselItem.imageUrl);
+        if (carouselItem.videoSrc) {
+            actionFormData.append('originalVideoSrc', carouselItem.videoSrc);
+        }
+      }
+
       const action = carouselItem
         ? updateCarouselItemAction(carouselItem.id, actionFormData)
         : createCarouselItemAction(actionFormData);
@@ -209,6 +225,9 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   }
 
   const isSubmitting = isPending || isUploading;
+  const currentImageUrlInForm = form.getValues('imageUrl');
+  const imagePreviewSrc = posterPreview || currentImageUrlInForm;
+
 
   return (
     <Form {...form}>
@@ -249,28 +268,30 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
               onChange={(e) => handleFileChange(e, setPosterFile, setPosterPreview)}
             />
           </FormControl>
-          <FormDescription>Upload a new poster image. If not provided, the existing or default URL will be used.</FormDescription>
-          {(posterPreview || form.getValues('imageUrl')) && (
+          <FormDescription>Upload a new poster image. If not provided, the existing or default image will be used.</FormDescription>
+          {imagePreviewSrc && (
             <div className="mt-2">
               <Image 
-                src={posterPreview || form.getValues('imageUrl')} 
+                src={imagePreviewSrc} 
                 alt="Poster preview" 
                 width={100} 
                 height={100} 
                 className="rounded object-cover" 
                 onError={() => {
-                  const fallbackUrl = `${defaultSufyUrlPrefix}placeholder-poster.jpg`;
-                  if (posterPreview) setPosterPreview(fallbackUrl);
-                  form.setValue('imageUrl', fallbackUrl);
+                  // If the intended src (local preview or form URL) fails, show a generic placeholder.
+                  // This only affects the visual preview, not the form's `imageUrl` value itself.
+                  setPosterPreview('https://placehold.co/100x100.png');
                 }}
               />
             </div>
           )}
+          {/* Display error for imageUrl from Zod schema if any */}
           <FormMessage>{form.formState.errors.imageUrl?.message}</FormMessage>
         </FormItem>
         
-        {/* Hidden input to carry the imageUrl if no new file is uploaded */}
-        <input type="hidden" {...form.register('imageUrl')} />
+        {/* This hidden input carries the imageUrl. Its value is updated if a new poster is uploaded. */}
+        {/* No, this is not needed. `form.setValue('imageUrl', uploadedPosterUrl)` handles it if upload successful. */}
+        {/* The `values.imageUrl` passed to `onSubmit` will be the original or the new one. */}
 
 
         <FormItem>
@@ -279,16 +300,16 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
             <Input
               type="file"
               accept="video/*"
-              name="videoFile" // added name for specific handling
-              onChange={(e) => handleFileChange(e, setVideoFile, undefined /* no direct preview for video file */)}
+              name="videoFile" 
+              onChange={(e) => handleFileChange(e, setVideoFile, undefined, setVideoFileName)}
             />
           </FormControl>
           <FormDescription>
-            Upload a new video file. The poster image above will be used. 
-            If not provided, the existing or default video source URL will be used. 
+            Upload a new video file. The poster image above will be used as its preview. 
             To remove an existing video, clear the "Video Source URL" field below and ensure no new video file is selected.
           </FormDescription>
           {videoFileName && <p className="text-sm text-muted-foreground mt-1">Selected video: {videoFileName}</p>}
+           {/* Display error for videoSrc from Zod schema if any */}
            <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage>
         </FormItem>
 
@@ -302,17 +323,21 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
                 <Input 
                   placeholder="Leave empty if uploading a new video or no video" 
                   {...field} 
-                  value={field.value ?? ''}
+                  value={field.value ?? ''} // Ensure value is not null for controlled input
                   onChange={(e) => {
-                    field.onChange(e);
-                    if (!videoFile) { // Only update text filename if no file is actively selected
+                    field.onChange(e); // Update form state
+                    if (!videoFile) { // Only update text filename display if no local file is selected
                         setVideoFileName(e.target.value ? (e.target.value.startsWith('http') ? "Remote Video" : e.target.value.split('/').pop() || "Video from URL") : null);
+                    }
+                    if(e.target.value === '' && videoFile) { // If URL cleared but local file exists, clear local file state too
+                        setVideoFile(null);
+                        // videoFileName would have been updated by handleFileChange for videoFile
                     }
                   }}
                 />
               </FormControl>
               <FormDescription>
-                Current video URL. If you upload a new video file, this will be overwritten. 
+                Current video URL. If you upload a new video file, this field will be overwritten by its URL. 
                 If you don't upload a new file, this URL will be used. Clear this field to remove the video if no new file is uploaded.
               </FormDescription>
               <FormMessage />
