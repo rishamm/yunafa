@@ -34,11 +34,11 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     try {
       // Ping the database to check if connection is still alive
       await cached.client.db('admin').command({ ping: 1 });
-      console.log("Using cached MongoDB connection.");
+      console.log("MongoDB: Using cached connection.");
       return { client: cached.client, db: cached.db };
     } catch (e) {
       // Connection lost, clear cache and reconnect
-      console.warn('MongoDB cached connection ping failed, attempting to reconnect...', e);
+      console.warn('MongoDB: Cached connection ping failed, attempting to reconnect...', e);
       cached.client = null;
       cached.db = null;
     }
@@ -46,20 +46,21 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
 
   if (!cached.client) {
     try {
-      console.log("Attempting new MongoDB connection to URI:", uri.substring(0, uri.indexOf('@') > 0 ? uri.indexOf('@') : 30) + "..." ); // Log URI safely
+      const safeUriToLog = uri.substring(0, uri.indexOf('@') > 0 ? uri.indexOf('@') : 30) + "...";
+      console.log(`MongoDB: Attempting new connection to ${safeUriToLog}`);
       client = new MongoClient(uri);
       await client.connect();
       cached.client = client;
-      console.log("Successfully connected to MongoDB Atlas!");
+      console.log("MongoDB: Successfully connected to MongoDB Atlas!");
     } catch (e) {
-      console.error("Failed to connect to MongoDB Atlas", e);
+      console.error("MongoDB: Failed to connect to MongoDB Atlas", e);
       throw e; // Rethrow error to be caught by caller
     }
   }
   
   db = cached.client.db(dbName);
   cached.db = db;
-  console.log(`Connected to MongoDB database: ${dbName}`);
+  console.log(`MongoDB: Connected to database: ${dbName}`);
 
   return { client: cached.client, db: cached.db };
 }
