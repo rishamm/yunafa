@@ -33,7 +33,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.name}
           </Link>
         </CardTitle>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">{product.description}</p>
+        <p className="text-muted-foreground text-sm mb-4 line-clamp-3 whitespace-pre-wrap">{product.description}</p>
       </CardContent>
       <CardFooter className="p-6 pt-0 flex justify-between items-center">
         <p className="text-lg font-semibold text-primary font-headline">${product.price.toLocaleString()}</p>
@@ -46,3 +46,4 @@ export function ProductCard({ product }: ProductCardProps) {
     </Card>
   );
 }
+

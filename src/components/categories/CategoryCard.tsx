@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import type { Category } from '@/lib/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +18,7 @@ export function CategoryCard({ category }: CategoryCardProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p className="text-muted-foreground text-sm line-clamp-2">{category.description}</p>
+          <p className="text-muted-foreground text-sm line-clamp-2 whitespace-pre-wrap">{category.description}</p>
         </CardContent>
         <CardContent className="pt-0">
             <div className="text-sm text-primary font-medium flex items-center">
@@ -28,3 +29,4 @@ export function CategoryCard({ category }: CategoryCardProps) {
     </Link>
   );
 }
+

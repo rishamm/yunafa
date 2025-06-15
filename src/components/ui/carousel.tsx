@@ -230,7 +230,7 @@ export const Card = ({
               >
                 {card.title}
               </motion.p>
-              <div className="py-10 text-foreground/80">{card.content}</div>
+              <div className="py-10 text-foreground/80 whitespace-pre-wrap">{card.content}</div>
             </motion.div>
           </div>
         )}
@@ -296,3 +296,4 @@ export const CardMedia = ({
   // If no videoSrc, render nothing for media. The card will be content-focused.
   return null; 
 };
+

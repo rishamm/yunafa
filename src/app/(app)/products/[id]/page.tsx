@@ -54,7 +54,7 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
           
           <div className="mb-6 prose max-w-none">
             <h2 className="text-xl font-semibold mb-2 font-headline">Description</h2>
-            <p className="text-foreground/80">{product.description}</p>
+            <p className="text-foreground/80 whitespace-pre-wrap">{product.description}</p>
           </div>
 
           {productCategories.length > 0 && (
@@ -91,3 +91,4 @@ export default async function ProductDetailPage({ params }: { params: { id: stri
     </div>
   );
 }
+

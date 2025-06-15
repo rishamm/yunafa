@@ -1,3 +1,4 @@
+
 import { getCategoryBySlug, getProductsByCategoryId } from '@/lib/data';
 import { ProductList } from '@/components/products/ProductList';
 import { notFound } from 'next/navigation';
@@ -33,8 +34,9 @@ export default async function CategoryPage({ params }: { params: { slug: string 
         </Link>
       </Button>
       <h1 className="text-4xl font-bold mb-4 font-headline">{category.name}</h1>
-      {category.description && <p className="text-lg text-muted-foreground mb-8">{category.description}</p>}
+      {category.description && <p className="text-lg text-muted-foreground mb-8 whitespace-pre-wrap">{category.description}</p>}
       <ProductList products={products} />
     </div>
   );
 }
+
