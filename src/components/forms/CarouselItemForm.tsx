@@ -113,21 +113,38 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
   const uploadFileToSufy = async (file: File): Promise<string | null> => {
     const tempFormData = new FormData();
     tempFormData.append('file', file);
-
+    setIsUploading(true);
     try {
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: tempFormData,
       });
       const data = await res.json();
+      
       if (!res.ok) {
-        throw new Error(data.error || `Upload failed for ${file.name}`);
+        const errorMessage = data.error || `Upload failed for ${file.name}.`;
+        const errorDetails = data.details || `Status: ${res.status}`;
+        console.error('Sufy Upload API Error Response:', data);
+        toast({ 
+            title: 'Upload Failed', 
+            description: `${errorMessage} ${typeof errorDetails === 'string' ? errorDetails : JSON.stringify(errorDetails)}`, 
+            variant: 'destructive' 
+        });
+        return null;
       }
+      
       toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
       return data.fileUrl;
     } catch (error: any) {
-      console.error('Sufy Upload Error:', error.message);
+      console.error('Sufy Upload Client-Side Fetch/JSON Parse Error:', error.message);
+      toast({ 
+        title: 'Upload Error', 
+        description: `Could not communicate with the upload service or parse its response. ${error.message}`, 
+        variant: 'destructive' 
+      });
       return null;
+    } finally {
+        setIsUploading(false);
     }
   };
 
@@ -135,14 +152,11 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     let finalVideoSrc: string | null | undefined = undefined;
 
     if (videoFile) {
-      setIsUploading(true);
       const uploadedVideoUrl = await uploadFileToSufy(videoFile);
-      setIsUploading(false);
       if (uploadedVideoUrl) {
         finalVideoSrc = uploadedVideoUrl;
       } else {
-        toast({ title: 'Upload Failed', description: 'Video could not be uploaded. Please try again or use a URL.', variant: 'destructive' });
-        return;
+        return; 
       }
     } else if (values.videoSrc && values.videoSrc.trim() !== '') {
       finalVideoSrc = values.videoSrc.trim();
