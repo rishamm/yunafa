@@ -35,7 +35,7 @@ const sufyUrlPrefix = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || 'https:/
 
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
-  category: z.string().min(1, 'Category is required.'), // Changed from min(3) as it's now a select
+  category: z.string().min(1, 'Category is required.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(sufyUrlPrefix)).optional().nullable(),
 });
@@ -91,7 +91,6 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     setVideoFile(file);
     setVideoFileName(file ? file.name : null);
     if (file) {
-        // If a file is chosen, clear the videoSrc URL input to avoid confusion
         form.setValue('videoSrc', '');
     }
   };
@@ -232,7 +231,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
             )}
           />
           
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[2fr_auto_2fr] items-center gap-x-4 gap-y-4 md:gap-y-0">
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_auto_minmax(0,2fr)] items-center gap-x-4 gap-y-4 md:gap-y-0">
             <FormItem>
               <FormLabel>Video File (Optional)</FormLabel>
               <FormControl>
@@ -241,7 +240,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
                     htmlFor="videoFile-input" 
                     className={cn(
                       buttonVariants({ variant: "outline" }), 
-                      "cursor-pointer w-full flex items-center justify-center gap-2"
+                      "cursor-pointer flex items-center justify-center gap-2" // Removed w-full
                     )}
                   >
                     <UploadCloud className="h-4 w-4" />
@@ -260,11 +259,10 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               <FormDescription className="mt-2">
                 Upload a new video. Takes precedence over URL.
               </FormDescription>
-              {/* FormMessage for videoSrc can appear here if schema fails, it's okay */}
               <FormMessage>{form.formState.errors.videoSrc?.message}</FormMessage> 
             </FormItem>
 
-            <div className="text-center text-muted-foreground font-semibold py-2 md:py-0 self-center md:mt-8">
+            <div className="text-center text-muted-foreground font-semibold self-center py-4 md:py-0 md:mt-8">
               OR
             </div>
             
@@ -276,10 +274,10 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
                   <FormLabel>Video Source URL (Optional)</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="e.g., /videos/my-video.mp4" 
+                      placeholder="e.g., /videos/my-video.mp4 or https://example.com/video.mp4" 
                       {...field} 
                       value={field.value ?? ''} 
-                      disabled={isSubmitting || !!videoFile} // Disable if a file is chosen
+                      disabled={isSubmitting || !!videoFile}
                       onChange={(e) => {
                         field.onChange(e); 
                         if (e.target.value && !videoFile) { 
