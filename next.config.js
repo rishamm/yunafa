@@ -27,7 +27,7 @@ const nextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https', 
+        protocol: 'https',
         hostname: 'plus.unsplash.com',
         port: '',
         pathname: '/**',
@@ -38,21 +38,24 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      { // For Sufy CDN - general endpoint
+      { // For Sufy: Matches the hostname structure from the SUFY_PUBLIC_URL_PREFIX placeholder.
+        // Example: if SUFY_PUBLIC_URL_PREFIX is "https://your-bucket-name.mos.sufycloud.com/",
+        // then the hostname is "your-bucket-name.mos.sufycloud.com".
+        // Please adjust this if your Sufy URL structure is different.
         protocol: 'https',
-        hostname: 'mos.sufycloud.com', 
-        port: '',
-        pathname: '/**', 
-      },
-      { // For specific Sufy bucket hostname yunafa.mos.ap-southeast-2.sufybkt.com
-        protocol: 'https',
-        hostname: 'yunafa.mos.ap-southeast-2.sufybkt.com',
+        hostname: 'your-bucket-name.mos.sufycloud.com',
         port: '',
         pathname: '/**',
       },
-      { // For the problematic hostname idoxdgh.sufydely.com
+      { // A more general pattern if your bucket names are subdomains of a primary Sufy domain like mos.sufycloud.com
         protocol: 'https',
-        hostname: 'idoxdgh.sufydely.com',
+        hostname: '*.mos.sufycloud.com', // Allows any subdomain of mos.sufycloud.com
+        port: '',
+        pathname: '/**',
+      },
+       { // A general pattern if your bucket names are subdomains of a primary Sufy domain like sufybkt.com for ap-southeast-2
+        protocol: 'https',
+        hostname: '*.mos.ap-southeast-2.sufybkt.com', // Allows any subdomain of mos.ap-southeast-2.sufybkt.com
         port: '',
         pathname: '/**',
       }
