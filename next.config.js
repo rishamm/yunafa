@@ -38,12 +38,18 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
-      { // For Sufy CDN - adjust hostname if your bucket/CDN URL is different
+      { // For Sufy CDN - general endpoint
         protocol: 'https',
-        hostname: 'mos.sufycloud.com', // Default based on endpoint. Replace if your files are served from a different (sub)domain.
+        hostname: 'mos.sufycloud.com', 
         port: '',
-        pathname: '/**', // Or a more specific path like '/your-bucket-name/**'
+        pathname: '/**', 
       },
+      { // For specific Sufy bucket hostname yunafa.mos.ap-southeast-2.sufybkt.com
+        protocol: 'https',
+        hostname: 'yunafa.mos.ap-southeast-2.sufybkt.com',
+        port: '',
+        pathname: '/**',
+      }
       // If you have a custom CDN domain for Sufy, add it here too.
       // Example:
       // {
