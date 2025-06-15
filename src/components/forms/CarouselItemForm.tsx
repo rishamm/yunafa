@@ -231,11 +231,11 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
             )}
           />
           
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,max-content)_auto_minmax(0,2fr)] items-center gap-x-4 gap-y-4 md:gap-y-0">
+          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-[minmax(0,max-content)_auto_minmax(0,2fr)] items-center gap-x-6 gap-y-4 md:gap-y-0">
             <FormItem>
               <FormLabel>Video File (Optional)</FormLabel>
               <FormControl>
-                <div className="inline-block"> {/* Added inline-block here */}
+                <div className="inline-block">
                   <label 
                     htmlFor="videoFile-input" 
                     className={cn(
@@ -325,5 +325,3 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     </Form>
   );
 }
-
-    
