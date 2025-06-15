@@ -16,28 +16,35 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from '@/hooks/use-toast';
-import type { CarouselItem } from '@/lib/types';
+import type { CarouselItem, Category } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useState, useTransition, useEffect, ChangeEvent } from 'react';
 import { Loader2 } from 'lucide-react';
 
-// Schema for form values, now without imageUrl and dataAiHint
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
-  category: z.string().min(3, 'Category must be at least 3 characters.'),
+  category: z.string().min(1, 'Category is required.'), // Ensure a category is selected
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).optional().nullable(),
+  videoSrc: z.string().url('Video Source must be a valid URL.').or(z.string().startsWith('/')).or(z.string().startsWith(process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com')).optional().nullable(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
 
 interface CarouselItemFormProps {
   carouselItem?: CarouselItem;
+  allCategories: Category[]; // Added prop for all categories
 }
 
-export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
+export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -67,13 +74,13 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
     } else {
       form.reset({ 
         title: '',
-        category: '',
+        category: allCategories.length > 0 ? allCategories[0].name : '', // Default to first category if available
         content: '',
         videoSrc: '',
       });
       setVideoFileName(null);
     }
-  }, [carouselItem, form]);
+  }, [carouselItem, form, allCategories]);
 
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>, setFile: (file: File | null) => void, setFileNameVisual?: (name: string | null) => void) => {
@@ -108,7 +115,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
   async function onSubmit(values: CarouselItemFormValues) {
     setIsUploading(true);
     
-    let finalVideoSrc: string | null | undefined = values.videoSrc; // Use undefined to distinguish from null if not set
+    let finalVideoSrc: string | null | undefined = values.videoSrc; 
     if (videoFile) { 
       const uploadedVideoUrl = await uploadFileToSufy(videoFile);
       if (uploadedVideoUrl) {
@@ -118,7 +125,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
         return; 
       }
     } else if (values.videoSrc === '' && !videoFile && carouselItem?.videoSrc) { 
-      finalVideoSrc = null; // Explicitly clearing the video
+      finalVideoSrc = null; 
     }
 
 
@@ -197,9 +204,24 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., New Arrivals" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {allCategories.length > 0 ? (
+                    allCategories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="disabled" disabled>No categories available. Create one first.</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

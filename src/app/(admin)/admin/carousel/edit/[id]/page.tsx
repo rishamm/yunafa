@@ -1,6 +1,8 @@
+
 import { CarouselItemForm } from '@/components/forms/CarouselItemForm';
-import { getCarouselItemById } from '@/lib/data';
+import { getCarouselItemById, getCategories } from '@/lib/data';
 import { notFound } from 'next/navigation';
+import type { Category } from '@/lib/types';
 
 export async function generateMetadata({ params }: { params: { id: string } }) {
   const item = await getCarouselItemById(params.id);
@@ -11,6 +13,7 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 
 export default async function EditCarouselItemPage({ params }: { params: { id: string } }) {
   const item = await getCarouselItemById(params.id);
+  const allCategories: Category[] = await getCategories();
 
   if (!item) {
     notFound();
@@ -20,7 +23,7 @@ export default async function EditCarouselItemPage({ params }: { params: { id: s
     <div className="space-y-6">
       <h1 className="text-3xl font-bold font-headline">Edit Carousel Item: <span className="text-primary">{item.title}</span></h1>
       <div className="bg-card p-6 rounded-lg shadow-lg">
-        <CarouselItemForm carouselItem={item} />
+        <CarouselItemForm carouselItem={item} allCategories={allCategories} />
       </div>
     </div>
   );
