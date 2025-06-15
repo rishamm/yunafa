@@ -9,6 +9,7 @@ export const metadata = {
 
 export default async function NewCarouselItemPage() {
   const allCategories: Category[] = await getCategories();
+  console.log("NewCarouselItemPage: allCategories fetched:", JSON.stringify(allCategories.map(c => ({id: c.id, name: c.name})), null, 2));
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold font-headline">Add New Carousel Item</h1>
@@ -18,3 +19,4 @@ export default async function NewCarouselItemPage() {
     </div>
   );
 }
+

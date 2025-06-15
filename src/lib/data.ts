@@ -18,10 +18,20 @@ function mapMongoDocument<T extends { _id?: ObjectId; id?: string }>(doc: any): 
 
 // --- Category Functions ---
 export async function getCategories(): Promise<Category[]> {
+  console.log("Attempting to fetch categories from database...");
   try {
     const collection = await getCollection<Category>('categories');
-    const categories = await collection.find({}).sort({ name: 1 }).toArray();
-    return categories.map(mapMongoDocument);
+    const categoriesRaw = await collection.find({}).sort({ name: 1 }).toArray();
+    console.log(`Fetched ${categoriesRaw.length} raw category documents.`);
+    if (categoriesRaw.length > 0) {
+        console.log("First raw category document sample:", JSON.stringify(categoriesRaw[0], null, 2));
+    }
+    const categoriesMapped = categoriesRaw.map(mapMongoDocument);
+    if (categoriesMapped.length > 0) {
+        console.log("First mapped category document sample:", JSON.stringify(categoriesMapped[0], null, 2));
+    }
+    console.log(`Returning ${categoriesMapped.length} mapped categories.`);
+    return categoriesMapped;
   } catch (error) {
     console.error('Error fetching categories:', error);
     return []; // Return empty array on error
@@ -54,15 +64,27 @@ export async function createCategory(categoryData: Omit<Category, 'id' | 'slug'>
   try {
     const collection = await getCollection<Category>('categories');
     const newId = new ObjectId().toHexString(); // Generate a string ID
-    const newCategory: Category = {
+    const newCategoryDocument: Category = {
       ...categoryData,
       id: newId,
       slug: categoryData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, ''),
     };
-    const result = await collection.insertOne(newCategory as any); // Cast to any to avoid _id issue with mongodb driver
-    // MongoDB driver adds _id automatically. We are using `id` as our primary string identifier.
-    // To return the object consistent with our type, we fetch it or map it.
-    return { ...newCategory, id: result.insertedId ? newId : newId }; // Ensure the ID we generated is returned
+    
+    const insertResult = await collection.insertOne(newCategoryDocument as any);
+    
+    if (insertResult.insertedId) {
+      // Fetch the document we just inserted to ensure we return the exact representation from the DB, mapped correctly.
+      // MongoDB's insertedId is an ObjectId, so we query by _id using it.
+      const createdDoc = await collection.findOne({ _id: insertResult.insertedId });
+      if (createdDoc) {
+        return mapMongoDocument(createdDoc);
+      }
+      // Fallback if findOne fails, though unlikely if insert succeeded
+      console.warn("Category created, but findOne after insert failed. Returning constructed object.");
+      return newCategoryDocument;
+    }
+    
+    throw new Error("Category creation failed, no insertedId returned from MongoDB.");
   } catch (error) {
     console.error('Error creating category:', error);
     throw error; // Re-throw to be handled by action
@@ -153,12 +175,20 @@ export async function createProduct(productData: Omit<Product, 'id'>): Promise<P
   try {
     const collection = await getCollection<Product>('products');
     const newId = new ObjectId().toHexString();
-    const newProduct: Product = {
+    const newProductDocument: Product = {
       ...productData,
       id: newId,
     };
-    const result = await collection.insertOne(newProduct as any);
-    return { ...newProduct, id: result.insertedId ? newId : newId };
+    const insertResult = await collection.insertOne(newProductDocument as any);
+     if (insertResult.insertedId) {
+      const createdDoc = await collection.findOne({ _id: insertResult.insertedId });
+      if (createdDoc) {
+        return mapMongoDocument(createdDoc);
+      }
+      console.warn("Product created, but findOne after insert failed. Returning constructed object.");
+      return newProductDocument;
+    }
+    throw new Error("Product creation failed, no insertedId returned from MongoDB.");
   } catch (error) {
     console.error('Error creating product:', error);
     throw error;
@@ -218,13 +248,21 @@ export async function getCarouselItemById(id: string): Promise<CarouselItem | un
 export async function createCarouselItem(itemData: Omit<CarouselItem, 'id'>): Promise<CarouselItem> {
   try {
     const collection = await getCollection<CarouselItem>('carouselItems');
-    const newId = `car${new ObjectId().toHexString()}`;
-    const newItem: CarouselItem = {
+    const newId = `car${new ObjectId().toHexString()}`; // Kept original prefixing logic
+    const newItemDocument: CarouselItem = {
       ...itemData,
       id: newId,
     };
-    const result = await collection.insertOne(newItem as any);
-    return { ...newItem, id: result.insertedId ? newId : newId };
+    const insertResult = await collection.insertOne(newItemDocument as any);
+    if (insertResult.insertedId) {
+      const createdDoc = await collection.findOne({ _id: insertResult.insertedId });
+      if (createdDoc) {
+        return mapMongoDocument(createdDoc);
+      }
+      console.warn("CarouselItem created, but findOne after insert failed. Returning constructed object.");
+      return newItemDocument;
+    }
+    throw new Error("CarouselItem creation failed, no insertedId returned from MongoDB.");
   } catch (error) {
     console.error('Error creating carousel item:', error);
     throw error;
@@ -256,3 +294,4 @@ export async function deleteCarouselItem(id: string): Promise<boolean> {
     throw error;
   }
 }
+

@@ -14,6 +14,8 @@ export async function generateMetadata({ params }: { params: { id: string } }) {
 export default async function EditCarouselItemPage({ params }: { params: { id: string } }) {
   const item = await getCarouselItemById(params.id);
   const allCategories: Category[] = await getCategories();
+  console.log(`EditCarouselItemPage (id: ${params.id}): allCategories fetched:`, JSON.stringify(allCategories.map(c => ({id: c.id, name: c.name})), null, 2));
+
 
   if (!item) {
     notFound();
@@ -28,3 +30,4 @@ export default async function EditCarouselItemPage({ params }: { params: { id: s
     </div>
   );
 }
+
