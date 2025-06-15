@@ -177,7 +177,20 @@ const carouselItemSchema = z.object({
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   imageUrl: z.preprocess(
     (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL. Example: https://example.com/image.png').or(z.string().startsWith('https://placehold.co'))
+    z.string().url('Must be a valid URL for image or poster. Example: https://example.com/image.png')
+     .or(z.string().startsWith('https://images.unsplash.com'))
+     .or(z.string().startsWith('https://placehold.co'))
+  ),
+  videoSrc: z.preprocess(
+    // FormData sends "null" for null, or empty string if input was cleared.
+    // Treat "null" string or empty string as actually null for zod optional.
+    (val) => (val === "null" || val === "" ? null : val),
+    z.string()
+      .refine(val => val.startsWith('http') || val.startsWith('/'), {
+        message: 'Must be a valid URL (e.g., https://...) or a local path (e.g., /my-video.mp4)',
+      })
+      .optional()
+      .nullable()
   ),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
@@ -185,15 +198,24 @@ const carouselItemSchema = z.object({
 
 export async function createCarouselItemAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
+  // videoSrc might be "null" if it was null and stringified by FormData.
+  // The schema's preprocess handles this.
   const parsedData = carouselItemSchema.safeParse(rawData);
 
   if (!parsedData.success) {
     console.error('Validation errors (createCarouselItemAction):', parsedData.error.flatten().fieldErrors);
     return { success: false, error: 'Invalid carousel item data.', errors: parsedData.error.flatten().fieldErrors };
   }
+  
+  // Ensure that null videoSrc is not passed as "null" string
+  const dataToSave = { ...parsedData.data };
+  if (dataToSave.videoSrc === null) {
+    delete (dataToSave as any).videoSrc; // Or ensure DB schema handles null
+  }
+
 
   try {
-    await dbCreateCarouselItem(parsedData.data as Omit<CarouselItem, 'id'>);
+    await dbCreateCarouselItem(dataToSave as Omit<CarouselItem, 'id'>);
     revalidatePath('/admin/carousel');
     revalidatePath('/'); // Revalidate homepage as carousel is there
     return { success: true, message: 'Carousel item created successfully.' };
@@ -212,8 +234,24 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
     return { success: false, error: 'Invalid carousel item data.', errors: parsedData.error.flatten().fieldErrors };
   }
 
+  const dataToUpdate = { ...parsedData.data };
+  // If videoSrc is null, we want to set it to null in the DB or remove the field.
+  // If the DB field is optional, sending `videoSrc: null` might be fine.
+  // Or, construct $set and $unset operations for MongoDB.
+  // For simplicity, we'll pass it as is and let the DB layer handle `null`.
+  // If `videoSrc` is intended to be removed, then an $unset operation is better.
+  // For now, if `videoSrc` is null, it will be passed as null.
+  // If `videoSrc` should be removed if empty/null:
+  // if (dataToUpdate.videoSrc === null) {
+  //   delete (dataToUpdate as any).videoSrc; 
+  //   // and then in dbUpdateCarouselItem use $unset: { videoSrc: "" } if needed
+  // }
+
+
   try {
-    await dbUpdateCarouselItem(id, parsedData.data as Partial<Omit<CarouselItem, 'id'>>);
+    // The dbUpdateCarouselItem expects Partial<Omit<CarouselItem, 'id'>>
+    // If videoSrc is null, it means "clear this field".
+    await dbUpdateCarouselItem(id, dataToUpdate as Partial<Omit<CarouselItem, 'id'>>);
     revalidatePath('/admin/carousel');
     revalidatePath(`/admin/carousel/edit/${id}`);
     revalidatePath('/');

@@ -27,9 +27,18 @@ const formSchema = z.object({
   category: z.string().min(3, 'Category must be at least 3 characters.'),
   imageUrl: z.preprocess(
     (val) => (typeof val === 'string' ? val.trim() : val),
-    z.string().url('Must be a valid URL. Example: https://example.com/image.png')
-     .or(z.string().startsWith('https://images.unsplash.com')) // Allow unsplash
-     .or(z.string().startsWith('https://placehold.co')) // Still allow for explicit placeholder if needed
+    z.string().url('Must be a valid URL for the image or video poster. Example: https://example.com/image.png')
+     .or(z.string().startsWith('https://images.unsplash.com'))
+     .or(z.string().startsWith('https://placehold.co'))
+  ),
+  videoSrc: z.preprocess(
+    (val) => (typeof val === 'string' && val.trim() === '' ? null : val), // Treat empty string as null
+    z.string()
+      .refine(val => val.startsWith('http') || val.startsWith('/'), {
+        message: 'Must be a valid URL (e.g., https://...) or a local path (e.g., /my-video.mp4)',
+      })
+      .optional()
+      .nullable()
   ),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   dataAiHint: z.string().optional(),
@@ -52,6 +61,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       title: carouselItem?.title || '',
       category: carouselItem?.category || '',
       imageUrl: carouselItem?.imageUrl?.trim() || 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60',
+      videoSrc: carouselItem?.videoSrc || null,
       content: carouselItem?.content || '',
       dataAiHint: carouselItem?.dataAiHint || 'fashion shopping',
     },
@@ -63,8 +73,18 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       Object.entries(values).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           formData.append(key, String(value));
+        } else if (key === 'videoSrc' && value === null) {
+          // Explicitly do not append if null, or handle as server expects for deletion/clearing
         }
       });
+
+      // Ensure videoSrc is either a string or not present if it's null/undefined
+      // FormData converts null to "null", so we might need to handle this specifically
+      // if the action expects absence of the field vs. a "null" string.
+      // For now, String(value) will convert null to "null".
+      // If `videoSrc` is truly optional and `null` means "not set",
+      // the action and data layers should handle "null" string appropriately or
+      // the field should be conditionally appended.
 
       const action = carouselItem ? updateCarouselItemAction(carouselItem.id, formData) : createCarouselItemAction(formData);
       const result = await action;
@@ -128,11 +148,35 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
           name="imageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image URL</FormLabel>
+              <FormLabel>Image URL / Video Poster URL</FormLabel>
               <FormControl>
-                <Input placeholder="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60" {...field} />
+                <Input 
+                  placeholder="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=800&fit=crop&q=60" 
+                  {...field} 
+                />
               </FormControl>
-              <FormDescription>Provide a direct URL to an image. Uses Unsplash for default.</FormDescription>
+              <FormDescription>Required. Direct URL to an image (or poster for video). Uses Unsplash for default.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="videoSrc"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Video Source URL/Path (Optional)</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="/videos/my-video.mp4 or https://example.com/video.mp4" 
+                  {...field} 
+                  value={field.value ?? ''} // Handle null for input value
+                />
+              </FormControl>
+              <FormDescription>
+                Provide a direct URL to a video or a path to a video in your `/public` folder (e.g., `/videos/main-promo.mp4`). 
+                If provided, the Image URL above will be used as its poster.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -159,7 +203,7 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
               <FormControl>
                 <Input placeholder="e.g., fashion shopping" {...field} />
               </FormControl>
-              <FormDescription>Keywords for AI image search if the image needs replacing (max 2 words).</FormDescription>
+              <FormDescription>Keywords for AI image search if the image/poster needs replacing (max 2 words).</FormDescription>
               <FormMessage />
             </FormItem>
           )}

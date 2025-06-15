@@ -41,9 +41,9 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
       // Assign videoSrc for the first two cards
       // Ensure your video files are in the /public folder
       if (index === 0 && items.length > 0) { 
-        cardData.videoSrc = '/carousel-video-1.mp4'; // Video for the first card
+        cardData.videoSrc = '/col_1.mp4'; // Video for the first card
       } else if (index === 1 && items.length > 1) { 
-        cardData.videoSrc = '/carousel-video-2.mp4'; // Video for the second card
+        cardData.videoSrc = '/col_2.mp4'; // Video for the second card
       }
 
       return (
