@@ -13,7 +13,7 @@ import {
   createCarouselItem as dbCreateCarouselItem,
   updateCarouselItem as dbUpdateCarouselItem,
   deleteCarouselItem as dbDeleteCarouselItem,
-  getCarouselItemById, // Import to fetch current item for updates
+  getCarouselItemById,
 } from './data';
 import type { Product, Category, CarouselItem } from './types';
 
@@ -173,7 +173,6 @@ export async function deleteCategoryAction(id: string) {
 }
 
 // Carousel Item Actions
-// This schema is for validating form data that might contain File objects
 const carouselItemActionSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(3, 'Category must be at least 3 characters.'),
@@ -182,12 +181,62 @@ const carouselItemActionSchema = z.object({
   imageUrlFile: z.custom((val) => val === undefined || val instanceof File, {
     message: "Poster image must be a file if provided.",
   }).optional(),
-  videoFile: z.custom((val) => val === undefined || val instanceof File, {
-    message: "Video must be a file if provided.",
+  videoFile: z.custom((val) => val === undefined || val instanceof File || val === null, {
+    message: "Video must be a file if provided, or null to remove.",
   }).optional().nullable(),
-  currentImageUrl: z.string().url().optional(), // Sent if editing and image not changed
-  currentVideoSrc: z.string().url().optional().nullable(), // Sent if editing and video not changed
+  currentImageUrl: z.string().url().optional(),
+  currentVideoSrc: z.string().url().optional().nullable(),
 });
+
+// Helper function conceptual placeholder for Firebase Storage upload
+async function uploadFileToFirebaseStorage(file: File, pathPrefix: string): Promise<string> {
+  // DEVELOPER TODO: Implement actual Firebase Storage upload
+  // 1. Ensure Firebase Admin SDK is initialized (ideally globally or via a helper)
+  //    e.g., import admin from 'firebase-admin';
+  //         import { getStorage } from 'firebase-admin/storage';
+  //         if (!admin.apps.length) { admin.initializeApp({ credential: admin.credential.cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY!)), storageBucket: 'YOUR_BUCKET_NAME.appspot.com' }); }
+  //    NOTE: Add 'firebase-admin' to package.json dependencies.
+  //          Store service account key and bucket name securely (e.g., environment variables).
+
+  // 2. Get storage bucket
+  //    const bucket = getStorage().bucket();
+
+  // 3. Generate a unique filename (e.g., using timestamp or UUID)
+  //    const uniqueFileName = `${pathPrefix}/${Date.now()}-${file.name.replace(/\s+/g, '_')}`;
+  //    const fileUpload = bucket.file(uniqueFileName);
+
+  // 4. Convert File object to Buffer
+  //    const buffer = Buffer.from(await file.arrayBuffer());
+
+  // 5. Upload the buffer
+  //    await fileUpload.save(buffer, { resumable: false, public: true, contentType: file.type });
+  
+  // 6. Get the public URL
+  //    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${uniqueFileName}`; // Or fileUpload.publicUrl() if configured
+  //    return publicUrl;
+
+  console.log(`DEVELOPER_TODO: Uploading ${file.name} to Firebase Storage at ${pathPrefix}. This is a placeholder.`);
+  // Return a placeholder URL for now. Replace with actual URL from Firebase Storage.
+  return `https://placehold.co/600x400.png?text=Uploaded+${encodeURIComponent(file.name)}`;
+}
+
+// Helper function conceptual placeholder for Firebase Storage deletion
+async function deleteFileFromFirebaseStorage(fileUrl: string | undefined | null): Promise<void> {
+  if (!fileUrl) return;
+  // DEVELOPER TODO: Implement actual Firebase Storage deletion
+  // 1. Ensure Firebase Admin SDK is initialized.
+  // 2. Parse the bucket and file path from the URL.
+  //    (e.g., for https://storage.googleapis.com/YOUR_BUCKET_NAME/path/to/file.jpg)
+  //    const bucketName = 'YOUR_BUCKET_NAME.appspot.com'; // From env or config
+  //    const filePath = fileUrl.substring(fileUrl.indexOf(bucketName) + bucketName.length + 1);
+  // 3. Get storage bucket and file reference.
+  //    const bucket = getStorage().bucket(bucketName);
+  //    const file = bucket.file(filePath);
+  // 4. Delete the file.
+  //    await file.delete({ ignoreNotFound: true });
+
+  console.log(`DEVELOPER_TODO: Deleting ${fileUrl} from Firebase Storage. This is a placeholder.`);
+}
 
 
 export async function createCarouselItemAction(formData: FormData) {
@@ -198,7 +247,7 @@ export async function createCarouselItemAction(formData: FormData) {
     content: formData.get('content'),
     dataAiHint: formData.get('dataAiHint') || undefined,
     imageUrlFile: formData.get('imageUrlFile') instanceof File ? formData.get('imageUrlFile') : undefined,
-    videoFile: formData.get('videoFile') instanceof File ? formData.get('videoFile') : undefined,
+    videoFile: formData.get('videoFile') instanceof File ? formData.get('videoFile') : (formData.get('videoFile') === 'null' ? null : undefined),
   });
 
   if (!parsedResult.success) {
@@ -215,44 +264,38 @@ export async function createCarouselItemAction(formData: FormData) {
   let imageFinalUrl = '';
   let videoFinalUrl: string | undefined | null = null;
 
-  // --- BEGIN FIREBASE UPLOAD LOGIC (PLACEHOLDER) ---
-  if (imageUrlFile instanceof File) {
-    // TODO: Implement Firebase Storage upload for imageUrlFile
-    // 1. Initialize Firebase Admin SDK (if not already done globally for server actions)
-    // 2. Upload imageUrlFile.arrayBuffer() or stream to Firebase Storage
-    // 3. Get the downloadURL
-    // Example: imageFinalUrl = await uploadToFirebaseStorage(imageUrlFile, `carousel_images/${new Date().getTime()}_${imageUrlFile.name}`);
-    console.log(`Placeholder: Would upload image ${imageUrlFile.name} to Firebase Storage.`);
-    imageFinalUrl = `https://placehold.co/600x400.png?text=Uploaded+${encodeURIComponent(imageUrlFile.name)}`; // Placeholder URL
-  }
+  try {
+    if (imageUrlFile instanceof File) {
+      imageFinalUrl = await uploadFileToFirebaseStorage(imageUrlFile, 'carousel_posters');
+    }
 
-  if (videoFile instanceof File) {
-    // TODO: Implement Firebase Storage upload for videoFile
-    // Example: videoFinalUrl = await uploadToFirebaseStorage(videoFile, `carousel_videos/${new Date().getTime()}_${videoFile.name}`);
-    console.log(`Placeholder: Would upload video ${videoFile.name} to Firebase Storage.`);
-    videoFinalUrl = `/placeholder-videos/${encodeURIComponent(videoFile.name)}`; // Placeholder path
+    if (videoFile instanceof File) {
+      videoFinalUrl = await uploadFileToFirebaseStorage(videoFile, 'carousel_videos');
+    }
+  } catch (uploadError: any) {
+    console.error("File upload process error:", uploadError);
+    return { success: false, error: `File upload failed: ${uploadError.message}. Firebase Storage integration may not be complete.` };
   }
-  // --- END FIREBASE UPLOAD LOGIC (PLACEHOLDER) ---
-
-  if (!imageFinalUrl) { // Should be set by placeholder or actual upload
-      return { success: false, error: 'Failed to process poster image.', errors: { imageUrlFile: ['Failed to process poster image.'] } };
+  
+  if (!imageFinalUrl) {
+      return { success: false, error: 'Failed to process poster image. Firebase Storage integration may not be complete.', errors: { imageUrlFile: ['Failed to obtain image URL after conceptual upload.'] } };
   }
 
   const itemToCreate: Omit<CarouselItem, 'id'> = {
     ...otherData,
     imageUrl: imageFinalUrl,
-    videoSrc: videoFinalUrl, // Will be string | undefined | null
-    dataAiHint: otherData.dataAiHint || otherData.category.toLowerCase(), // Default AI hint
+    videoSrc: videoFinalUrl,
+    dataAiHint: otherData.dataAiHint || otherData.category.toLowerCase(),
   };
 
   try {
     await dbCreateCarouselItem(itemToCreate);
     revalidatePath('/admin/carousel');
     revalidatePath('/');
-    return { success: true, message: 'Carousel item data received. Firebase Storage upload logic is pending actual implementation.' };
+    return { success: true, message: 'Carousel item data received. DEVELOPER_ACTION_REQUIRED: Ensure Firebase Storage upload logic is fully implemented and service account/permissions are configured.' };
   } catch (e) {
     console.error(e);
-    return { success: false, error: 'Failed to create carousel item in database.' };
+    return { success: false, error: 'Failed to create carousel item in database after processing files.' };
   }
 }
 
@@ -269,9 +312,9 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
     content: formData.get('content'),
     dataAiHint: formData.get('dataAiHint') || undefined,
     imageUrlFile: formData.get('imageUrlFile') instanceof File ? formData.get('imageUrlFile') : undefined,
-    videoFile: formData.get('videoFile') instanceof File ? formData.get('videoFile') : undefined,
-    currentImageUrl: formData.get('currentImageUrl') as string || undefined, // To preserve if no new file
-    currentVideoSrc: formData.get('currentVideoSrc') as string || undefined, // To preserve if no new file
+    videoFile: formData.get('videoFile') instanceof File ? formData.get('videoFile') : (formData.get('videoFile') === 'null' ? null : undefined),
+    currentImageUrl: formData.get('currentImageUrl') as string || undefined,
+    currentVideoSrc: formData.get('currentVideoSrc') as string || undefined,
   });
 
   if (!parsedResult.success) {
@@ -281,34 +324,39 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
 
   const { imageUrlFile, videoFile, currentImageUrl, currentVideoSrc, ...otherData } = parsedResult.data;
 
-  let imageFinalUrl = currentImageUrl || existingItem.imageUrl; // Start with current or existing
+  let imageFinalUrl = currentImageUrl || existingItem.imageUrl;
   let videoFinalUrl: string | undefined | null = currentVideoSrc !== undefined ? currentVideoSrc : existingItem.videoSrc;
 
+  try {
+    if (imageUrlFile instanceof File) {
+      // If new image is uploaded, delete old one before uploading new
+      if (existingItem.imageUrl && existingItem.imageUrl !== imageFinalUrl) { // Check if it's not a placeholder/same URL
+          await deleteFileFromFirebaseStorage(existingItem.imageUrl);
+      }
+      imageFinalUrl = await uploadFileToFirebaseStorage(imageUrlFile, 'carousel_posters');
+    }
 
-  // --- BEGIN FIREBASE UPLOAD LOGIC (PLACEHOLDER) ---
-  if (imageUrlFile instanceof File) {
-    // TODO: Implement Firebase Storage upload for imageUrlFile
-    // 1. Delete old image from Firebase Storage if necessary (existingItem.imageUrl)
-    // 2. Upload new imageUrlFile
-    // 3. Get the downloadURL
-    console.log(`Placeholder: Would upload NEW image ${imageUrlFile.name} to Firebase Storage, replacing old one.`);
-    imageFinalUrl = `https://placehold.co/600x400.png?text=Updated+${encodeURIComponent(imageUrlFile.name)}`; // Placeholder
+    if (videoFile instanceof File) {
+      // If new video is uploaded, delete old one
+      if (existingItem.videoSrc && existingItem.videoSrc !== videoFinalUrl) {
+          await deleteFileFromFirebaseStorage(existingItem.videoSrc);
+      }
+      videoFinalUrl = await uploadFileToFirebaseStorage(videoFile, 'carousel_videos');
+    } else if (videoFile === null && parsedResult.data.hasOwnProperty('videoFile')) {
+      // Video is being explicitly removed
+      if (existingItem.videoSrc) {
+          await deleteFileFromFirebaseStorage(existingItem.videoSrc);
+      }
+      videoFinalUrl = null;
+    }
+  } catch (uploadError: any) {
+    console.error("File update process error:", uploadError);
+    return { success: false, error: `File update failed: ${uploadError.message}. Firebase Storage integration may not be complete.` };
   }
-
-  if (videoFile instanceof File) {
-    // TODO: Implement Firebase Storage upload for videoFile
-    // 1. Delete old video from Firebase Storage if necessary (existingItem.videoSrc)
-    // 2. Upload new videoFile
-    // 3. Get the downloadURL
-    console.log(`Placeholder: Would upload NEW video ${videoFile.name} to Firebase Storage, replacing old one.`);
-    videoFinalUrl = `/placeholder-videos/updated-${encodeURIComponent(videoFile.name)}`; // Placeholder
-  } else if (videoFile === null && parsedResult.data.hasOwnProperty('videoFile')) {
-    // If videoFile was explicitly set to null (e.g. user wants to remove video)
-    // TODO: Delete existingItem.videoSrc from Firebase Storage
-    console.log(`Placeholder: Would delete existing video ${existingItem.videoSrc} from Firebase Storage.`);
-    videoFinalUrl = null;
+  
+  if (!imageFinalUrl) {
+      return { success: false, error: 'Failed to process poster image for update. Firebase Storage integration may not be complete.', errors: { imageUrlFile: ['Failed to obtain image URL after conceptual upload.'] } };
   }
-  // --- END FIREBASE UPLOAD LOGIC (PLACEHOLDER) ---
 
   const itemToUpdate: Partial<Omit<CarouselItem, 'id'>> = {
     ...otherData,
@@ -322,26 +370,28 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
     revalidatePath('/admin/carousel');
     revalidatePath(`/admin/carousel/edit/${id}`);
     revalidatePath('/');
-    return { success: true, message: 'Carousel item data received for update. Firebase Storage upload logic is pending actual implementation.' };
+    return { success: true, message: 'Carousel item data received for update. DEVELOPER_ACTION_REQUIRED: Ensure Firebase Storage upload/delete logic is fully implemented and service account/permissions are configured.' };
   } catch (e) {
     console.error(e);
-    return { success: false, error: 'Failed to update carousel item in database.' };
+    return { success: false, error: 'Failed to update carousel item in database after processing files.' };
   }
 }
 
 
 export async function deleteCarouselItemAction(id: string) {
   try {
-    // TODO: Optionally, delete files from Firebase Storage when deleting item from DB
-    // const itemToDelete = await getCarouselItemById(id);
-    // if (itemToDelete?.imageUrl) { /* delete from Firebase Storage */ }
-    // if (itemToDelete?.videoSrc) { /* delete from Firebase Storage */ }
-    console.log("Placeholder: Firebase Storage deletion logic for carousel item would go here.");
+    const itemToDelete = await getCarouselItemById(id);
+    if (itemToDelete) {
+      await deleteFileFromFirebaseStorage(itemToDelete.imageUrl);
+      if (itemToDelete.videoSrc) {
+        await deleteFileFromFirebaseStorage(itemToDelete.videoSrc);
+      }
+    }
 
     await dbDeleteCarouselItem(id);
     revalidatePath('/admin/carousel');
     revalidatePath('/');
-    return { success: true, message: 'Carousel item deleted successfully.' };
+    return { success: true, message: 'Carousel item deleted successfully. DEVELOPER_ACTION_REQUIRED: Confirm Firebase Storage files were also deleted if implemented.' };
   } catch (e) {
     console.error(e);
     return { success: false, error: 'Failed to delete carousel item.' };
