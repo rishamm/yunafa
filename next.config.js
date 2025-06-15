@@ -49,6 +49,12 @@ const nextConfig = {
         hostname: 'yunafa.mos.ap-southeast-2.sufybkt.com',
         port: '',
         pathname: '/**',
+      },
+      { // For the problematic hostname idoxdgh.sufydely.com
+        protocol: 'https',
+        hostname: 'idoxdgh.sufydely.com',
+        port: '',
+        pathname: '/**',
       }
       // If you have a custom CDN domain for Sufy, add it here too.
       // Example:

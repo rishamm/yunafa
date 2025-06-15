@@ -1,3 +1,4 @@
+
 // src/app/api/upload/route.ts
 import { type NextRequest, NextResponse } from 'next/server';
 import { s3 } from '@/lib/s3Client';
@@ -16,9 +17,10 @@ export async function POST(req: NextRequest) {
   }
   
   const bucketName = process.env.SUFY_BUCKET_NAME;
-  const publicUrlPrefix = process.env.SUFY_PUBLIC_URL_PREFIX.endsWith('/') 
-    ? process.env.SUFY_PUBLIC_URL_PREFIX 
-    : `${process.env.SUFY_PUBLIC_URL_PREFIX}/`;
+  const rawSufyUrlPrefix = process.env.SUFY_PUBLIC_URL_PREFIX;
+  const publicUrlPrefix = rawSufyUrlPrefix.endsWith('/') 
+    ? rawSufyUrlPrefix 
+    : `${rawSufyUrlPrefix}/`;
 
   try {
     const formidableReq = {

@@ -54,7 +54,8 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
     carouselItem?.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null
   );
   
-  const defaultSufyUrlPrefix = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || "https://your-bucket-name.mos.sufycloud.com/";
+  const rawSufyUrlPrefixEnv = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || "https://your-bucket-name.mos.sufycloud.com/";
+  const defaultSufyUrlPrefix = rawSufyUrlPrefixEnv.endsWith('/') ? rawSufyUrlPrefixEnv : `${rawSufyUrlPrefixEnv}/`;
 
 
   const form = useForm<CarouselItemFormValues>({
@@ -81,6 +82,9 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
       });
       setPosterPreview(carouselItem.imageUrl);
       setVideoFileName(carouselItem.videoSrc ? (carouselItem.videoSrc.startsWith('http') ? 'Remote Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video') : null);
+    } else {
+      // For new items, set default imageUrl with the potentially corrected prefix
+      form.setValue('imageUrl', `${defaultSufyUrlPrefix}placeholder-poster.jpg`);
     }
   }, [carouselItem, form, defaultSufyUrlPrefix]);
 
@@ -255,8 +259,9 @@ export function CarouselItemForm({ carouselItem }: CarouselItemFormProps) {
                 height={100} 
                 className="rounded object-cover" 
                 onError={() => {
-                  if (posterPreview) setPosterPreview(`${defaultSufyUrlPrefix}placeholder-poster.jpg`); // fallback for bad preview
-                  form.setValue('imageUrl', `${defaultSufyUrlPrefix}placeholder-poster.jpg`); // fallback for bad initial URL
+                  const fallbackUrl = `${defaultSufyUrlPrefix}placeholder-poster.jpg`;
+                  if (posterPreview) setPosterPreview(fallbackUrl);
+                  form.setValue('imageUrl', fallbackUrl);
                 }}
               />
             </div>
