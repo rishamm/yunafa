@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 
 interface LogoProps {
@@ -27,3 +28,4 @@ export function Logo({ height = 60, className }: LogoProps) {
     </div>
   );
 }
+
