@@ -14,7 +14,7 @@ export function Logo({ height = 60, className }: LogoProps) {
   return (
     <div className='flex flex-col items-center '>
     <Image
-      src="/logo3.jpg" 
+      src="/logo.png" 
       alt="Yunafa Logo"
       width={width}
       height={height}

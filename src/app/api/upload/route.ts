@@ -9,6 +9,14 @@ import type { CompleteMultipartUploadCommandOutput } from "@aws-sdk/client-s3";
 
 
 export async function POST(req: NextRequest) {
+  // Log all required Sufy env vars to check if they are available in this environment
+  console.log("API Upload - SUFY_BUCKET_NAME:", process.env.SUFY_BUCKET_NAME ? "SET" : "NOT SET");
+  console.log("API Upload - SUFY_PUBLIC_URL_PREFIX:", process.env.SUFY_PUBLIC_URL_PREFIX ? "SET" : "NOT SET");
+  console.log("API Upload - SUFY_ENDPOINT:", process.env.SUFY_ENDPOINT ? "SET" : "NOT SET");
+  console.log("API Upload - SUFY_REGION:", process.env.SUFY_REGION ? "SET" : "NOT SET");
+  console.log("API Upload - SUFY_ACCESS_KEY:", process.env.SUFY_ACCESS_KEY ? "SET (exists)" : "NOT SET");
+  console.log("API Upload - SUFY_SECRET_KEY:", process.env.SUFY_SECRET_KEY ? "SET (exists)" : "NOT SET");
+
   if (!process.env.SUFY_BUCKET_NAME) {
     console.error('API Upload Error: Sufy bucket name is not configured.');
     return NextResponse.json({ error: "Sufy bucket name is not configured.", details: "Server configuration missing SUFY_BUCKET_NAME." }, { status: 500 });
@@ -16,6 +24,10 @@ export async function POST(req: NextRequest) {
   if (!process.env.SUFY_PUBLIC_URL_PREFIX) {
     console.error('API Upload Error: Sufy public URL prefix is not configured.');
     return NextResponse.json({ error: "Sufy public URL prefix is not configured.", details: "Server configuration missing SUFY_PUBLIC_URL_PREFIX." }, { status: 500 });
+  }
+  if (!process.env.SUFY_ENDPOINT || !process.env.SUFY_REGION || !process.env.SUFY_ACCESS_KEY || !process.env.SUFY_SECRET_KEY) {
+    console.error('API Upload Error: Sufy S3 client configuration is incomplete. One or more required SUFY_ENDPOINT, SUFY_REGION, SUFY_ACCESS_KEY, SUFY_SECRET_KEY variables are missing.');
+    return NextResponse.json({ error: "Sufy S3 client configuration incomplete.", details: "Server configuration missing one or more SUFY_ENDPOINT, SUFY_REGION, SUFY_ACCESS_KEY, SUFY_SECRET_KEY." }, { status: 500 });
   }
   
   const bucketName = process.env.SUFY_BUCKET_NAME;
@@ -25,10 +37,19 @@ export async function POST(req: NextRequest) {
     : `${rawSufyUrlPrefix}/`;
 
   const form = formidable({ multiples: false });
-  let tempFilepath: string | undefined; // To store filepath for cleanup in case of error
+  let tempFilepath: string | undefined;
 
   try {
-    const [fields, filesRecord] = await form.parse(req as any); 
+    const [fields, filesRecord] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+        form.parse(req, (err, fieldsFromCallback, filesFromCallback) => {
+            if (err) {
+                console.error("Formidable parsing error inside promise:", err);
+                reject(err);
+                return;
+            }
+            resolve([fieldsFromCallback, filesFromCallback]);
+        });
+    });
 
     const fileEntry = filesRecord.file;
     let file: FormidableFile | undefined;
@@ -43,7 +64,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'No file found in the upload.', details: "The 'file' field was missing from the form data." }, { status: 400 });
     }
     
-    tempFilepath = file.filepath; // Store for potential cleanup
+    tempFilepath = file.filepath; 
 
     const fileStream = fs.createReadStream(file.filepath);
     const originalFilename = file.originalFilename || `file-${Date.now()}`;
@@ -53,7 +74,7 @@ export async function POST(req: NextRequest) {
     console.log(`Attempting to upload ${originalFilename} as ${uniqueKey} to bucket ${bucketName}`);
 
     const upload = new Upload({
-      client: s3,
+      client: s3, // s3 client from @/lib/s3Client
       params: {
         Bucket: bucketName,
         Key: uniqueKey,
@@ -67,48 +88,27 @@ export async function POST(req: NextRequest) {
     
     if (!result.ETag) {
         console.error("API Upload Error: Upload to Sufy S3 compatible storage failed, ETag not found in response.", result);
-        if (tempFilepath) {
-            fs.unlink(tempFilepath, (unlinkErr) => {
-                if (unlinkErr) console.error("Error deleting temporary file after ETag failure:", unlinkErr.message);
-            });
-        }
         return NextResponse.json({ error: "Upload to storage service failed.", details: "ETag not found in response from storage service." }, { status: 500 });
     }
 
     const fileUrl = `${publicUrlPrefix}${uniqueKey}`;
     console.log(`File uploaded successfully: ${fileUrl}`);
-
-    fs.unlink(file.filepath, (unlinkErr) => {
-        if (unlinkErr) {
-            console.error("Error deleting temporary file after successful upload:", unlinkErr.message);
-        } else {
-            console.log("Temporary file deleted successfully:", file.filepath);
-        }
-    });
-    tempFilepath = undefined; 
-
+    
     return NextResponse.json({ message: 'Uploaded!', fileUrl: fileUrl }, { status: 200 });
 
   } catch (error: any) {
-    console.error('Full API Upload Error:', error); 
-
-    if (tempFilepath) {
-        fs.unlink(tempFilepath, (unlinkErr) => {
-            if (unlinkErr) console.error("Error deleting temporary file during error handling:", unlinkErr.message, tempFilepath);
-            else console.log("Temporary file deleted during error handling:", tempFilepath);
-        });
-    }
+    console.error('Full API Upload Error in POST route catch block:', error); 
 
     let errorMessage = 'An unexpected error occurred during file upload.';
     let errorDetails: string | Record<string, unknown> = 'Check server logs for more information.';
     let statusCode = 500;
 
-    if (error instanceof formidableErrors.FormidableError) {
+    if (error instanceof formidableErrors.FormidableError || error.constructor.name === 'FormidableError') {
         errorMessage = 'Error parsing form data.';
         errorDetails = error.message; 
-        statusCode = error.httpCode || 400;
-        console.error(`Formidable Error (Code: ${error.internalCode}): ${error.message}`);
-    } else if (error.name && typeof error.message === 'string') {
+        statusCode = (error as any).httpCode || 400;
+        console.error(`Formidable Error (Code: ${(error as any).internalCode || 'N/A'}): ${error.message}`);
+    } else if (error.name && typeof error.message === 'string') { // AWS SDK V3 errors
         errorMessage = `Storage operation failed: ${error.name}.`;
         errorDetails = error.message.substring(0, 300); 
         if (error.$metadata && error.$metadata.httpStatusCode) {
@@ -117,10 +117,22 @@ export async function POST(req: NextRequest) {
         console.error(`S3 Client or other library error: ${error.name} - ${error.message}`);
     } else if (typeof error.message === 'string') {
         errorDetails = error.message.substring(0, 300);
-        console.error(`Generic error: ${error.message}`);
+        console.error(`Generic error (message only): ${error.message}`);
+    } else {
+        console.error('Generic error (object):', error);
     }
 
-
-    return NextResponse.json({ error: errorMessage, details: errorDetails, originalErrorName: error.name }, { status: statusCode });
+    return NextResponse.json({ error: errorMessage, details: errorDetails, originalErrorName: error.name || 'UnknownError' }, { status: statusCode });
+  } finally {
+    if (tempFilepath) {
+        fs.unlink(tempFilepath, (unlinkErr) => {
+            if (unlinkErr) {
+                console.error("Error deleting temporary file in finally block:", unlinkErr.message, tempFilepath);
+            } else {
+                console.log("Temporary file deleted successfully in finally block:", tempFilepath);
+            }
+        });
+    }
   }
 }
+

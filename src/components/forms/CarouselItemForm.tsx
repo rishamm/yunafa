@@ -107,6 +107,8 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     if (file) {
         form.setValue('videoSrc', ''); 
         form.clearErrors('videoSrc');
+    } else if (form.getValues('videoSrc')) { // If file is removed, re-evaluate videoSrc
+        setVideoFileName(form.getValues('videoSrc'));
     }
   };
 
@@ -119,24 +121,36 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         method: 'POST',
         body: tempFormData,
       });
-      const data = await res.json();
-      
-      if (!res.ok) {
-        const errorMessage = data.error || `Upload failed for ${file.name}.`;
-        const errorDetails = data.details || `Status: ${res.status}`;
-        console.error('Sufy Upload API Error Response:', data);
+
+      if (res.ok && res.headers.get("content-type")?.includes("application/json")) {
+        const data = await res.json();
+         if (data.fileUrl) {
+            toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
+            return data.fileUrl;
+         } else {
+            // JSON response but missing fileUrl or other error structure
+            console.error('Sufy Upload API Error: JSON response missing fileUrl or indicates error.', data);
+            toast({ 
+                title: 'Upload Failed', 
+                description: data.error || `Upload succeeded but API returned an issue: ${JSON.stringify(data.details || data)}`, 
+                variant: 'destructive' 
+            });
+            return null;
+         }
+      } else {
+        // Handle non-OK or non-JSON responses
+        const responseText = await res.text(); // Get raw response text
+        console.error('Sufy Upload API Error: Non-OK or Non-JSON response. Status:', res.status, 'Response Text:', responseText);
         toast({ 
             title: 'Upload Failed', 
-            description: `${errorMessage} ${typeof errorDetails === 'string' ? errorDetails : JSON.stringify(errorDetails)}`, 
+            description: `Server returned status ${res.status}. Response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`, 
             variant: 'destructive' 
         });
         return null;
       }
-      
-      toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
-      return data.fileUrl;
     } catch (error: any) {
-      console.error('Sufy Upload Client-Side Fetch/JSON Parse Error:', error.message);
+      // This catch block handles network errors or errors from res.json() / res.text()
+      console.error('Sufy Upload Client-Side Fetch/JSON Parse Error:', error.message, error);
       toast({ 
         title: 'Upload Error', 
         description: `Could not communicate with the upload service or parse its response. ${error.message}`, 
@@ -156,12 +170,12 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
       if (uploadedVideoUrl) {
         finalVideoSrc = uploadedVideoUrl;
       } else {
-        return; 
+        return; // Upload failed, stop submission
       }
     } else if (values.videoSrc && values.videoSrc.trim() !== '') {
       finalVideoSrc = values.videoSrc.trim();
     } else {
-      finalVideoSrc = null;
+      finalVideoSrc = null; // No file and no URL, so no video source
     }
     
     const submissionData = {
@@ -175,6 +189,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         if (value !== undefined && value !== null) {
           actionFormData.append(key, String(value));
         } else if (key === 'videoSrc' && (value === null || value === '')) {
+           // Ensure empty string is sent if videoSrc is explicitly cleared/null
            actionFormData.append(key, ''); 
         }
       });
@@ -353,3 +368,4 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     </Form>
   );
 }
+
