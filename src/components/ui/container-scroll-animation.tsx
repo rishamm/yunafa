@@ -30,7 +30,7 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [1, 1];
+    if (isMobile) return [1, 0.75];
     if (isVeryLargeScreen) return [1, 0.75]; // Slightly larger start for very large screens
     return [1, 0.75]; // For medium desktop
   };
@@ -50,7 +50,7 @@ export const ContainerScroll = ({
     scrollYProgress,
     [0, 1],
     isMobile
-      ? [0, -25] // Mobile: card moves 75px up
+      ? [0, 54] // Mobile: card moves 75px up
       : isVeryLargeScreen
       ? [0, -10] // Very Large Desktop (>1440px): card moves 20px up
       : [0, -9] // Medium Desktop (<=1440px): card moves 40px up
@@ -59,7 +59,7 @@ export const ContainerScroll = ({
 
   return (
     <div
-      className="flex items-center justify-center relative p-2 min-h-[60vh] md:min-h-[80vh]"
+      className="flex items-center justify-center relative  min-h-[60vh] md:min-h-[80vh]"
       ref={containerRef}
     >
       <div
