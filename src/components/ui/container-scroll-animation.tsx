@@ -50,7 +50,7 @@ export const ContainerScroll = ({
     scrollYProgress,
     [0, 1],
     isMobile
-      ? [0, 54] // Mobile: card moves 75px up
+      ? [0, 53] // Mobile: card moves 75px up
       : isVeryLargeScreen
       ? [0, -10] // Very Large Desktop (>1440px): card moves 20px up
       : [0, -9] // Medium Desktop (<=1440px): card moves 40px up

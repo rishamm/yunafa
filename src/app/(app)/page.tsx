@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
 import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
+import { FullScreenVideo } from '@/components/sections/FullScreenVideo';
 
 
 export default async function HomePage() {
@@ -28,6 +29,12 @@ export default async function HomePage() {
   return (
     <div className=" flex flex-col overflow-hidden ">
       
+      <FullScreenVideo 
+        videoSrc="/intro-video.mp4" 
+        posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
+        videoHint="ocean waves"
+      />
+      
       <HeroScrollSection />
 
       <section className="parallax-swiper-outer-wrap m-0 mt-0 ">
@@ -45,10 +52,10 @@ export default async function HomePage() {
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 font-headline">About Yunafa</h2>
-            <p className="text-foreground/80 mb-4">
+            <p className="text-foreground/80 mb-4 whitespace-pre-wrap">
               At Yunafa, we believe in the art of fine living. Our mission is to bring you a curated selection of products that embody craftsmanship, elegance, and timeless appeal. Each item in our collection is chosen with meticulous care, ensuring it meets our high standards of quality and design.
             </p>
-            <p className="text-foreground/80 mb-6">
+            <p className="text-foreground/80 mb-6 whitespace-pre-wrap">
               Whether you are looking for a statement piece for your home, a unique gift, or a personal treasure, Yunafa offers an unparalleled shopping experience.
             </p>
             <Button asChild variant="outline" className="border-primary text-primary hover:bg-primary/10">
