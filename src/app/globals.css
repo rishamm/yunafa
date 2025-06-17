@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --background: 180 20% 96%; /* #F0F5F5 - Very light tealish gray */
-    --foreground: 0 0% 0%; /* #000000 - Pure Black */ /* Changed from 180 25% 20% */
+    --foreground: 180 25% 20%; /* #425C5C - Dark desaturated teal (Reverted) */
 
     --card: 180 0% 100%; /* #FFFFFF - White */
     --card-foreground: 180 25% 20%; /* Dark desaturated teal - kept as is, can be changed if needed */
@@ -47,6 +47,8 @@
     --sidebar-accent-foreground: 180 10% 95%; /* #F0F7F7 - Light contrast */
     --sidebar-border: 180 15% 15%;   /* #1E2B2B */
     --sidebar-ring: 180 65% 60%;      /* #52C7C7 */
+
+    --announcement-text-color: 0 0% 0%; /* Pure Black for light mode announcement text */
   }
 
   .dark {
@@ -92,6 +94,8 @@
     --sidebar-accent-foreground: 180 10% 95%;
     --sidebar-border: 180 15% 15%;
     --sidebar-ring: 180 65% 60%;
+
+    --announcement-text-color: 180 15% 90%; /* Light Tealish Gray for dark mode announcement text (same as dark --foreground) */
   }
 }
 
@@ -106,5 +110,11 @@
   }
   * {
     @apply border-border;
+  }
+}
+
+@layer utilities {
+  .text-announcement {
+    color: hsl(var(--announcement-text-color));
   }
 }

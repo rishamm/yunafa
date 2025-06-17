@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export function AnnouncementBar() {
   return (
-    <div className="bg-card text-foreground py-2 px-4 text-center text-sm font-medium overflow-hidden">
+    <div className="bg-card text-announcement py-2 px-4 text-center text-sm font-medium overflow-hidden">
       <div className="inline-flex whitespace-nowrap animate-marquee-left">
         <p className="mx-10 md:mx-20 text-md flex-shrink-0">
           Special Announcement: Yunafa&apos;s New Collection Just Dropped!{" "}
