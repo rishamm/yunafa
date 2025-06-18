@@ -24,7 +24,7 @@ export function HeroScrollSection() {
   const videoFileName = 'hero.mp4';
 
   return (
-    <div className="relative flex flex-col justify-start pt-20 md:pt-40">
+    <div className="relative flex flex-col justify-start  ">
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
@@ -43,7 +43,7 @@ export function HeroScrollSection() {
         </div>
       </ContainerScroll>
       {/* Absolutely positioned hero text on top */}
-      <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center pt-10 md:pt-20 z-10 pointer-events-none">
+      <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center  z-10 pointer-events-none">
           <div className="pointer-events-auto"> {/* Allow interaction with hero text content */}
                {heroTextContent}
           </div>

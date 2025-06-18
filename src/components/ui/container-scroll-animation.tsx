@@ -35,7 +35,7 @@ export const ContainerScroll = ({
     return [1, 0.75]; // For medium desktop
   };
 
-  const rotate = useTransform(scrollYProgress, [1, 0], [93.899, 0]);
+  const rotate = useTransform(scrollYProgress, [1, 0], [90, 0]);
   const cardScale = useTransform(scrollYProgress, [0, 1], scaleDimensions());
 
   // Adjusted headerTranslateY for mobile vs desktop
@@ -50,10 +50,10 @@ export const ContainerScroll = ({
     scrollYProgress,
     [0, 1],
     isMobile
-      ? [0, 53] // Mobile: card moves 75px up
+      ? [0, 11] // Mobile: card moves 75px up
       : isVeryLargeScreen
-      ? [0, -10] // Very Large Desktop (>1440px): card moves 20px up
-      : [0, -9] // Medium Desktop (<=1440px): card moves 40px up
+      ? [0, 8.7] // Very Large Desktop (>1440px): card moves 20px up
+      : [0, 11] // Medium Desktop (<=1440px): card moves 40px up
   );
 
 
@@ -63,7 +63,7 @@ export const ContainerScroll = ({
       ref={containerRef}
     >
       <div
-        className="pt-10 md:pt-40 w-full relative"
+        className=" w-full relative"
         style={{
           perspective: "1200px",
         }}

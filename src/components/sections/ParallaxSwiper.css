@@ -139,31 +139,7 @@
   opacity: 1;
 }
 
-/* Custom Swiper Pagination Styles */
-.parallax-swiper-container .swiper-pagination-bullet {
-  width: 14px !important;
-  height: 14px !important;
-  display: inline-block !important;
-  background: #fff !important;
-  opacity: 0.4 !important;
-  margin: 5px 0 !important; /* For vertical pagination */
-}
-
-.parallax-swiper-container .swiper-pagination-bullet-active {
-  opacity: 1 !important;
-  background: #fff !important;
-}
-
-.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-bullets,
-.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-custom {
-  right: 15px !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-}
-.parallax-swiper-container .swiper-pagination-vertical.swiper-pagination-bullets .swiper-pagination-bullet {
-    display: block !important;
-}
-
+/* Removed Custom Swiper Pagination Styles */
 
 /* Media Queries */
 @media screen and (max-width: 1280px) {

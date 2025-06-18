@@ -4,11 +4,11 @@
 
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Parallax, Pagination, Mousewheel } from 'swiper/modules';
+import { Parallax, Mousewheel } from 'swiper/modules'; // Removed Pagination
 
 // Import Swiper styles
 import 'swiper/css';
-import 'swiper/css/pagination';
+// import 'swiper/css/pagination'; // Removed pagination CSS import
 import 'swiper/css/parallax'; // Ensure parallax styles are imported
 
 // Import custom styles for this component
@@ -51,10 +51,10 @@ export function ParallaxSwiper() {
   return (
     <div className="parallax-swiper-container">
       <Swiper
-        modules={[Parallax, Pagination, Mousewheel]}
+        modules={[Parallax, Mousewheel]} // Removed Pagination
         direction="vertical"
         loop={false}
-        pagination={{ clickable: true, el: '.swiper-pagination-customized' }}
+        // Removed pagination prop: pagination={{ clickable: true, el: '.swiper-pagination-customized' }}
         grabCursor={true}
         speed={1000}
         parallax={true}
@@ -86,8 +86,7 @@ export function ParallaxSwiper() {
             </div>
           </SwiperSlide>
         ))}
-        {/* Custom Pagination container matching the CSS selector */}
-        <div className="swiper-pagination swiper-pagination-customized swiper-pagination-vertical swiper-pagination-bullets"></div>
+        {/* Removed custom Pagination container */}
       </Swiper>
     </div>
   );

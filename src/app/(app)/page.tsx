@@ -30,7 +30,7 @@ export default async function HomePage() {
     <div className=" flex flex-col overflow-hidden ">
       
       <FullScreenVideo 
-        videoSrc="/intro-video.mp4" 
+        videoSrc="/col_2.mp4" 
         posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
         videoHint="ocean waves"
       />
