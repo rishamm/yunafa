@@ -13,7 +13,7 @@ export function FullScreenVideo({
   videoHint = "background video" 
 }: FullScreenVideoProps) {
   return (
-    <section className="sticky top-0 h-screen w-full overflow-hidden bg-neutral-800 z-10">
+    <section className=" w-full h-screen overflow-hidden z-30 pointer-events-none bg-neutral-800 z-10">
       <video
         key={videoSrc} 
         src={videoSrc}
@@ -22,7 +22,7 @@ export function FullScreenVideo({
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        className=" top-0 left-0 w-full h-full object-cover z-0"
         data-ai-hint={videoHint} 
       >
         Your browser does not support the video tag.

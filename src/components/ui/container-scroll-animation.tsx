@@ -13,6 +13,7 @@ export const ContainerScroll = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
+    offset: ["start 1%", "start 90%"], 
   });
   const [isMobile, setIsMobile] = React.useState(false);
   const [isVeryLargeScreen, setIsVeryLargeScreen] = React.useState(false);
@@ -30,7 +31,7 @@ export const ContainerScroll = ({
   }, []);
 
   const scaleDimensions = () => {
-    if (isMobile) return [1, 0.75];
+    if (isMobile) return [1, 0.65];
     if (isVeryLargeScreen) return [1, 0.75]; // Slightly larger start for very large screens
     return [1, 0.75]; // For medium desktop
   };
@@ -48,18 +49,18 @@ export const ContainerScroll = ({
   // Adjusted cardTranslateY with a new breakpoint for very large screens
   const cardTranslateY = useTransform(
     scrollYProgress,
-    [0, 1],
+    [0, 0.2],
     isMobile
-      ? [0, 11] // Mobile: card moves 75px up
+      ? [0, 0] // Mobile: card moves 75px up
       : isVeryLargeScreen
-      ? [0, 8.7] // Very Large Desktop (>1440px): card moves 20px up
+      ? [0, 1] // Very Large Desktop (>1440px): card moves 20px up
       : [0, 11] // Medium Desktop (<=1440px): card moves 40px up
   );
 
 
   return (
     <div
-      className="flex items-center justify-center relative  min-h-[60vh] md:min-h-[80vh]"
+      className="flex items-center justify-center relative   "
       ref={containerRef}
     >
       <div
@@ -114,7 +115,7 @@ export const Card = ({
         scale: scale,
         translateY: translateY,
       }}
-      className="-mt-12 h-[30rem] md:h-[40rem] w-full shadow-2xl"
+      className="mt-[-3px] h-[30rem] md:h-[40rem] w-full shadow-2xl"
     >
       <div className=" h-full w-full overflow-hidden   md:p-0 ">
         {children}

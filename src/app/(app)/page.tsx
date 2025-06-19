@@ -41,11 +41,11 @@ export default function HomePage() {
 
   const { scrollYProgress: contentScrollYProgress } = useScroll({
     target: contentWrapperRef,
-    offset: ["start end", "start 0.5"] 
+    offset: ["start end", "end start"] 
   });
 
-  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [0, 0]); 
-  const contentOpacity = useTransform(contentScrollYProgress, [0, 1], [0, 1]); 
+  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [0, -200]); 
+  const contentOpacity = useTransform(contentScrollYProgress, [0, 0.3], [0, 1]); 
 
   const collectionsHeadingElement = (
     <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4">
@@ -75,7 +75,10 @@ export default function HomePage() {
         className="relative z-20 bg-background" 
       >
         {/* Content that scrolls OVER the video starts here */}
-        <HeroScrollSection />
+
+        <section className="h-[100vh] bg-transparent">
+  <HeroScrollSection />
+</section>
 
         <section className="parallax-swiper-outer-wrap m-0 mt-0 ">
           <ParallaxSwiper />
