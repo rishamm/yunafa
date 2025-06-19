@@ -1,38 +1,17 @@
 
-import type { NextConfig } from 'next';
-// Removed: import path from 'path';
 import { TrustedHostsSection } from './_components/TrustedHostsSection';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+// Removed dynamic import of next.config.js
 
 export const metadata = {
   title: 'Site Settings - Yunafa Admin',
 };
 
 async function getCurrentHostnames(): Promise<{ hostnames: string[]; error?: string }> {
-  try {
-    // Changed to a static relative path for the import
-    // Original problematic code:
-    // const configPath = path.join(process.cwd(), 'next.config.js');
-    // const configModule = await import(configPath);
-
-    // Path from src/app/(admin)/admin/settings/ -> ../../../../../ -> project root
-    const configModule = await import('../../../../../next.config.js');
-    const config: NextConfig = configModule.default || configModule;
-
-    if (config.images && config.images.remotePatterns) {
-      const hostnamesWithDuplicates = config.images.remotePatterns
-        .map(p => p.hostname)
-        .filter(Boolean) as string[];
-      // Deduplicate hostnames
-      const hostnames = Array.from(new Set(hostnamesWithDuplicates));
-      return { hostnames };
-    }
-    return { hostnames: [], error: "No remotePatterns configured in next.config.js." };
-  } catch (error: any) {
-    console.error("Error dynamically importing next.config.js:", error.message);
-    return { hostnames: [], error: "Failed to load hostnames from next.config.js. Ensure the file exists at the project root and is a valid JS module. Error: " + error.message };
-  }
+  // Return a static message instead of dynamically importing next.config.js
+  return {
+    hostnames: [],
+    error: "Image hostnames are configured in next.config.js (or next.config.ts) at the project root. This list cannot be displayed dynamically. Please refer to the configuration file directly to view or modify allowed hostnames.",
+  };
 }
 
 export default async function AdminSettingsPage() {

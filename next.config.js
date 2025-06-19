@@ -65,13 +65,14 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Prevent 'child_process' from being bundled on the client
+      // Ensure config.resolve and config.resolve.fallback exist before modifying
+      config.resolve = config.resolve || {};
       config.resolve.fallback = {
         ...(config.resolve.fallback || {}),
         child_process: false,
-        fs: false, // Often needed with mongodb as well
-        net: false, // Often needed with mongodb as well
-        tls: false, // Often needed with mongodb as well
+        fs: false, 
+        net: false, 
+        tls: false, 
       };
     }
     return config;
