@@ -1,3 +1,4 @@
+'use server';
 
 import type { Product, Category, CarouselItem } from './types';
 import { getCollection } from './mongodb';
@@ -295,4 +296,3 @@ export async function deleteCarouselItem(id: string): Promise<boolean> {
     throw error;
   }
 }
-
