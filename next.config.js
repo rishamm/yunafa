@@ -1,4 +1,5 @@
 
+
 const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
@@ -61,7 +62,20 @@ const nextConfig = {
   },
   env: {
     NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX: process.env.SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com/',
-  }
+  },
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Prevent 'child_process' from being bundled on the client
+      config.resolve.fallback = {
+        ...(config.resolve.fallback || {}),
+        child_process: false,
+        fs: false, // Often needed with mongodb as well
+        net: false, // Often needed with mongodb as well
+        tls: false, // Often needed with mongodb as well
+      };
+    }
+    return config;
+  },
 };
 
 export default nextConfig;
