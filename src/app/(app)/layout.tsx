@@ -9,13 +9,13 @@ export default function AppLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
+    <div className='relative'>
       <AnnouncementBar />
       <Header />
       <main className="flex-grow ">
         {children}
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

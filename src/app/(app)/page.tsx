@@ -30,7 +30,7 @@ export default async function HomePage() {
     <div className="relative flex flex-col overflow-hidden min-h-screen">
       <div className="absolute top-0 left-0 w-full h-screen -z-10">
         <FullScreenVideo 
-          videoSrc="/intro-video.mp4" 
+          videoSrc="/land_scape.mp4" 
           posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
           videoHint="ocean waves"
         />
