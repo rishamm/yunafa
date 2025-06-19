@@ -13,7 +13,7 @@ export function FullScreenVideo({
   videoHint = "background video" 
 }: FullScreenVideoProps) {
   return (
-    <section className="relative w-full h-screen overflow-hidden bg-neutral-800">
+    <section className="relative w-full h-full overflow-hidden bg-neutral-800">
       <video
         key={videoSrc} 
         src={videoSrc}
@@ -36,3 +36,4 @@ export function FullScreenVideo({
     </section>
   );
 }
+
