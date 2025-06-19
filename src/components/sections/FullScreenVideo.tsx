@@ -1,7 +1,7 @@
 
 'use client';
 
-import Image from 'next/image';
+// Removed Image import from next/image as it's not used for the styled div overlay
 
 interface FullScreenVideoProps {
   videoSrc: string;
@@ -29,13 +29,18 @@ export function FullScreenVideo({
       >
         Your browser does not support the video tag.
       </video>
-      <Image
-        src="/overlay.png"
-        alt="Video overlay"
-        layout="fill"
-        objectFit="cover"
-        className="absolute inset-0 z-10 pointer-events-none opacity-50" // Adjust opacity as needed
-        data-ai-hint="video overlay pattern"
+      <div
+        className="absolute inset-0 z-10 pointer-events-none"
+        style={{
+          width: '100%',
+          height: '100%',
+          backgroundSize: '100px',
+          backgroundRepeat: 'repeat',
+          backgroundImage: "url('https://framerusercontent.com/images/rR6HYXBrMmX4cRpXfXUOvpvpB0.png')",
+          opacity: 0.1,
+          borderRadius: 0,
+        }}
+        aria-hidden="true" // Decorative overlay
       />
       {/* You can add content on top of the video here if needed, make sure its z-index is higher than the overlay */}
       {/* Example overlay:
