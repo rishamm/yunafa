@@ -15,14 +15,14 @@ export function Logo({ height = 60, className }: LogoProps) {
     <div className='flex flex-col items-center '>
     <Image
       src="/logo.png" 
-      alt="Yunafa Logo"
+      alt="Yunafa Logo Image"
       width={width}
       height={height}
       className={className}
       priority 
-      aria-label="Yunafa Logo" 
+      aria-label="Yunafa Logo Image" 
     />
-    <span>
+    <span className="text-announcement">
       YUNAFA
     </span>
     </div>
