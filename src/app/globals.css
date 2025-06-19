@@ -112,6 +112,20 @@
   * {
     @apply border-border;
   }
+
+  /* Lenis recommended CSS */
+  html.lenis {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important; /* Lenis will handle the smooth scrolling */
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
 }
 
 @layer utilities {
@@ -119,4 +133,3 @@
     color: hsl(var(--announcement-text-color));
   }
 }
-
