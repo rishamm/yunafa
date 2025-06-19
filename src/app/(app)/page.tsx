@@ -76,9 +76,8 @@ export default function HomePage() {
       >
         {/* Content that scrolls OVER the video starts here */}
 
-        <section className="h-[100vh] bg-transparent">
-  <HeroScrollSection />
-</section>
+        {/* Removed h-[100vh] bg-transparent wrapper from HeroScrollSection */}
+        <HeroScrollSection />
 
         <section className="parallax-swiper-outer-wrap m-0 mt-0 ">
           <ParallaxSwiper />
