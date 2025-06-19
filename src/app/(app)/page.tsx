@@ -44,7 +44,7 @@ export default function HomePage() {
     offset: ["start end", "start 0.5"] 
   });
 
-  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [50, 0]); 
+  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [0, 0]); 
   const contentOpacity = useTransform(contentScrollYProgress, [0, 1], [0, 1]); 
 
   const collectionsHeadingElement = (
