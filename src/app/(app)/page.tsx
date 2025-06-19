@@ -18,7 +18,7 @@ export default function HomePage() {
   const [carouselItems, setCarouselItems] = useState<CarouselItemType[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
 
-  const contentWrapperRef = useRef<HTMLDivElement>(null);
+  const contentWrapperRef = useRef<HTMLDivElement>(null); // Ref will be applied to the motion.div
 
   useEffect(() => {
     async function loadData() {
@@ -41,12 +41,12 @@ export default function HomePage() {
   }, []);
 
   const { scrollYProgress: contentScrollYProgress } = useScroll({
-    target: contentWrapperRef,
-    offset: ["start end", "start 0.75"] // Animation starts when top of content hits bottom of VP, ends when top of content is 75% up VP
+    target: contentWrapperRef, // Target is now the motion.div
+    offset: ["start end", "start 0.5"] // Animation starts when top of content hits bottom of VP, ends when top of content is 50% up VP
   });
 
-  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], ["50px", "0px"]);
-  const contentOpacity = useTransform(contentScrollYProgress, [0, 1], [0.5, 1]);
+  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [50, 0]); // Start 50px down
+  const contentOpacity = useTransform(contentScrollYProgress, [0, 1], [0, 1]); // Fade from 0 to 1
 
   const collectionsHeadingElement = (
     <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4">
@@ -61,7 +61,8 @@ export default function HomePage() {
   );
 
   return (
-    <div className="relative flex flex-col overflow-x-hidden min-h-screen"> {/* Ensure overflow-x-hidden */}
+    // Outermost div for page structure
+    <div className="relative z-20 flex flex-col overflow-x-hidden min-h-screen">
       {/* FullScreenVideo will be sticky and z-10 */}
       <FullScreenVideo
         videoSrc="/land_scape.mp4"
@@ -69,15 +70,19 @@ export default function HomePage() {
         videoHint="ocean waves"
       />
 
-      {/* This div wraps all content that scrolls OVER the sticky video */}
-      {/* It needs a background and a higher z-index */}
-      <div ref={contentWrapperRef} className="relative z-20 bg-background">
-        <motion.div
+      {/* This motion.div wraps all content that scrolls OVER the sticky video */}
+      {/* It needs a background and a higher z-index, and it's the target for the scroll animation */}
+      <motion.div
+          ref={contentWrapperRef} // Ref moved here
           style={{
             translateY: contentTranslateY,
             opacity: contentOpacity,
           }}
+          className="relative z-20" // Ensure it's above the video, background is on the inner div
         >
+        {/* Inner div provides the solid background for scrolling content */}
+        <div className="relative bg-background">
+       
           <HeroScrollSection />
 
           <section className="parallax-swiper-outer-wrap m-0 mt-0 ">
@@ -119,8 +124,9 @@ export default function HomePage() {
               </div>
             </div>
           </section>
-        </motion.div>
-      </div>
+        
+        </div>
+      </motion.div>
     </div>
   );
 }
