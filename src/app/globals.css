@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -95,7 +96,7 @@
     --sidebar-border: 180 15% 15%;
     --sidebar-ring: 180 65% 60%;
 
-    --announcement-text-color: 180 15% 90%; /* Light Tealish Gray for dark mode announcement text (same as dark --foreground) */
+    --announcement-text-color: 0 0% 100%; /* Pure White for dark mode announcement text */
   }
 }
 
@@ -118,3 +119,4 @@
     color: hsl(var(--announcement-text-color));
   }
 }
+
