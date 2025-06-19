@@ -10,15 +10,13 @@ import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
 import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
 import { FullScreenVideo } from '@/components/sections/FullScreenVideo';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion'; // Keep motion for potential future simple animations
+import { useEffect, useState } from 'react';
 
 export default function HomePage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [carouselItems, setCarouselItems] = useState<CarouselItemType[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
-
-  const contentWrapperRef = useRef<HTMLDivElement>(null); 
 
   useEffect(() => {
     async function loadData() {
@@ -39,14 +37,6 @@ export default function HomePage() {
     loadData();
   }, []);
 
-  const { scrollYProgress: contentScrollYProgress } = useScroll({
-    target: contentWrapperRef,
-    offset: ["start end", "end start"] 
-  });
-
-  const contentTranslateY = useTransform(contentScrollYProgress, [0, 1], [0, -200]); 
-  const contentOpacity = useTransform(contentScrollYProgress, [0, 0.3], [0, 1]); 
-
   const collectionsHeadingElement = (
     <div className="flex-shrink-0 h-full flex items-center justify-center px-2 md:px-4">
       <div className="h-80 md:h-[40rem] flex items-center">
@@ -66,20 +56,12 @@ export default function HomePage() {
         posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
         videoHint="ocean waves"
       />
-      <motion.div
-        ref={contentWrapperRef} 
-        style={{
-          translateY: contentTranslateY,
-          opacity: contentOpacity,
-        }}
-        className="relative z-20 bg-background" 
-      >
-        {/* Content that scrolls OVER the video starts here */}
-
-        {/* Removed h-[100vh] bg-transparent wrapper from HeroScrollSection */}
+      
+      {/* Content that scrolls normally AFTER the video section */}
+      <div className="relative bg-background"> {/* z-20 less critical here, bg-background important */}
         <HeroScrollSection />
 
-        <section className="parallax-swiper-outer-wrap m-0 mt-0 ">
+        <section className="parallax-swiper-outer-wrap m-0 mt-0">
           <ParallaxSwiper />
         </section>
 
@@ -118,8 +100,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        {/* End of content that scrolls over video */}
-      </motion.div>
+      </div>
     </div>
   );
 }
