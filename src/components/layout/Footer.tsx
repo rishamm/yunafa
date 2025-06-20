@@ -8,9 +8,10 @@ export function Footer() {
           <p className="mb-2">&copy; {new Date().getFullYear()} Yunafa. All rights reserved.</p>
         </div>
         <div className="text-center"> {/* This div will center the large YUNAFA text */}
-          <span className="text-7xl md:text-[15.5rem] font-bold font-headline text-white leading-none">YUNAFA</span>
+          <span className="text-7xl md:text-[15.5rem] font-bold font-headline text-white">YUNAFA</span>
         </div>
       </div>
     </footer>
   );
 }
+
