@@ -65,12 +65,12 @@ export function FullScreenVideo({
         aria-hidden="true"
       />
        <nav className="absolute left-8 md:left-16 bottom-[7rem] z-20 pointer-events-auto">
-        <ul className="space-y-3">
+        <ul className="space-y-4">
           {heroLinks.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="inline-block text-sm font-medium text-white hover:opacity-80 transition-opacity leading-[0.8] border-b border-l border-white pb-[0.2rem] pl-[0.2rem] tracking-wider"
+                className="inline-block text-xl font-medium text-white hover:opacity-80 transition-opacity tracking-[0.1rem] leading-[0.8] border-b border-l border-white pb-[0.051rem] pl-[0.1rem] tracking-wider"
               >
                 {link.label}
               </Link>
