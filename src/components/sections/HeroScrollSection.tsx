@@ -20,13 +20,6 @@ export function HeroScrollSection() {
     </div>
   );
 
-  const heroLinks = [
-    { href: "/category/new-arrivals", label: "New Arrivals" },
-    { href: "/category/best-sellers", label: "Best Sellers" },
-    { href: "#home-carousel", label: "Collections" },
-    { href: "/our-story", label: "Our Story" },
-  ];
-
   // IMPORTANT: Ensure 'hero-video.mp4' is the correct filename in your public folder.
   const videoFileName = 'hero.mp4';
 
@@ -55,22 +48,6 @@ export function HeroScrollSection() {
                {heroTextContent}
           </div>
       </section>
-
-      {/* Absolutely positioned links on the left */}
-      <nav className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 z-20 pointer-events-auto hidden md:block">
-        <ul className="space-y-4">
-          {heroLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-sm font-medium text-white underline hover:opacity-80 transition-opacity"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </div>
   );
 }
