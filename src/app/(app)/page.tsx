@@ -61,7 +61,7 @@ export default function HomePage() {
       <div className="relative bg-background"> {/* z-20 less critical here, bg-background important */}
         <HeroScrollSection />
 
-        <section className="parallax-swiper-outer-wrap m-0 mt-0">
+        <section className="h-screen w-full bg-white">
           <ParallaxSwiper />
         </section>
 

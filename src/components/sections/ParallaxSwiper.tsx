@@ -1,4 +1,3 @@
-
 // src/components/sections/ParallaxSwiper.tsx
 'use client';
 
@@ -49,7 +48,7 @@ const slidesData = [
 
 export function ParallaxSwiper() {
   return (
-    <div className="parallax-swiper-container">
+    <div className="parallax-swiper-container" data-lenis-prevent>
       <Swiper
         modules={[Parallax, Mousewheel]} // Removed Pagination
         direction="vertical"

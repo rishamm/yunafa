@@ -1,18 +1,13 @@
 
 /* Component-specific styles for ParallaxSwiper */
-.parallax-swiper-outer-wrap {
+
+.parallax-swiper-container {
+  height: 100%;
   width: 100%;
-  height: 100vh;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: white;
-}
-
-.parallax-swiper-container {
-  height: 100vh;
-  width: 100%; /* Changed from 90vw to 100% */
-  position: relative;
 }
 
 .parallax-swiper-container .swiper {
