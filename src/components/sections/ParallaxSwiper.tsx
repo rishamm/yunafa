@@ -48,7 +48,7 @@ const slidesData = [
 
 export function ParallaxSwiper() {
   return (
-    <div className="parallax-swiper-container" data-lenis-prevent>
+    <div className="parallax-swiper-container">
       <Swiper
         modules={[Parallax, Mousewheel]} // Removed Pagination
         direction="vertical"
