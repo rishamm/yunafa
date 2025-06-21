@@ -77,11 +77,9 @@ export default function HomePage() {
         </section>
 
         <section className="px-4 py-12 bg-background">
-          <div className="max-w-3xl mx-auto">
-            <p className="text-primary mb-4 whitespace-pre-wrap">
+            <p className="text-primary mb-4 whitespace-pre-wrap max-w-3xl">
               At Yunafa, we believe in the art of fine living. Our mission is to bring you a curated selection of products that embody craftsmanship, elegance, and timeless appeal. Each item in our collection is chosen with meticulous care, ensuring it meets our high standards of quality and design.
             </p>
-          </div>
         </section>
       </div>
     </div>
