@@ -43,7 +43,7 @@ export const ContainerScroll = ({
   const headerTranslateY = useTransform(
     scrollYProgress,
     [0, 1],
-    isMobile ? [0, -50] : [0, -100]
+    isMobile ? [0, -50] : [-50, -100]
   );
 
   // Adjusted cardTranslateY with a new breakpoint for very large screens
@@ -90,7 +90,7 @@ export const Header = ({
       style={{
         translateY: translate,
       }}
-      className="w-full mx-auto text-center"
+      className="w-full mx-auto text-center absolute"
     >
       {titleComponent}
     </motion.div>
