@@ -1,7 +1,7 @@
 
 export function Footer() {
   return (
-    <footer className="bg-card border-t mt-auto overflow-hidden">
+    <footer className="bg-card border-t border-primary mt-auto overflow-hidden">
       <div className="h-full flex flex-col gap-0 justify-center pt-8 pb-0">
         {/* This div will align its content to the left */}
         <div className="text-left px-4"> 
