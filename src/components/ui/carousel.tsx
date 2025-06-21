@@ -278,9 +278,20 @@ export const CardMedia = ({
   alt,
   className,
 }: CardMediaProps) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.warn("Carousel video autoplay was prevented:", error);
+      });
+    }
+  }, []);
+
   if (videoSrc) {
     return (
       <video
+        ref={videoRef}
         key={videoSrc} 
         src={videoSrc}
         // Removed poster attribute as we no longer manage separate poster images
@@ -296,4 +307,3 @@ export const CardMedia = ({
   // If no videoSrc, render nothing for media. The card will be content-focused.
   return null; 
 };
-

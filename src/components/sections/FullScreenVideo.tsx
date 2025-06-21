@@ -1,6 +1,7 @@
 // src/components/sections/FullScreenVideo.tsx
 'use client';
 import Link from 'next/link';
+import { useRef, useEffect } from 'react';
 
 interface FullScreenVideoProps {
   videoSrc: string;
@@ -13,6 +14,16 @@ export function FullScreenVideo({
   posterSrc, 
   videoHint = "background video" 
 }: FullScreenVideoProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.warn("Video autoplay was prevented by the browser:", error);
+      });
+    }
+  }, []);
+
   const heroLinks = [
     { href: "/category/new-arrivals", label: "New Arrivals" },
     { href: "/category/best-sellers", label: "Best Sellers" },
@@ -23,6 +34,7 @@ export function FullScreenVideo({
   return (
     <section className="relative h-screen w-full overflow-hidden bg-neutral-800">
       <video
+        ref={videoRef}
         key={videoSrc} 
         src={videoSrc}
         poster={posterSrc}

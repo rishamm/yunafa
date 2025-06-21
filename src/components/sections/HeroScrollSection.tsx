@@ -4,8 +4,19 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
+import { useRef, useEffect } from 'react';
 
 export function HeroScrollSection() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(error => {
+        console.warn("Hero scroll video autoplay was prevented:", error);
+      });
+    }
+  }, []);
+
   const heroTextContent = (
     <div className="max-w-5xl mx-auto text-center h-auto">
       <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-white">
@@ -20,7 +31,6 @@ export function HeroScrollSection() {
     </div>
   );
 
-  // IMPORTANT: Ensure 'hero-video.mp4' is the correct filename in your public folder.
   const videoFileName = 'hero.mp4';
 
   return (
@@ -28,23 +38,23 @@ export function HeroScrollSection() {
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
-            key={videoFileName} // Adding a key can help React differentiate if src changes
+            ref={videoRef}
+            key={videoFileName}
             src={`/${videoFileName}`}
             autoPlay
             loop
             muted
-            playsInline // Important for iOS autoplay
+            playsInline
             className="object-cover w-full h-full bg-top"
-            poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Poster image while video loads
+            poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
           >
             Your browser does not support the video tag.
           </video>
         </div>
       </ContainerScroll>
       
-      {/* Absolutely positioned hero text on top */}
       <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center z-10 pointer-events-none">
-          <div className="pointer-events-auto"> {/* Allow interaction with hero text content */}
+          <div className="pointer-events-auto">
                {heroTextContent}
           </div>
       </section>
