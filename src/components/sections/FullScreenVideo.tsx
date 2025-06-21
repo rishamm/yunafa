@@ -1,3 +1,4 @@
+
 // src/components/sections/FullScreenVideo.tsx
 'use client';
 import Link from 'next/link';
@@ -66,7 +67,7 @@ export function FullScreenVideo({
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="block text-sm font-medium text-white hover:opacity-80 transition-opacity border-b border-l border-white pl-1 pb-1"
+                className="block text-sm font-medium text-white hover:opacity-80 transition-opacity border-b border-l border-white"
               >
                 {link.label}
               </Link>
