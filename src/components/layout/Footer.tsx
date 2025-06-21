@@ -8,7 +8,7 @@ export function Footer() {
           <p className="mb-0 text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Yunafa. All rights reserved.</p>
         </div>
         <div className="text-center h-full"> {/* This div will center the large YUNAFA text */}
-          <span className="font-['Cormorant_SC',_serif] uppercase text-primary tracking-[-0.02em] leading-[0.7em] text-7xl md:text-[282.96px]">&nbsp;YUNAFA&nbsp;</span>
+          <span className="font-['Cormorant_SC',_serif] uppercase text-primary tracking-[-0.02em] leading-[0.7em] text-[clamp(4.5rem,20vw,282.96px)]">&nbsp;YUNAFA&nbsp;</span>
         </div>
       </div>
     </footer>
