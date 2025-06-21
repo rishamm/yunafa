@@ -150,12 +150,11 @@
 @media screen and (max-width: 960px) {
   .parallax-swiper-slide h1 { font-size: 3.5rem; }
   .parallax-swiper-slide h1 span:not(.emphasis) { font-size: 2.5rem; }
-  .parallax-swiper-slide p.paragraph { max-width: 90%; }
+  .parallax-swiper-slide p.paragraph { max-w: 90%; }
 }
 
 @media screen and (max-width: 640px) {
   .parallax-swiper-container {
-    height: 100vh;
     width: 100%;
   }
   .parallax-swiper-slide h1 {
@@ -163,7 +162,7 @@
     align-self: center;
   }
   .parallax-swiper-slide h1 span:not(.emphasis) { font-size: 2.1rem; }
-  .parallax-swiper-slide p.paragraph { max-width: 94%; }
+  .parallax-swiper-slide p.paragraph { max-w: 94%; }
   .parallax-swiper-slide .swiper-image-inner.swiper-image-left { padding: 2rem; }
   .parallax-swiper-slide .subtitle-custom { padding-right: 2rem; }
 }
