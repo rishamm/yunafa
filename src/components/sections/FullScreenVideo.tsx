@@ -70,7 +70,7 @@ export function FullScreenVideo({
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="block text-sm font-medium text-white hover:opacity-80 transition-opacity leading-[0.8] pl-[0.8rem] pb-0 border-b border-l border-white"
+                className="inline-block text-sm font-medium text-white hover:opacity-80 transition-opacity leading-[0.8] pl-[0.8rem] pb-0 border-b border-l border-white"
               >
                 {link.label}
               </Link>
