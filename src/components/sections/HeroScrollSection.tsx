@@ -8,10 +8,10 @@ import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 export function HeroScrollSection() {
   const heroTextContent = (
     <div className="max-w-5xl mx-auto text-center h-auto">
-      <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-foreground">
+      <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-white">
         Welcome to Yunafa
       </h1>
-      <p className="text-lg md:text-xl text-foreground/80 mb-8 max-w-2xl mx-auto">
+      <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
         Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
       </p>
       <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
@@ -20,11 +20,18 @@ export function HeroScrollSection() {
     </div>
   );
 
+  const heroLinks = [
+    { href: "/category/new-arrivals", label: "New Arrivals" },
+    { href: "/category/best-sellers", label: "Best Sellers" },
+    { href: "#home-carousel", label: "Collections" },
+    { href: "/our-story", label: "Our Story" },
+  ];
+
   // IMPORTANT: Ensure 'hero-video.mp4' is the correct filename in your public folder.
   const videoFileName = 'hero.mp4';
 
   return (
-    <div className="relative flex flex-col justify-start  ">
+    <div className="relative flex flex-col justify-start">
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
@@ -34,20 +41,36 @@ export function HeroScrollSection() {
             loop
             muted
             playsInline // Important for iOS autoplay
-            className="object-cover w-full h-full bg-top 
-            " // Added rounded-2xl
+            className="object-cover w-full h-full bg-top"
             poster="https://images.unsplash.com/photo-1601672439911-572af5dcf128?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // Poster image while video loads
           >
             Your browser does not support the video tag.
           </video>
         </div>
       </ContainerScroll>
+      
       {/* Absolutely positioned hero text on top */}
-      <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center  z-10 pointer-events-none">
+      <section className="absolute top-0 left-0 w-full h-full flex flex-col items-center justify-center z-10 pointer-events-none">
           <div className="pointer-events-auto"> {/* Allow interaction with hero text content */}
                {heroTextContent}
           </div>
       </section>
+
+      {/* Absolutely positioned links on the left */}
+      <nav className="absolute left-8 md:left-16 top-1/2 -translate-y-1/2 z-20 pointer-events-auto hidden md:block">
+        <ul className="space-y-4">
+          {heroLinks.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className="text-sm font-medium text-white underline hover:opacity-80 transition-opacity"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 }

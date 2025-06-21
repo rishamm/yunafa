@@ -81,9 +81,6 @@ export default function HomePage() {
               <p className="text-foreground/80 mb-4 whitespace-pre-wrap">
                 At Yunafa, we believe in the art of fine living. Our mission is to bring you a curated selection of products that embody craftsmanship, elegance, and timeless appeal. Each item in our collection is chosen with meticulous care, ensuring it meets our high standards of quality and design.
               </p>
-              <p className="text-foreground/80 mb-6 whitespace-pre-wrap">
-                Whether you are looking for a statement piece for your home, a unique gift, or a personal treasure, Yunafa offers an unparalleled shopping experience.
-              </p>
              
             </div>
             
