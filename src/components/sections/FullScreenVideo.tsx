@@ -25,10 +25,14 @@ export function FullScreenVideo({
   }, [videoSrc]);
 
   const heroLinks = [
-    { href: "/category/new-arrivals", label: "New Arrivals" },
-    { href: "/category/best-sellers", label: "Best Sellers" },
-    { href: "#home-carousel", label: "Collections" },
-    { href: "/our-story", label: "Our Story" },
+    { href: "/category/ethnic", label: "Ethnic" },
+    { href: "/category/casual", label: "Casual" },
+    { href: "/category/traditional", label: "Traditional" },
+    { href: "/category/modest", label: "Modest" },
+    { href: "/category/western", label: "Western" },
+    { href: "/category/korean", label: "Korean" },
+    { href: "/category/junior", label: "Junior" },
+    { href: "/category/tervibe", label: "Tervibe" },
   ];
 
   return (
