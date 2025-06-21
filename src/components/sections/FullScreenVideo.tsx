@@ -63,10 +63,10 @@ export function FullScreenVideo({
        <nav className="absolute left-8 md:left-16 bottom-24 z-20 pointer-events-auto">
         <ul className="space-y-2">
           {heroLinks.map((link) => (
-            <li key={link.href} className="border-b border-white pb-2">
+            <li key={link.href}>
               <Link
                 href={link.href}
-                className="text-sm font-medium text-white hover:opacity-80 transition-opacity"
+                className="block text-sm font-medium text-white hover:opacity-80 transition-opacity border-b border-l border-white pl-2 pb-2"
               >
                 {link.label}
               </Link>
