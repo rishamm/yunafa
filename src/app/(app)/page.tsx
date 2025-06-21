@@ -75,12 +75,6 @@ export default function HomePage() {
               <HomePageCarousel items={carouselItems} leadingElement={collectionsHeadingElement} />
           )}
         </section>
-
-        <section className="px-4 py-12 bg-background">
-            <p className="text-primary mb-4 whitespace-pre-wrap max-w-3xl">
-              At Yunafa, we believe in the art of fine living. Our mission is to bring you a curated selection of products that embody craftsmanship, elegance, and timeless appeal. Each item in our collection is chosen with meticulous care, ensuring it meets our high standards of quality and design.
-            </p>
-        </section>
       </div>
     </div>
   );
