@@ -1,4 +1,3 @@
-
 // src/components/sections/FullScreenVideo.tsx
 'use client';
 import Link from 'next/link';
@@ -62,7 +61,7 @@ export function FullScreenVideo({
         aria-hidden="true"
       />
        <nav className="absolute left-8 md:left-16 bottom-24 z-20 pointer-events-auto">
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {heroLinks.map((link) => (
             <li key={link.href}>
               <Link
