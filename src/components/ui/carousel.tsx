@@ -286,7 +286,7 @@ export const CardMedia = ({
         console.warn("Carousel video autoplay was prevented:", error);
       });
     }
-  }, []);
+  }, [videoSrc]);
 
   if (videoSrc) {
     return (

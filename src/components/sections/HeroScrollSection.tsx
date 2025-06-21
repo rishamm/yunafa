@@ -8,6 +8,7 @@ import { useRef, useEffect } from 'react';
 
 export function HeroScrollSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoFileName = 'hero.mp4';
 
   useEffect(() => {
     if (videoRef.current) {
@@ -15,7 +16,7 @@ export function HeroScrollSection() {
         console.warn("Hero scroll video autoplay was prevented:", error);
       });
     }
-  }, []);
+  }, [videoFileName]);
 
   const heroTextContent = (
     <div className="max-w-5xl mx-auto text-center h-auto">
@@ -30,8 +31,6 @@ export function HeroScrollSection() {
       </Button>
     </div>
   );
-
-  const videoFileName = 'hero.mp4';
 
   return (
     <div className="relative flex flex-col justify-start">

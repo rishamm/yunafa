@@ -22,7 +22,7 @@ export function FullScreenVideo({
         console.warn("Video autoplay was prevented by the browser:", error);
       });
     }
-  }, []);
+  }, [videoSrc]);
 
   const heroLinks = [
     { href: "/category/new-arrivals", label: "New Arrivals" },
