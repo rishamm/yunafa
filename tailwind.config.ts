@@ -13,6 +13,7 @@ export default {
         body: ['Batusa', 'sans-serif'], 
         headline: ['Batusa', 'serif'], 
         code: ['monospace'],
+        'plex-mono': ['"IBM Plex Mono"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',
