@@ -26,9 +26,6 @@ export function HeroScrollSection() {
       <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
         Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
       </p>
-      <Button asChild size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground transition-transform hover:scale-105">
-        <Link href="#home-carousel">Explore Collection</Link>
-      </Button>
     </div>
   );
 
