@@ -1,3 +1,4 @@
+
 'use client';
 import Link from 'next/link';
 import { useRef, useEffect } from 'react';
@@ -69,7 +70,7 @@ export function FullScreenVideo({
             <li key={link.href}>
               <Link
                 href={link.href}
-                className="inline-block font-plex-mono text-xs font-normal uppercase tracking-normal leading-[1.6] text-white border-b border-l border-white hover:opacity-80 transition-opacity pb-[0.051rem]"
+                className="inline-block font-plex-mono text-xs font-normal uppercase tracking-normal leading-[1.6] text-white hover:opacity-80 transition-opacity"
               >
                 {link.label}
               </Link>
