@@ -20,9 +20,6 @@ export function HeroScrollSection() {
 
   const heroTextContent = (
     <div className="max-w-5xl mx-auto text-center h-auto">
-      <h1 className="text-4xl md:text-6xl font-bold mb-6 font-headline text-white">
-        Welcome to Yunafa
-      </h1>
       <p className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto">
         Discover an exquisite collection of unique and luxurious items, curated for the discerning eye.
       </p>
