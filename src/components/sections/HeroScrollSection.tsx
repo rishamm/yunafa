@@ -34,7 +34,7 @@ export function HeroScrollSection() {
 
   return (
     <div className="relative flex flex-col justify-start">
-      <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-muted-foreground">Scroll to discover our showcase</span>}>
+      <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-white">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
             ref={videoRef}
