@@ -11,7 +11,7 @@ export function AnnouncementBar() {
   );
 
   return (
-    <div className="bg-card text-announcement relative flex overflow-hidden whitespace-nowrap py-3 text-sm font-medium">
+    <div className="bg-card text-announcement relative flex overflow-hidden whitespace-nowrap py-3 text-sm font-semibold">
       <div className="animate-marquee-left flex min-w-full shrink-0 items-center">
         <MarqueeContent />
       </div>
