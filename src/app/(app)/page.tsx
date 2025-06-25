@@ -35,17 +35,18 @@ export default function HomePage() {
 
   // Animate `left` and `top` CSS properties
   const navLeft = useTransform(scrollYProgress, [0, 1], ["4rem", "50%"]);
-  const navTop = useTransform(scrollYProgress, [0, 1], ["50%", "20%"]);
+  // At the end of the scroll (progress=1), the target landing area's center will be at 70vh of the viewport.
+  const navTop = useTransform(scrollYProgress, [0, 1], ["50%", "70%"]);
 
   // Animate the `transform` property to smoothly switch from vertical to horizontal centering
   const navTransform = useTransform(scrollYProgress, (pos) => {
-      // When pos=0 (start), translateY is -50% to center it vertically.
-      // When pos=1 (end), translateY is 0.
-      const translateY = (1 - pos) * -50;
-
       // When pos=0 (start), translateX is 0.
       // When pos=1 (end), translateX is -50% to center it horizontally.
       const translateX = pos * -50;
+
+      // translateY should always be -50% to keep the element vertically centered on its `top` coordinate.
+      const translateY = -50;
+
       return `translate(${translateX}%, ${translateY}%)`;
   });
 
