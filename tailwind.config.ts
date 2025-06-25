@@ -90,8 +90,8 @@ export default {
           },
         },
         'marquee-left': {
-          '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' }, // Moves by half the total width due to duplicated content
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-100%)' },
         },
       },
       animation: {
