@@ -226,53 +226,65 @@ export async function deleteProduct(id: string): Promise<boolean> {
 
 // --- Carousel Item Functions ---
 export async function getCarouselItems(): Promise<CarouselItem[]> {
+  // NOTE: This function is temporarily set to always return demo data with images
+  // to ensure the carousel is populated for demonstration purposes.
+  // To use live data from your database, comment out the `return [...]` block
+  // and uncomment the database fetching logic below it.
   try {
+    // Forcing demo data to be returned.
+    return [
+      {
+        id: 'mock1',
+        title: 'Street Style',
+        category: 'New Collection',
+        content: 'Discover the latest trends from the street and make them your own. Effortless, chic, and uniquely you.',
+        imageSrc: 'https://images.unsplash.com/photo-1492707892479-7bc8d5a44d70?w=800&auto=format&fit=crop&q=60',
+        'data-ai-hint': 'fashion street',
+        videoSrc: null,
+      },
+      {
+        id: 'mock2',
+        title: 'The Statement Bag',
+        category: 'Accessories',
+        content: 'Every detail matters. Find the perfect bag to complement your look and carry your world in style.',
+        imageSrc: 'https://images.unsplash.com/photo-1548036328-c9fa89d123b5?w=800&auto=format&fit=crop&q=60',
+        'data-ai-hint': 'handbag product',
+        videoSrc: null,
+      },
+      {
+        id: 'mock3',
+        title: 'Timeless Elegance',
+        category: 'Fine Jewelry',
+        content: 'Adorn yourself with pieces that last a lifetime. Exquisite craftsmanship meets modern design.',
+        imageSrc: 'https://images.unsplash.com/photo-1611652022417-a51415e91344?w=800&auto=format&fit=crop&q=60',
+        'data-ai-hint': 'jewelry detail',
+        videoSrc: null,
+      },
+      {
+          id: 'mock4',
+          title: 'Cinematic Moments',
+          category: 'Brand Story',
+          content: 'A showcase of our brand essence in motion. Experience the story behind our craft.',
+          videoSrc: '/hero.mp4',
+          imageSrc: 'https://images.unsplash.com/photo-1601672439911-572af5dcf128?w=800&q=80',
+          'data-ai-hint': 'dark fashion',
+      }
+    ];
+
+    /*
+    // --- Live Database Logic ---
+    // To use live data, comment out the return block above and uncomment this section.
     const collection = await getCollection<CarouselItem>('carouselItems');
     const items = await collection.find({}).sort({ title: 1 }).toArray();
 
     if (items.length === 0) {
-      // If no items in DB, return some mock data with images
-      return [
-        {
-          id: 'mock1',
-          title: 'Street Style',
-          category: 'New Collection',
-          content: 'Discover the latest trends from the street and make them your own. Effortless, chic, and uniquely you.',
-          imageSrc: 'https://images.unsplash.com/photo-1492707892479-7bc8d5a44d70?w=800&auto=format&fit=crop&q=60',
-          'data-ai-hint': 'fashion street',
-          videoSrc: null,
-        },
-        {
-          id: 'mock2',
-          title: 'The Statement Bag',
-          category: 'Accessories',
-          content: 'Every detail matters. Find the perfect bag to complement your look and carry your world in style.',
-          imageSrc: 'https://images.unsplash.com/photo-1548036328-c9fa89d123b5?w=800&auto=format&fit=crop&q=60',
-          'data-ai-hint': 'handbag product',
-          videoSrc: null,
-        },
-        {
-          id: 'mock3',
-          title: 'Timeless Elegance',
-          category: 'Fine Jewelry',
-          content: 'Adorn yourself with pieces that last a lifetime. Exquisite craftsmanship meets modern design.',
-          imageSrc: 'https://images.unsplash.com/photo-1611652022417-a51415e91344?w=800&auto=format&fit=crop&q=60',
-          'data-ai-hint': 'jewelry detail',
-          videoSrc: null,
-        },
-        {
-            id: 'mock4',
-            title: 'Cinematic Moments',
-            category: 'Brand Story',
-            content: 'A showcase of our brand essence in motion. Experience the story behind our craft.',
-            videoSrc: '/hero.mp4',
-            imageSrc: 'https://images.unsplash.com/photo-1601672439911-572af5dcf128?w=800&q=80',
-            'data-ai-hint': 'dark fashion',
-        }
-      ];
+      // This block can be used to populate the database with initial items if it's empty.
+      // For now, we are forcing demo data above.
+      return [];
     }
     
     return items.map(mapMongoDocument);
+    */
   } catch (error) {
     console.error('Error fetching carousel items:', error);
     return [];
@@ -281,6 +293,8 @@ export async function getCarouselItems(): Promise<CarouselItem[]> {
 
 export async function getCarouselItemById(id: string): Promise<CarouselItem | undefined> {
   try {
+    // If using mock data, this might need adjustment to find from the mock array.
+    // For now, it will only find items that actually exist in the database.
     const collection = await getCollection<CarouselItem>('carouselItems');
     const item = await collection.findOne({ id: id });
     return item ? mapMongoDocument(item) : undefined;
