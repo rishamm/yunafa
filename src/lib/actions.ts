@@ -186,7 +186,10 @@ const carouselItemActionSchema = z.object({
              .or(z.string().startsWith('/'))
              .or(z.string().startsWith(sufyUrlPrefixValidated))
              .optional().nullable(),
-  imageSrc: z.string().url('Image Source must be a valid URL.').optional().nullable(),
+  imageSrc: z.string().url('Image Source must be a valid URL.')
+             .or(z.string().startsWith('/'))
+             .or(z.string().startsWith(sufyUrlPrefixValidated))
+             .optional().nullable(),
   'data-ai-hint': z.string().max(40, "AI hint should be concise.").optional(),
 });
 
