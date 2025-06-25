@@ -33,14 +33,19 @@ export default function HomePage() {
     clamp: true, // Prevents values from going outside 0-1 range
   });
 
-  // Animate from a fixed left position to the horizontal center of the screen
-  const navX = useTransform(scrollYProgress, [0, 1], ["4rem", "50%"]);
-  // Animate from the vertical center to a higher position
-  const navY = useTransform(scrollYProgress, [0, 1], ["50%", "20%"]);
-  // Animate the transform property to smoothly switch from vertical to horizontal centering
+  // Animate `left` and `top` CSS properties
+  const navLeft = useTransform(scrollYProgress, [0, 1], ["4rem", "50%"]);
+  const navTop = useTransform(scrollYProgress, [0, 1], ["50%", "20%"]);
+
+  // Animate the `transform` property to smoothly switch from vertical to horizontal centering
   const navTransform = useTransform(scrollYProgress, (pos) => {
-      const translateY = (1 - pos) * -50; // Starts at -50% and moves to 0
-      const translateX = pos * -50;       // Starts at 0 and moves to -50%
+      // When pos=0 (start), translateY is -50% to center it vertically.
+      // When pos=1 (end), translateY is 0.
+      const translateY = (1 - pos) * -50;
+
+      // When pos=0 (start), translateX is 0.
+      // When pos=1 (end), translateX is -50% to center it horizontally.
+      const translateX = pos * -50;
       return `translate(${translateX}%, ${translateY}%)`;
   });
 
@@ -70,11 +75,11 @@ export default function HomePage() {
       
       <motion.nav
         style={{
-          x: navX,
-          y: navY,
+          left: navLeft,
+          top: navTop,
           transform: navTransform,
         }}
-        className="fixed left-0 top-0 z-40 pointer-events-auto"
+        className="fixed z-40 pointer-events-auto"
       >
         <ul className="space-y-4">
           {heroLinks.map((link) => (
