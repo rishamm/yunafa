@@ -10,8 +10,10 @@ export default function AppLayout({
 }) {
   return (
     <div className='relative'>
-      <AnnouncementBar />
-      <Header />
+      <div className="absolute top-0 left-0 w-full z-50">
+        <AnnouncementBar />
+        <Header />
+      </div>
       <main className="flex-grow ">
         {children}
       </main>

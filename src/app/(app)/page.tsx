@@ -138,9 +138,7 @@ export default function HomePage() {
         </section>
 
         <section id="home-carousel" ref={carouselRef} className="py-10 md:py-16 bg-background">
-          <div className="h-[40vh]">
-            {/* This is a spacer div to create a "landing area" for the animated nav above the carousel */}
-          </div>
+         
           {isLoadingData ? (
               <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
                   <p>Loading collections...</p>
