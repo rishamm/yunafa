@@ -23,37 +23,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from '@/hooks/use-toast';
 import type { CarouselItem, Category } from '@/lib/types';
 import { useRouter } from 'next/navigation';
 import { createCarouselItemAction, updateCarouselItemAction } from '@/lib/actions';
 import { useState, useTransition, useEffect, ChangeEvent } from 'react';
-import { Loader2, UploadCloud, Image as ImageIcon, Video } from 'lucide-react';
+import { Loader2, UploadCloud } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const rawSufyUrlPrefix = process.env.NEXT_PUBLIC_SUFY_PUBLIC_URL_PREFIX || 'https://your-bucket-name.mos.sufycloud.com/';
-const sufyUrlPrefixValidated = rawSufyUrlPrefix.endsWith('/') ? rawSufyUrlPrefix : `${rawSufyUrlPrefix}/`;
-
+// This is the schema for the form's internal state.
+// It's simpler and easier to manage.
 const formSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
   category: z.string().min(1, 'Category is required.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
-  videoSrc: z
-    .string()
-    .url('Video Source must be a valid URL.')
-    .or(z.string().startsWith('/'))
-    .or(z.string().startsWith(sufyUrlPrefixValidated))
-    .or(z.literal('')) // Allow empty string if a file is selected
-    .optional()
-    .nullable(),
-  imageSrc: z
-    .string()
-    .url('Image Source must be a valid URL.')
-    .or(z.string().startsWith('/'))
-    .or(z.string().startsWith(sufyUrlPrefixValidated))
-    .or(z.literal('')) // Allow empty string if a file is selected
-    .optional()
-    .nullable(),
+  mediaType: z.enum(['image', 'video'], { required_error: 'You must select a media type.' }),
+  mediaSrc: z.string().optional().nullable(),
   'data-ai-hint': z.string().optional(),
 });
 
@@ -69,24 +55,21 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isUploading, setIsUploading] = useState(false);
+  const [mediaFile, setMediaFile] = useState<File | null>(null);
 
-  // Media state
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [videoFileName, setVideoFileName] = useState<string | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imageFileName, setImageFileName] = useState<string | null>(null);
-  
   const form = useForm<CarouselItemFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: carouselItem?.title || '',
       category: carouselItem?.category || (allCategories.length > 0 ? allCategories[0].name : ''),
       content: carouselItem?.content || '',
-      videoSrc: carouselItem?.videoSrc || '',
-      imageSrc: carouselItem?.imageSrc || '',
+      mediaType: carouselItem?.videoSrc ? 'video' : 'image',
+      mediaSrc: carouselItem?.videoSrc || carouselItem?.imageSrc || '',
       'data-ai-hint': carouselItem?.['data-ai-hint'] || '',
     },
   });
+
+  const mediaType = form.watch('mediaType');
 
   useEffect(() => {
     if (carouselItem) {
@@ -94,61 +77,29 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         title: carouselItem.title,
         category: carouselItem.category,
         content: carouselItem.content,
-        videoSrc: carouselItem.videoSrc || '',
-        imageSrc: carouselItem.imageSrc || '',
+        mediaType: carouselItem.videoSrc ? 'video' : 'image',
+        mediaSrc: carouselItem.videoSrc || carouselItem.imageSrc || '',
         'data-ai-hint': carouselItem['data-ai-hint'] || '',
       });
-      // Video
-      if (carouselItem.videoSrc) {
-        setVideoFileName(carouselItem.videoSrc.startsWith('http') || carouselItem.videoSrc.startsWith('/') ? 'Remote/Linked Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video');
-      } else {
-        setVideoFileName(null);
-      }
-      setVideoFile(null); 
-      // Image
-      if (carouselItem.imageSrc) {
-        setImageFileName(carouselItem.imageSrc.startsWith('http') ? 'Remote/Linked Image' : carouselItem.imageSrc.split('/').pop() || 'Uploaded Image');
-      } else {
-        setImageFileName(null);
-      }
-      setImageFile(null);
     } else {
-      form.reset({ 
-        title: '',
-        category: allCategories.length > 0 ? allCategories[0].name : '', 
-        content: '',
-        videoSrc: '',
-        imageSrc: '',
-        'data-ai-hint': '',
-      });
-      setVideoFileName(null);
-      setVideoFile(null); 
-      setImageFileName(null);
-      setImageFile(null); 
+        form.reset({
+            title: '',
+            category: allCategories.length > 0 ? allCategories[0].name : '',
+            content: '',
+            mediaType: 'image',
+            mediaSrc: '',
+            'data-ai-hint': '',
+        });
     }
+    setMediaFile(null);
   }, [carouselItem, form, allCategories]);
 
-  const handleVideoFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
-    setVideoFile(file);
-    setVideoFileName(file ? file.name : null);
+    setMediaFile(file);
     if (file) {
-        form.setValue('videoSrc', ''); 
-        form.clearErrors('videoSrc');
-    } else if (form.getValues('videoSrc')) {
-        setVideoFileName(form.getValues('videoSrc'));
-    }
-  };
-  
-  const handleImageFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setImageFile(file);
-    setImageFileName(file ? file.name : null);
-    if (file) {
-        form.setValue('imageSrc', ''); 
-        form.clearErrors('imageSrc');
-    } else if (form.getValues('imageSrc')) {
-        setImageFileName(form.getValues('imageSrc'));
+      form.setValue('mediaSrc', ''); // Clear URL input if a file is selected
+      form.clearErrors('mediaSrc');
     }
   };
 
@@ -165,10 +116,10 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
       if (res.ok && res.headers.get("content-type")?.includes("application/json")) {
         const data = await res.json();
          if (data.fileUrl) {
-            toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully to Sufy.` });
+            toast({ title: 'File Uploaded', description: `${file.name} uploaded successfully.` });
             return data.fileUrl;
          } else {
-            console.error('Sufy Upload API Error: JSON response missing fileUrl or indicates error.', data);
+            console.error('Upload API Error: JSON response missing fileUrl or indicates error.', data);
             toast({ 
                 title: 'Upload Failed', 
                 description: data.error || `Upload succeeded but API returned an issue: ${JSON.stringify(data.details || data)}`, 
@@ -178,7 +129,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
          }
       } else {
         const responseText = await res.text();
-        console.error('Sufy Upload API Error: Non-OK or Non-JSON response. Status:', res.status, 'Response Text:', responseText);
+        console.error('Upload API Error: Non-OK or Non-JSON response. Status:', res.status, 'Response Text:', responseText);
         toast({ 
             title: 'Upload Failed', 
             description: `Server returned status ${res.status}. Response: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`, 
@@ -187,7 +138,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         return null;
       }
     } catch (error: any) {
-      console.error('Sufy Upload Client-Side Fetch/JSON Parse Error:', error.message, error);
+      console.error('Upload Client-Side Fetch/JSON Parse Error:', error.message, error);
       toast({ 
         title: 'Upload Error', 
         description: `Could not communicate with the upload service or parse its response. ${error.message}`, 
@@ -201,36 +152,30 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
 
   async function onSubmit(values: CarouselItemFormValues) {
     if (isUploading) return;
-    
-    let finalVideoSrc: string | null | undefined = undefined;
-    let finalImageSrc: string | null | undefined = undefined;
-    
-    if (imageFile) {
-      const uploadedImageUrl = await uploadFileToSufy(imageFile);
-      if (uploadedImageUrl) {
-        finalImageSrc = uploadedImageUrl;
+
+    let finalMediaSrc = values.mediaSrc;
+
+    if (mediaFile) {
+      const uploadedUrl = await uploadFileToSufy(mediaFile);
+      if (uploadedUrl) {
+        finalMediaSrc = uploadedUrl;
       } else {
-        return; // Stop submission on failed image upload
+        return; // Stop submission on failed upload
       }
-    } else {
-      finalImageSrc = values.imageSrc?.trim() || null;
     }
 
-    if (videoFile) {
-      const uploadedVideoUrl = await uploadFileToSufy(videoFile);
-      if (uploadedVideoUrl) {
-        finalVideoSrc = uploadedVideoUrl;
-      } else {
-        return; // Stop submission on failed video upload
-      }
-    } else {
-      finalVideoSrc = values.videoSrc?.trim() || null;
+    if (!finalMediaSrc) {
+        form.setError('mediaSrc', { type: 'manual', message: 'A media URL or file upload is required.'});
+        return;
     }
-    
+
     const submissionData = {
-      ...values,
-      videoSrc: finalVideoSrc,
-      imageSrc: finalImageSrc,
+      title: values.title,
+      category: values.category,
+      content: values.content,
+      'data-ai-hint': values['data-ai-hint'],
+      imageSrc: values.mediaType === 'image' ? finalMediaSrc : null,
+      videoSrc: values.mediaType === 'video' ? finalMediaSrc : null,
     };
 
     startTransition(async () => {
@@ -238,7 +183,7 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
       Object.entries(submissionData).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
           actionFormData.append(key, String(value));
-        } else if ((key === 'videoSrc' || key === 'imageSrc') && (value === null || value === '')) {
+        } else if ((key === 'videoSrc' || key === 'imageSrc') && (value === null)) {
            actionFormData.append(key, ''); 
         }
       });
@@ -262,11 +207,16 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
           variant: 'destructive',
         });
         if (result.errors) {
+          if (result.errors.imageSrc || result.errors.videoSrc) {
+            form.setError('mediaSrc', { type: 'manual', message: (result.errors.imageSrc || result.errors.videoSrc)!.join(', ') });
+          }
           Object.entries(result.errors).forEach(([field, messages]) => {
-            form.setError(field as keyof CarouselItemFormValues, {
-              type: 'manual',
-              message: (messages as string[]).join(', '),
-            });
+             if (field !== 'imageSrc' && field !== 'videoSrc') {
+                form.setError(field as keyof CarouselItemFormValues, {
+                    type: 'manual',
+                    message: (messages as string[]).join(', '),
+                });
+            }
           });
         }
       }
@@ -320,120 +270,109 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               </FormItem>
             )}
           />
-          
-          <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-            {/* Image Upload Area */}
-            <div className="space-y-4 p-4 border rounded-lg">
-                <FormLabel className="flex items-center gap-2 text-lg font-semibold"><ImageIcon className="h-5 w-5"/> Image Media</FormLabel>
-                <FormItem>
-                    <FormLabel>Upload Image File</FormLabel>
-                     <FormControl>
-                        <label 
-                            htmlFor="imageFile-input" 
-                            className={cn(
-                            buttonVariants({ variant: "outline" }), 
-                            "cursor-pointer flex items-center justify-center gap-2 w-full",
-                            isSubmitting && "cursor-not-allowed opacity-50"
-                            )}
-                        >
-                            <UploadCloud className="h-4 w-4" />
-                            <span className="truncate">{imageFile ? imageFile.name : (imageFileName || "Choose Image File")}</span>
-                        </label>
-                        <Input id="imageFile-input" type="file" accept="image/*" className="sr-only" onChange={handleImageFileChange} disabled={isSubmitting} />
-                    </FormControl>
-                     <FormMessage>{form.formState.errors.imageSrc?.message && !imageFile ? form.formState.errors.imageSrc.message : ''}</FormMessage> 
-                </FormItem>
-                <div className="text-center text-muted-foreground font-semibold text-sm">OR</div>
-                 <FormField
-                    control={form.control}
-                    name="imageSrc"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Image Source URL</FormLabel>
-                            <FormControl>
-                                <Input placeholder="https://..." {...field} value={field.value ?? ''} disabled={isSubmitting || !!imageFile} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </div>
-            
-            {/* Video Upload Area */}
-            <div className="space-y-4 p-4 border rounded-lg">
-                 <FormLabel className="flex items-center gap-2 text-lg font-semibold"><Video className="h-5 w-5"/> Video Media (Optional)</FormLabel>
-                 <FormItem>
-                    <FormLabel>Upload Video File</FormLabel>
-                     <FormControl>
-                        <label 
-                            htmlFor="videoFile-input" 
-                            className={cn(
-                            buttonVariants({ variant: "outline" }), 
-                            "cursor-pointer flex items-center justify-center gap-2 w-full",
-                            isSubmitting && "cursor-not-allowed opacity-50"
-                            )}
-                        >
-                            <UploadCloud className="h-4 w-4" />
-                            <span className="truncate">{videoFile ? videoFile.name : (videoFileName || "Choose Video File")}</span>
-                        </label>
-                        <Input id="videoFile-input" type="file" accept="video/*" className="sr-only" onChange={handleVideoFileChange} disabled={isSubmitting} />
-                    </FormControl>
-                    <FormDescription>Video will override the image if both are provided.</FormDescription>
-                     <FormMessage>{form.formState.errors.videoSrc?.message && !videoFile ? form.formState.errors.videoSrc.message : ''}</FormMessage> 
-                </FormItem>
-                <div className="text-center text-muted-foreground font-semibold text-sm">OR</div>
-                <FormField
-                    control={form.control}
-                    name="videoSrc"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Video Source URL</FormLabel>
-                            <FormControl>
-                                <Input placeholder="https://..." {...field} value={field.value ?? ''} disabled={isSubmitting || !!videoFile} />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-            </div>
-          </div>
-
-          <FormField
-            control={form.control}
-            name="content"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Content</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Short description or content for the card..." {...field} rows={4} disabled={isSubmitting}/>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="data-ai-hint"
-            render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>AI Hint (for Image)</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="e.g., luxury watch" 
-                    {...field}
-                    value={field.value ?? ''}
-                    disabled={isSubmitting}
-                  />
-                </FormControl>
-                <FormDescription>
-                  Keywords for AI to find a replacement image if the URL is broken (max 2 words).
-                </FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
         </div>
+
+        <div className="space-y-4 p-4 border rounded-lg">
+           <FormField
+            control={form.control}
+            name="mediaType"
+            render={({ field }) => (
+              <FormItem className="space-y-3">
+                <FormLabel>Media Type</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex items-center space-x-4"
+                    disabled={isSubmitting}
+                  >
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl><RadioGroupItem value="image" /></FormControl>
+                      <FormLabel className="font-normal">Image</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-2 space-y-0">
+                      <FormControl><RadioGroupItem value="video" /></FormControl>
+                      <FormLabel className="font-normal">Video</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="text-center text-muted-foreground font-semibold text-sm">Provide a URL or Upload a File</div>
+
+          <FormField
+            control={form.control}
+            name="mediaSrc"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{mediaType === 'image' ? 'Image Source URL' : 'Video Source URL'}</FormLabel>
+                <FormControl>
+                  <Input placeholder="https://..." {...field} value={field.value ?? ''} disabled={isSubmitting || !!mediaFile} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormItem>
+            <FormLabel>Or Upload File</FormLabel>
+            <FormControl>
+              <label 
+                  htmlFor="mediaFile-input" 
+                  className={cn(
+                  buttonVariants({ variant: "outline" }), 
+                  "cursor-pointer flex items-center justify-center gap-2 w-full",
+                  isSubmitting && "cursor-not-allowed opacity-50"
+                  )}
+              >
+                  <UploadCloud className="h-4 w-4" />
+                  <span className="truncate">{mediaFile ? mediaFile.name : `Choose ${mediaType === 'image' ? 'Image' : 'Video'} File`}</span>
+                  <Input id="mediaFile-input" type="file" accept={mediaType === 'image' ? 'image/*' : 'video/*'} className="sr-only" onChange={handleFileChange} disabled={isSubmitting} />
+              </label>
+            </FormControl>
+            <FormDescription>Uploading a file will override the URL input.</FormDescription>
+          </FormItem>
+        </div>
+
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Content</FormLabel>
+              <FormControl>
+                <Textarea placeholder="Short description or content for the card..." {...field} rows={4} disabled={isSubmitting}/>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="data-ai-hint"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>AI Hint (for Image)</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="e.g., luxury watch" 
+                  {...field}
+                  value={field.value ?? ''}
+                  disabled={isSubmitting || mediaType !== 'image'}
+                />
+              </FormControl>
+              <FormDescription>
+                Keywords for AI to find a replacement image if the URL is broken (max 2 words).
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>
             Cancel
