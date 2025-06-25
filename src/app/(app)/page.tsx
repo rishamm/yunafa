@@ -1,4 +1,3 @@
-
 // src/app/(app)/page.tsx
 'use client';
 
@@ -9,8 +8,8 @@ import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
 import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
 import { FullScreenVideo } from '@/components/sections/FullScreenVideo';
-import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 
 export default function HomePage() {
   const [carouselItems, setCarouselItems] = useState<CarouselItemType[]>([]);
@@ -26,6 +25,25 @@ export default function HomePage() {
     { href: "/category/junior", label: "Junior" },
     { href: "/category/tervibe", label: "Tervibe" },
   ];
+
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: carouselRef,
+    offset: ["start end", "start center"], // Animate as section scrolls from bottom to center of screen
+    clamp: true, // Prevents values from going outside 0-1 range
+  });
+
+  // Animate from a fixed left position to the horizontal center of the screen
+  const navX = useTransform(scrollYProgress, [0, 1], ["4rem", "50%"]);
+  // Animate from the vertical center to a higher position
+  const navY = useTransform(scrollYProgress, [0, 1], ["50%", "20%"]);
+  // Animate the transform property to smoothly switch from vertical to horizontal centering
+  const navTransform = useTransform(scrollYProgress, (pos) => {
+      const translateY = (1 - pos) * -50; // Starts at -50% and moves to 0
+      const translateX = pos * -50;       // Starts at 0 and moves to -50%
+      return `translate(${translateX}%, ${translateY}%)`;
+  });
+
 
   useEffect(() => {
     async function loadData() {
@@ -51,10 +69,12 @@ export default function HomePage() {
       />
       
       <motion.nav
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, ease: "easeInOut" }}
-        className="fixed left-8 md:left-16 top-1/2 -translate-y-1/2 z-40 pointer-events-auto"
+        style={{
+          x: navX,
+          y: navY,
+          transform: navTransform,
+        }}
+        className="fixed left-0 top-0 z-40 pointer-events-auto"
       >
         <ul className="space-y-4">
           {heroLinks.map((link) => (
@@ -77,7 +97,10 @@ export default function HomePage() {
           <ParallaxSwiper />
         </section>
 
-        <section id="home-carousel" className="py-10 md:py-16 bg-background">
+        <section id="home-carousel" ref={carouselRef} className="py-10 md:py-16 bg-background">
+          <div className="h-[40vh]">
+            {/* This is a spacer div to create a "landing area" for the animated nav above the carousel */}
+          </div>
           {isLoadingData ? (
               <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
                   <p>Loading collections...</p>
