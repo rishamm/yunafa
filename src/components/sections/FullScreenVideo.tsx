@@ -64,7 +64,7 @@ export function FullScreenVideo({
         }}
         aria-hidden="true"
       />
-       <nav className="absolute left-8 md:left-16 bottom-[7rem] z-20 pointer-events-auto">
+       <nav className="fixed left-8 md:left-16 bottom-[7rem] z-40 pointer-events-auto">
         <ul className="space-y-4">
           {heroLinks.map((link) => (
             <li key={link.href}>
