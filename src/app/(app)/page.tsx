@@ -8,12 +8,19 @@ import { HomePageCarousel } from '@/components/sections/HomePageCarousel';
 import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
 import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
 import { FullScreenVideo } from '@/components/sections/FullScreenVideo';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
 
 export default function HomePage() {
   const [carouselItems, setCarouselItems] = useState<CarouselItemType[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
+  const [navStyle, setNavStyle] = useState<React.CSSProperties>({
+    position: 'fixed',
+    top: '50%',
+    left: '4rem',
+    transform: 'translateY(-50%)',
+    zIndex: 40,
+  });
 
   const heroLinks = [
     { href: "/category/ethnic", label: "Ethnic" },
@@ -26,30 +33,81 @@ export default function HomePage() {
     { href: "/category/tervibe", label: "Tervibe" },
   ];
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: carouselRef,
-    offset: ["start end", "start center"], // Animate as section scrolls from bottom to center of screen
-    clamp: true, // Prevents values from going outside 0-1 range
-  });
+  const navRef = useRef<HTMLElement>(null);
 
-  // Animate `left` and `top` CSS properties
-  const navLeft = useTransform(scrollYProgress, [0, 1], ["4rem", "50%"]);
-  // At the end of the scroll (progress=1), the target landing area's center will be at 70vh of the viewport.
-  const navTop = useTransform(scrollYProgress, [0, 1], ["50%", "70%"]);
 
-  // Animate the `transform` property to smoothly switch from vertical to horizontal centering
-  const navTransform = useTransform(scrollYProgress, (pos) => {
-      // When pos=0 (start), translateX is 0.
-      // When pos=1 (end), translateX is -50% to center it horizontally.
-      const translateX = pos * -50;
+  useEffect(() => {
+    const onScroll = () => {
+      if (!carouselRef.current || !containerRef.current || !navRef.current) return;
 
-      // translateY should always be -50% to keep the element vertically centered on its `top` coordinate.
-      const translateY = -50;
+      const scrollY = window.scrollY;
+      const viewportHeight = window.innerHeight;
+      const navHeight = navRef.current.offsetHeight;
+      
+      const containerAbsTop = containerRef.current.offsetTop;
+      const carouselAbsTop = carouselRef.current.offsetTop + containerAbsTop;
+      const carouselHeight = carouselRef.current.offsetHeight;
+      
+      const stickPoint = carouselAbsTop - (viewportHeight / 2) + (navHeight / 2);
+      const unstickPoint = carouselAbsTop + carouselHeight - (viewportHeight / 2) - (navHeight / 2);
 
-      return `translate(${translateX}%, ${translateY}%)`;
-  });
+      if (scrollY < stickPoint) {
+        setNavStyle({
+          position: 'fixed',
+          top: '50%',
+          left: '4rem',
+          transform: 'translateY(-50%)',
+          zIndex: 40,
+        });
+      } else if (scrollY >= stickPoint && scrollY < unstickPoint) {
+        // This makes it look sticky while being fixed
+        setNavStyle({
+          position: 'fixed',
+          top: '50%',
+          left: '4rem',
+          transform: 'translateY(-50%)',
+          zIndex: 40,
+        });
+      } else {
+        // After it should unstick, pin it to the last scroll position
+        setNavStyle({
+          position: 'absolute',
+          top: `${unstickPoint - containerAbsTop + (viewportHeight / 2)}px`,
+          left: '4rem',
+          transform: 'translateY(-50%)',
+          zIndex: 40,
+        });
+      }
+    };
 
+    const loadDataAndTrackScroll = async () => {
+      setIsLoadingData(true);
+      try {
+        const items = await getCarouselItems();
+        setCarouselItems(items);
+      } catch (error) {
+        console.error("Failed to load page data:", error);
+      } finally {
+        setIsLoadingData(false);
+        // Use timeout to ensure DOM is updated after data load
+        setTimeout(() => {
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onScroll);
+            onScroll(); // Initial check
+        }, 100);
+      }
+    };
+    
+    loadDataAndTrackScroll();
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     async function loadData() {
@@ -74,29 +132,23 @@ export default function HomePage() {
         videoHint="ocean waves"
       />
       
-      <motion.nav
-        style={{
-          left: navLeft,
-          top: navTop,
-          transform: navTransform,
-        }}
-        className="fixed z-40 pointer-events-auto"
-      >
-        <ul className="space-y-4">
-          {heroLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="inline-block font-plex-mono text-xs font-normal uppercase tracking-widest leading-[1.6] text-white hover:opacity-80 transition-opacity"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </motion.nav>
+      <div ref={containerRef} className="relative bg-background">
+        
+        <motion.nav ref={navRef} style={navStyle} className="pointer-events-auto">
+            <ul className="space-y-4">
+            {heroLinks.map((link) => (
+                <li key={link.href}>
+                <Link
+                    href={link.href}
+                    className="inline-block font-plex-mono text-xs font-normal uppercase tracking-widest leading-[1.6] text-white hover:opacity-80 transition-opacity"
+                >
+                    {link.label}
+                </Link>
+                </li>
+            ))}
+            </ul>
+        </motion.nav>
 
-      <div className="relative bg-background">
         <HeroScrollSection />
 
         <section className="h-[70vh] md:h-[80vh] w-full bg-white">
