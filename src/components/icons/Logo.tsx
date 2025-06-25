@@ -22,10 +22,9 @@ export function Logo({ height = 60, className }: LogoProps) {
       priority 
       aria-label="Yunafa Logo Image" 
     />
-    <span className="text-announcement">
+    <span>
       YUNAFA
     </span>
     </div>
   );
 }
-

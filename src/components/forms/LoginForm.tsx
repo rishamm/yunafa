@@ -64,7 +64,7 @@ export function LoginForm() {
     <div className="flex items-center justify-center min-h-screen bg-muted/40 p-4">
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4">
+          <div className="mx-auto mb-4 text-foreground">
             <Logo height={25} />
           </div>
           <CardTitle className="text-3xl font-headline">Admin Login</CardTitle>

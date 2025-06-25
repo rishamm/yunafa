@@ -25,7 +25,7 @@ export async function Header() {
   return (
     <header className="w-full py-12">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <Link href="/" aria-label="Yunafa Home">
+        <Link href="/" aria-label="Yunafa Home" className="text-primary-foreground">
           <Logo height={21} />
         </Link>
         <nav className="hidden md:flex items-center space-x-6">
@@ -33,7 +33,7 @@ export async function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-announcement hover:opacity-80 transition-colors duration-200 ease-in-out"
+              className="text-sm font-medium text-primary-foreground hover:opacity-80 transition-colors duration-200 ease-in-out"
             >
               {link.label}
             </Link>
