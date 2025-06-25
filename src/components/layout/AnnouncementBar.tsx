@@ -1,22 +1,28 @@
 
 export function AnnouncementBar() {
   const message = "Welcome to Yunafa. View our new collections!";
-  const MarqueeContent = () => (
-    <>
-      <span className="mx-8">{message}</span>
-      <span className="mx-8">{message}</span>
-      <span className="mx-8">{message}</span>
-      <span className="mx-8">{message}</span>
-    </>
+  
+  // This component will render the message multiple times to ensure it's wide enough for a smooth marquee on all screens.
+  const Content = () => (
+    <span className="pr-16">{message}</span>
   );
 
   return (
-    <div className="bg-card text-announcement relative flex overflow-x-hidden whitespace-nowrap py-3 text-sm font-semibold">
-      <div className="animate-marquee flex min-w-full shrink-0 items-center">
-        <MarqueeContent />
+    <div className="bg-card text-announcement relative h-auto overflow-x-hidden whitespace-nowrap py-3 text-sm font-semibold">
+      <div className="animate-marquee">
+        <Content />
+        <Content />
+        <Content />
+        <Content />
+        <Content />
       </div>
-      <div aria-hidden="true" className="animate-marquee flex min-w-full shrink-0 items-center">
-        <MarqueeContent />
+
+      <div className="animate-marquee2 absolute top-0 py-3">
+        <Content />
+        <Content />
+        <Content />
+        <Content />
+        <Content />
       </div>
     </div>
   );
