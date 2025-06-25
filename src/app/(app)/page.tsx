@@ -50,19 +50,12 @@ export default function HomePage() {
       const carouselAbsTop = carouselRef.current.offsetTop + containerAbsTop;
       const carouselHeight = carouselRef.current.offsetHeight;
       
-      const stickPoint = carouselAbsTop - (viewportHeight / 2) + (navHeight / 2);
-      const unstickPoint = carouselAbsTop + carouselHeight - (viewportHeight / 2) - (navHeight / 2);
+      // Calculate the scrollY value where the middle of the viewport aligns with the middle of the carousel.
+      // This is when the nav should switch from 'fixed' to 'absolute'.
+      const unstickPoint = (carouselAbsTop + carouselHeight / 2) - (viewportHeight / 2);
 
-      if (scrollY < stickPoint) {
-        setNavStyle({
-          position: 'fixed',
-          top: '50%',
-          left: '4rem',
-          transform: 'translateY(-50%)',
-          zIndex: 40,
-        });
-      } else if (scrollY >= stickPoint && scrollY < unstickPoint) {
-        // This makes it look sticky while being fixed
+      if (scrollY < unstickPoint) {
+        // STATE 1: Before the unstick point. The nav is fixed to the viewport's center.
         setNavStyle({
           position: 'fixed',
           top: '50%',
@@ -71,12 +64,15 @@ export default function HomePage() {
           zIndex: 40,
         });
       } else {
-        // After it should unstick, pin it to the last scroll position
+        // STATE 2: After the unstick point. Pin the nav to the vertical middle of the carousel.
+        const carouselTopRelativeToContainer = carouselRef.current.offsetTop;
+        const finalTopPosition = carouselTopRelativeToContainer + (carouselHeight / 2) - (navHeight / 2);
+
         setNavStyle({
           position: 'absolute',
-          top: `${unstickPoint - containerAbsTop + (viewportHeight / 2)}px`,
+          top: `${finalTopPosition}px`,
           left: '4rem',
-          transform: 'translateY(-50%)',
+          transform: 'translateY(0px)', // Reset the transform used for vertical centering
           zIndex: 40,
         });
       }
@@ -109,20 +105,6 @@ export default function HomePage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    async function loadData() {
-      setIsLoadingData(true);
-      try {
-        const items = await getCarouselItems();
-        setCarouselItems(items);
-      } catch (error) {
-        console.error("Failed to load page data:", error);
-      } finally {
-        setIsLoadingData(false);
-      }
-    }
-    loadData();
-  }, []);
 
   return (
     <div className="relative flex flex-col overflow-x-hidden min-h-screen">
