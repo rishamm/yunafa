@@ -32,11 +32,12 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
   if (hasActualItems) {
     itemsForUiCarousel = items.map((item, index) => {
       const cardData: CardData = {
-        // No src (image) by default
+        src: item.imageSrc,
+        "data-ai-hint": item["data-ai-hint"],
         title: item.title,
         category: item.category,
         content: <p>{item.content}</p>,
-        videoSrc: item.videoSrc || undefined, // Pass videoSrc if available
+        videoSrc: item.videoSrc || undefined,
       };
 
       return (

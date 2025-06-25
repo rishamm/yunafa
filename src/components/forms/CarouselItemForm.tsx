@@ -46,6 +46,8 @@ const formSchema = z.object({
     .or(z.literal('')) // Allow empty string if a file is selected
     .optional()
     .nullable(),
+  imageSrc: z.string().url('Image Source must be a valid URL.').or(z.literal('')).optional().nullable(),
+  'data-ai-hint': z.string().optional(),
 });
 
 type CarouselItemFormValues = z.infer<typeof formSchema>;
@@ -70,6 +72,8 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
       category: carouselItem?.category || (allCategories.length > 0 ? allCategories[0].name : ''),
       content: carouselItem?.content || '',
       videoSrc: carouselItem?.videoSrc || '',
+      imageSrc: carouselItem?.imageSrc || '',
+      'data-ai-hint': carouselItem?.['data-ai-hint'] || '',
     },
   });
 
@@ -80,6 +84,8 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         category: carouselItem.category,
         content: carouselItem.content,
         videoSrc: carouselItem.videoSrc || '',
+        imageSrc: carouselItem.imageSrc || '',
+        'data-ai-hint': carouselItem['data-ai-hint'] || '',
       });
       if (carouselItem.videoSrc) {
         setVideoFileName(carouselItem.videoSrc.startsWith('http') || carouselItem.videoSrc.startsWith('/') ? 'Remote/Linked Video' : carouselItem.videoSrc.split('/').pop() || 'Uploaded Video');
@@ -93,6 +99,8 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
         category: allCategories.length > 0 ? allCategories[0].name : '', 
         content: '',
         videoSrc: '',
+        imageSrc: '',
+        'data-ai-hint': '',
       });
       setVideoFileName(null);
       setVideoFile(null); 
@@ -190,6 +198,8 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
           actionFormData.append(key, String(value));
         } else if (key === 'videoSrc' && (value === null || value === '')) {
            // Ensure empty string is sent if videoSrc is explicitly cleared/null
+           actionFormData.append(key, ''); 
+        } else if (key === 'imageSrc' && (value === null || value === '')) {
            actionFormData.append(key, ''); 
         }
       });
@@ -354,6 +364,50 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="imageSrc"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel>Image Source URL (Optional)</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="e.g., https://images.unsplash.com/photo-12345.jpg" 
+                    {...field}
+                    value={field.value ?? ''}
+                    disabled={isSubmitting}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Provide an image URL. This will be used if no video is available.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="data-ai-hint"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel>AI Hint (for Image)</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="e.g., luxury watch" 
+                    {...field}
+                    value={field.value ?? ''}
+                    disabled={isSubmitting}
+                  />
+                </FormControl>
+                <FormDescription>
+                  Keywords for AI to find a replacement image if the URL is broken (max 2 words).
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => router.back()} disabled={isSubmitting}>
@@ -368,4 +422,3 @@ export function CarouselItemForm({ carouselItem, allCategories }: CarouselItemFo
     </Form>
   );
 }
-

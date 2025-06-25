@@ -7,7 +7,7 @@ import React, {
   createContext,
   useContext,
 } from "react";
-// Removed NextImage import as CardMedia will only handle video or nothing
+import NextImage from "next/image";
 import {
   IconArrowNarrowLeft,
   IconArrowNarrowRight,
@@ -24,11 +24,12 @@ interface CarouselProps {
 }
 
 export type CardData = {
+  src?: string | null;
+  'data-ai-hint'?: string;
   videoSrc?: string | null; // Optional: path to video file
   title: string;
   category: string;
   content: React.ReactNode;
-  // Removed src and data-ai-hint as they were for poster images
 };
 
 export const CarouselContext = createContext<{
@@ -240,7 +241,7 @@ export const Card = ({
         onClick={handleOpen}
         className="relative z-10 flex h-80 w-56 flex-col items-start justify-start overflow-hidden rounded-3xl bg-neutral-100 md:h-[40rem] md:w-96 dark:bg-neutral-900"
       >
-        {card.videoSrc && ( /* Only render media if videoSrc is present */
+        {(card.videoSrc || card.src) && (
           <div className="pointer-events-none absolute inset-x-0 top-0 z-30 h-full bg-gradient-to-b from-black/50 via-transparent to-transparent" />
         )}
         <div className="relative z-40 p-8">
@@ -258,8 +259,10 @@ export const Card = ({
           </motion.p>
         </div>
         <CardMedia
-          videoSrc={card.videoSrc} 
-          alt={card.title} // Alt is still useful for accessibility if the video fails or for context
+          videoSrc={card.videoSrc}
+          src={card.src}
+          data-ai-hint={card['data-ai-hint']}
+          alt={card.title}
           className="absolute inset-0 z-10 h-full w-full object-cover"
         />
       </motion.button>
@@ -268,13 +271,17 @@ export const Card = ({
 };
 
 interface CardMediaProps {
-  videoSrc?: string | null; // Path to video file
+  videoSrc?: string | null;
+  src?: string | null;
+  'data-ai-hint'?: string;
   alt: string;
   className?: string;
 }
 
 export const CardMedia = ({
   videoSrc,
+  src,
+  "data-ai-hint": dataAiHint,
   alt,
   className,
 }: CardMediaProps) => {
@@ -294,16 +301,27 @@ export const CardMedia = ({
         ref={videoRef}
         key={videoSrc} 
         src={videoSrc}
-        // Removed poster attribute as we no longer manage separate poster images
         autoPlay
         loop
         muted
         playsInline
         className={cn("absolute inset-0 z-10 h-full w-full object-cover", className)}
-        title={alt} // Use alt as title for video for accessibility
+        title={alt}
       />
     );
   }
-  // If no videoSrc, render nothing for media. The card will be content-focused.
+
+  if (src) {
+    return (
+      <NextImage
+        src={src}
+        alt={alt}
+        fill
+        className={cn("absolute inset-0 z-10 h-full w-full object-cover", className)}
+        data-ai-hint={dataAiHint}
+      />
+    );
+  }
+
   return null; 
 };

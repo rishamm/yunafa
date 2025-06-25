@@ -22,5 +22,7 @@ export interface CarouselItem {
   title: string;
   category: string;
   content: string; // Stored as simple text/string from CMS
+  imageSrc?: string | null;
   videoSrc?: string | null; // Video is optional, primary media if present
+  'data-ai-hint'?: string;
 }

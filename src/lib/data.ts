@@ -1,3 +1,4 @@
+
 'use server';
 
 import type { Product, Category, CarouselItem } from './types';
@@ -227,8 +228,49 @@ export async function deleteProduct(id: string): Promise<boolean> {
 export async function getCarouselItems(): Promise<CarouselItem[]> {
   try {
     const collection = await getCollection<CarouselItem>('carouselItems');
-    // You might want to add sorting here, e.g., by a creation date or an order field
     const items = await collection.find({}).sort({ title: 1 }).toArray();
+
+    if (items.length === 0) {
+      // If no items in DB, return some mock data with images
+      return [
+        {
+          id: 'mock1',
+          title: 'Elegant Timepieces',
+          category: 'Luxury Watches',
+          content: 'Discover our collection of finely crafted watches, a perfect blend of tradition and modernity.',
+          imageSrc: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80',
+          'data-ai-hint': 'luxury watch',
+          videoSrc: null,
+        },
+        {
+          id: 'mock2',
+          title: 'Summer Vibes',
+          category: 'Fashion',
+          content: 'Step out in style with our latest summer collection. Bright colors, light fabrics.',
+          imageSrc: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=800&q=80',
+          'data-ai-hint': 'summer fashion',
+          videoSrc: null,
+        },
+        {
+          id: 'mock3',
+          title: 'Artisan Leather',
+          category: 'Accessories',
+          content: 'Handcrafted leather goods that are built to last a lifetime. Bags, wallets, and more.',
+          imageSrc: 'https://images.unsplash.com/photo-1594223274502-9843934b3b8f?w=800&q=80',
+          'data-ai-hint': 'leather bag',
+          videoSrc: null,
+        },
+        {
+            id: 'mock4',
+            title: 'Cinematic Moments',
+            category: 'Highlight',
+            content: 'A showcase of our brand essence in motion. Experience the story behind our craft.',
+            videoSrc: '/hero.mp4',
+            imageSrc: null,
+        }
+      ];
+    }
+    
     return items.map(mapMongoDocument);
   } catch (error) {
     console.error('Error fetching carousel items:', error);

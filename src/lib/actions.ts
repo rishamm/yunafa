@@ -180,19 +180,24 @@ const sufyUrlPrefixValidated = sufyUrlPrefixRaw.endsWith('/') ? sufyUrlPrefixRaw
 
 const carouselItemActionSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters.'),
-  category: z.string().min(1, 'Category is required.'), // Changed from min(3)
+  category: z.string().min(1, 'Category is required.'),
   content: z.string().min(10, 'Content must be at least 10 characters.'),
   videoSrc: z.string().url('Video Source must be a valid URL.')
              .or(z.string().startsWith('/'))
              .or(z.string().startsWith(sufyUrlPrefixValidated))
              .optional().nullable(),
+  imageSrc: z.string().url('Image Source must be a valid URL.').optional().nullable(),
+  'data-ai-hint': z.string().max(40, "AI hint should be concise.").optional(),
 });
 
 
 export async function createCarouselItemAction(formData: FormData) {
   const rawData = Object.fromEntries(formData.entries());
-   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
+  if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
     rawData.videoSrc = null;
+  }
+  if (rawData.imageSrc === '' || rawData.imageSrc === 'null') { 
+    rawData.imageSrc = null;
   }
 
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
@@ -206,6 +211,7 @@ export async function createCarouselItemAction(formData: FormData) {
   const itemToCreate: Omit<CarouselItem, 'id'> = {
     ...itemData,
     videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null,
+    imageSrc: itemData.imageSrc ? itemData.imageSrc.trim() : null,
   };
 
   try {
@@ -224,6 +230,9 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   if (rawData.videoSrc === '' || rawData.videoSrc === 'null') { 
     rawData.videoSrc = null;
   }
+  if (rawData.imageSrc === '' || rawData.imageSrc === 'null') { 
+    rawData.imageSrc = null;
+  }
 
   const parsedResult = carouselItemActionSchema.safeParse(rawData);
 
@@ -236,6 +245,7 @@ export async function updateCarouselItemAction(id: string, formData: FormData) {
   const itemToUpdate: Partial<Omit<CarouselItem, 'id'>> = {
     ...itemData,
     videoSrc: itemData.videoSrc ? itemData.videoSrc.trim() : null,
+    imageSrc: itemData.imageSrc ? itemData.imageSrc.trim() : null,
   };
 
   try {
