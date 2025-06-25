@@ -11,11 +11,11 @@ export function AnnouncementBar() {
   );
 
   return (
-    <div className="bg-card text-announcement relative flex overflow-hidden whitespace-nowrap py-3 text-sm font-semibold">
-      <div className="animate-marquee-left flex min-w-full shrink-0 items-center">
+    <div className="bg-card text-announcement relative flex overflow-x-hidden whitespace-nowrap py-3 text-sm font-semibold">
+      <div className="animate-marquee flex min-w-full shrink-0 items-center">
         <MarqueeContent />
       </div>
-      <div aria-hidden="true" className="animate-marquee-left flex min-w-full shrink-0 items-center">
+      <div aria-hidden="true" className="animate-marquee flex min-w-full shrink-0 items-center">
         <MarqueeContent />
       </div>
     </div>
