@@ -90,21 +90,23 @@ export default {
           },
         },
         marquee: {
-          from: { transform: 'translateX(0)' },
-          to: { transform: 'translateX(-100%)' },
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-100%)' },
         },
         'wave-scroll': {
           from: { backgroundPositionX: '0' },
-          to: { backgroundPositionX: '-400px' },
+          to: { backgroundPositionX: '-100px' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee 40s linear infinite',
-        'wave-scroll': 'wave-scroll 8s linear infinite',
+        'wave-scroll': 'wave-scroll 2s linear infinite',
       },
     },
   },
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
+
+    
