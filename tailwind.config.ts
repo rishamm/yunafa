@@ -90,19 +90,19 @@ export default {
           },
         },
         marquee: {
-          '0%': { transform: 'translateX(0)' },
-          '100%': { transform: 'translateX(-100%)' },
+          from: { transform: 'translateX(0)' },
+          to: { transform: 'translateX(calc(-100% - 1rem))' },
         },
         'wave-scroll': {
           from: { backgroundPositionX: '0' },
-          to: { backgroundPositionX: '-100px' },
+          to: { backgroundPositionX: '-2000px' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee 40s linear infinite',
-        'wave-scroll': 'wave-scroll 2s linear infinite',
+        'wave-scroll': 'wave-scroll 40s linear infinite',
       },
     },
   },

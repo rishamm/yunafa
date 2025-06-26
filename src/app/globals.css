@@ -134,7 +134,7 @@
   }
   .wave-pattern {
     background-color: #ffffff;
-    background-image: url("data:image/svg+xml,%3csvg width='100' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M-2 10 Q23 0, 48 10 T98 10' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3cpath d='M-2 15 Q23 5, 48 15 T98 15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3cpath d='M-2 20 Q23 10, 48 20 T98 20' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg width='2000' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0,15 C125,0 125,30 250,15 S375,0 500,15 S625,30 750,15 S875,0 1000,15 S1125,30 1250,15 S1375,0 1500,15 S1625,30 1750,15 S1875,0 2000,15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
     background-repeat: repeat-x;
     background-position: 0 center;
   }
