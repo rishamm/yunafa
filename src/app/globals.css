@@ -133,10 +133,14 @@
     color: hsl(var(--announcement-text-color));
   }
   .wave-pattern {
+    width: 100vw;
+    margin-left: 50%;
+    transform: translateX(-50%);
     background-color: #ffffff;
-    background-image: url("data:image/svg+xml,%3csvg width='2000' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0,15 C125,0 125,30 250,15 S375,0 500,15 S625,30 750,15 S875,0 1000,15 S1125,30 1250,15 S1375,0 1500,15 S1625,30 1750,15 S1875,0 2000,15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg width='2000' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0,15 C50,0 50,30 100,15 S150,0 200,15 S250,30 300,15 S350,0 400,15 S450,30 500,15 S550,0 600,15 S650,30 700,15 S750,0 800,15 S850,30 900,15 S950,0 1000,15 S1050,30 1100,15 S1150,0 1200,15 S1250,30 1300,15 S1350,0 1400,15 S1450,30 1500,15 S1550,0 1600,15 S1650,30 1700,15 S1750,0 1800,15 S1850,30 1900,15 S1950,0 2000,15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
     background-repeat: repeat-x;
     background-position: 0 center;
+    animation: wave-scroll 40s linear infinite;
   }
   .magicpattern { 
     width: 100%;
