@@ -22,8 +22,8 @@ export async function Header() {
   ];
 
   return (
-    <header className="w-full py-12">
-      <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+    <header className="w-full py-4">
+      <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" aria-label="Yunafa Home" className="text-black">
           <Logo height={21} />
         </Link>
