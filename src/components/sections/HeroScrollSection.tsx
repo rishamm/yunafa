@@ -27,7 +27,19 @@ export function HeroScrollSection() {
   );
 
   return (
-    <div className="relative flex flex-col justify-start">
+    <div className="relative flex flex-col justify-start overflow-hidden">
+       <div
+        className="absolute top-8 -left-8 text-8xl md:text-9xl font-bold text-white/5 pointer-events-none z-0 font-headline"
+        aria-hidden="true"
+      >
+        YUNAFA
+      </div>
+       <div
+        className="absolute top-8 -right-8 text-8xl md:text-9xl font-bold text-white/5 pointer-events-none z-0 text-right font-headline"
+        aria-hidden="true"
+      >
+        UNIQUE
+      </div>
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-white">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
