@@ -94,15 +94,14 @@ export default {
           to: { transform: 'translateX(calc(-100% - 1rem))' },
         },
         'wave-scroll': {
-          from: { backgroundPositionX: '0' },
-          to: { backgroundPositionX: '-2000px' },
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee 25s linear infinite',
-        'wave-scroll': 'wave-scroll 20s linear infinite',
       },
     },
   },
