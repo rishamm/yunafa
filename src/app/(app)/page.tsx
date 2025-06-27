@@ -114,7 +114,7 @@ export default function HomePage() {
         videoHint="ocean waves"
       />
       
-      <div ref={containerRef} className="relative bg-background">
+      <div ref={containerRef} className="relative">
         
         <motion.nav ref={navRef} style={navStyle} className="pointer-events-auto">
             <ul className="space-y-4">
