@@ -29,13 +29,13 @@ export function HeroScrollSection() {
   return (
     <div className="relative flex flex-col justify-start overflow-hidden">
        <div
-        className="absolute top-8 -left-8 text-8xl md:text-9xl font-bold text-black/5 pointer-events-none z-0 font-headline"
+        className="absolute top-8 -left-8 text-8xl md:text-9xl font-bold text-black pointer-events-none z-0 font-headline"
         aria-hidden="true"
       >
         YUNAFA
       </div>
        <div
-        className="absolute top-8 -right-8 text-8xl md:text-9xl font-bold text-black/5 pointer-events-none z-0 text-right font-headline"
+        className="absolute top-8 -right-8 text-8xl md:text-9xl font-bold text-black pointer-events-none z-0 text-right font-headline"
         aria-hidden="true"
       >
         UNIQUE
