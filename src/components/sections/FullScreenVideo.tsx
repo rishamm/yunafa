@@ -1,6 +1,4 @@
-
 'use client';
-import Link from 'next/link';
 import { useRef, useEffect } from 'react';
 
 interface FullScreenVideoProps {
@@ -25,7 +23,7 @@ export function FullScreenVideo({
   }, [videoSrc]);
 
   return (
-    <section className="sticky top-0 h-screen w-full overflow-hidden bg-neutral-800">
+    <div className="fixed top-0 left-0 h-screen w-full overflow-hidden bg-neutral-800 -z-10">
       <video
         ref={videoRef}
         key={videoSrc} 
@@ -35,7 +33,7 @@ export function FullScreenVideo({
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        className="absolute top-0 left-0 w-full h-full object-cover"
         data-ai-hint={videoHint} 
       >
         Your browser does not support the video tag.
@@ -53,6 +51,6 @@ export function FullScreenVideo({
         }}
         aria-hidden="true"
       />
-    </section>
+    </div>
   );
 }

@@ -46,8 +46,7 @@ export default function HomePage() {
       const viewportHeight = window.innerHeight;
       const navHeight = navRef.current.offsetHeight;
       
-      const containerAbsTop = containerRef.current.offsetTop;
-      const carouselAbsTop = carouselRef.current.offsetTop + containerAbsTop;
+      const carouselAbsTop = carouselRef.current.offsetTop;
       const carouselHeight = carouselRef.current.offsetHeight;
       
       // Calculate the scrollY value where the middle of the viewport aligns with the middle of the carousel.
@@ -107,14 +106,14 @@ export default function HomePage() {
 
 
   return (
-    <div className="bg-background">
+    <>
       <FullScreenVideo
         videoSrc="/land_scape.mp4"
         posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
         videoHint="ocean waves"
       />
       
-      <div ref={containerRef} className="relative z-10">
+      <div ref={containerRef} className="relative">
         
         <motion.nav ref={navRef} style={navStyle} className="pointer-events-auto">
             <ul className="space-y-4">
@@ -148,6 +147,6 @@ export default function HomePage() {
           )}
         </section>
       </div>
-    </div>
+    </>
   );
 }
