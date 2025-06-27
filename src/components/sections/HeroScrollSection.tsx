@@ -38,7 +38,7 @@ export function HeroScrollSection() {
         className="absolute top-8 -right-8 text-8xl md:text-9xl font-bold text-black pointer-events-none z-0 text-right font-headline"
         aria-hidden="true"
       >
-        UNIQUE
+        YUNAFA
       </div>
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-white">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
