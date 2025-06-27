@@ -136,7 +136,7 @@
     width: 100vw;
     margin-left: 50%;
     transform: translateX(-50%);
-    background-image: url("data:image/svg+xml,%3csvg width='2000' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0,15 C40,5 60,25 100,12 S160,28 200,18 S240,-5 300,15 C350,35 380,0 400,10 S460,20 500,16 S540,30 600,14 S650,-2 700,11 C740,29 760,5 800,17 S850,25 900,13 S960,30 1000,15 C1050,5 1080,25 1100,15 S1140,25 1200,10 S1260,28 1300,18 S1350,0 1400,13 S1440,29 1500,11 S1550,25 1600,17 S1640,0 1700,15 S1750,30 1800,12 S1860,-3 1900,16 S1950,28 2000,15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg width='2000' height='30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M0,15 Q25,5 50,15 T100,15 T150,15 T200,15 T250,15 T300,15 T350,15 T400,15 T450,15 T500,15 T550,15 T600,15 T650,15 T700,15 T750,15 T800,15 T850,15 T900,15 T950,15 T1000,15 T1050,15 T1100,15 T1150,15 T1200,15 T1250,15 T1300,15 T1350,15 T1400,15 T1450,15 T1500,15 T1550,15 T1600,15 T1650,15 T1700,15 T1750,15 T1800,15 T1850,15 T1900,15 T1950,15 T2000,15' stroke='%23000000' stroke-width='1.5' fill='none'/%3e%3c/svg%3e");
     background-repeat: repeat-x;
     background-position: 0 center;
   }
