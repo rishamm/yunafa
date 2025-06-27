@@ -107,14 +107,14 @@ export default function HomePage() {
 
 
   return (
-    <div className="relative flex flex-col min-h-screen">
+    <div className="bg-background">
       <FullScreenVideo
         videoSrc="/land_scape.mp4"
         posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
         videoHint="ocean waves"
       />
       
-      <div ref={containerRef} className="relative">
+      <div ref={containerRef} className="relative z-10">
         
         <motion.nav ref={navRef} style={navStyle} className="pointer-events-auto">
             <ul className="space-y-4">
