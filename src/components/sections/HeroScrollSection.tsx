@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 export function HeroScrollSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -26,20 +27,38 @@ export function HeroScrollSection() {
     </div>
   );
 
+  const MarqueeText = () => (
+    <>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+    </>
+  );
+
   return (
     <div className="relative flex flex-col justify-start overflow-hidden">
-       <div
-        className="absolute top-8 -left-8 text-8xl md:text-9xl font-bold text-black pointer-events-none z-0 font-headline"
+      <div
+        className="absolute top-8 left-0 w-full pointer-events-none z-0 overflow-hidden"
         aria-hidden="true"
       >
-        YUNAFA
+        <motion.div 
+            className="flex whitespace-nowrap"
+            animate={{
+                x: ['0%', '-100%'],
+            }}
+            transition={{
+                ease: 'linear',
+                duration: 40,
+                repeat: Infinity,
+            }}
+        >
+            <MarqueeText />
+            <MarqueeText />
+        </motion.div>
       </div>
-       <div
-        className="absolute top-8 -right-8 text-8xl md:text-9xl font-bold text-black pointer-events-none z-0 text-right font-headline"
-        aria-hidden="true"
-      >
-        YUNAFA
-      </div>
+      
       <ContainerScroll titleComponent={<span className="text-base md:text-lg font-medium text-white">Scroll to discover our showcase</span>}>
         <div className="relative w-full h-full">
           <video
