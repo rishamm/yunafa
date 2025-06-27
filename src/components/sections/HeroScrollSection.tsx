@@ -29,11 +29,11 @@ export function HeroScrollSection() {
 
   const MarqueeText = () => (
     <>
-        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
-        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
-        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
-        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
-        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-4">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-12">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-12">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-12">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-12">YUNAFA</span>
+        <span className="text-8xl md:text-9xl font-bold text-black font-headline mx-12">YUNAFA</span>
     </>
   );
 
