@@ -35,7 +35,7 @@ export function HeroScrollSection() {
           }}
           transition={{
             ease: 'linear',
-            duration: 20,
+            duration: 10,
             repeat: Infinity,
           }}
         >

@@ -107,7 +107,7 @@ export default function HomePage() {
 
 
   return (
-    <div className="relative flex flex-col overflow-x-hidden min-h-screen">
+    <div className="relative flex flex-col min-h-screen">
       <FullScreenVideo
         videoSrc="/land_scape.mp4"
         posterSrc="https://images.unsplash.com/photo-1488375633099-766993104619?w=1920&h=1080&fit=crop&q=80"
