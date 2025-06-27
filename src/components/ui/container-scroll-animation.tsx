@@ -115,7 +115,7 @@ export const Card = ({
         scale: scale,
         translateY: translateY,
       }}
-      className="mt-[-3px] h-[30rem] md:h-[40rem] w-full shadow-2xl"
+      className="mt-[-3px] h-[40rem] md:h-[60rem] w-full shadow-2xl"
     >
       <div className=" h-full w-full overflow-hidden   md:p-0 ">
         {children}

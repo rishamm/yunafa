@@ -25,7 +25,7 @@ export function FullScreenVideo({
   }, [videoSrc]);
 
   return (
-    <section className="relative h-screen w-full overflow-hidden bg-neutral-800">
+    <section className="sticky top-0 h-screen w-full overflow-hidden bg-neutral-800">
       <video
         ref={videoRef}
         key={videoSrc} 
