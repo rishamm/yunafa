@@ -1,0 +1,138 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 180 20% 96%; /* #F0F5F5 - Very light tealish gray */
+    --foreground: 180 25% 20%; /* #425C5C - Dark desaturated teal */
+
+    --card: 180 0% 100%; /* #FFFFFF - White */
+    --card-foreground: 180 25% 20%; /* Dark desaturated teal */
+
+    --popover: 180 0% 100%; /* White */
+    --popover-foreground: 180 25% 20%; /* Dark desaturated teal */
+
+    --primary: 180 70% 40%; /* #1F9A9A - Teal */
+    --primary-foreground: 180 10% 95%; /* #F0F7F7 - Very light teal for contrast */
+
+    --secondary: 180 15% 90%; /* #E0EBEB - Light tealish gray */
+    --secondary-foreground: 180 20% 30%; /* #3D5C5C - Darker tealish gray */
+
+    --muted: 180 10% 85%; /* #D4E0E0 - Very light muted teal */
+    --muted-foreground: 180 10% 50%; /* #738C8C - Medium muted teal */
+
+    --accent: 180 60% 55%; /* #3DB8B8 - Brighter Teal */
+    --accent-foreground: 180 10% 95%; /* #F0F7F7 - Very light teal for contrast */
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 180 15% 80%; /* #C2D6D6 - Light tealish gray border */
+    --input: 180 15% 88%; /* #D9E8E8 - Lighter for input */
+    --ring: 180 70% 50%; /* #29CCCC - Brighter teal for ring */
+    
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+
+    --sidebar-background: 180 20% 8%; /* #0F1A1A - Very dark desaturated teal */
+    --sidebar-foreground: 180 15% 85%; /* #D1E0E0 - Light tealish gray */
+    --sidebar-primary: 180 65% 55%;    /* #42BABA - Vibrant teal */
+    --sidebar-primary-foreground: 180 10% 95%; /* #F0F7F7 - Light contrast */
+    --sidebar-accent: 180 70% 65%;     /* #5CEDED - Brighter teal */
+    --sidebar-accent-foreground: 180 10% 95%; /* #F0F7F7 - Light contrast */
+    --sidebar-border: 180 15% 15%;   /* #1E2B2B */
+    --sidebar-ring: 180 65% 60%;      /* #52C7C7 */
+  }
+
+  .dark {
+    --background: 180 15% 10%; /* #141F1F - Dark desaturated teal */
+    --foreground: 180 15% 90%; /* #E0EBEB - Light tealish gray */
+
+    --card: 180 15% 12%; /* #182323 - Slightly lighter than dark bg */
+    --card-foreground: 180 15% 90%; /* Light tealish gray */
+
+    --popover: 180 15% 12%; /* Slightly lighter than dark bg */
+    --popover-foreground: 180 15% 90%; /* Light tealish gray */
+
+    --primary: 180 65% 55%; /* #42BABA - Brighter teal for dark mode */
+    --primary-foreground: 180 70% 15%; /* #1A3333 - Dark contrast for primary */
+
+    --secondary: 180 10% 20%; /* #2D3B3B - Darker muted teal */
+    --secondary-foreground: 180 10% 80%; /* #C2D1D1 - Lighter tealish gray */
+
+    --muted: 180 10% 20%; /* Darker muted teal */
+    --muted-foreground: 180 10% 60%; /* #8C9E9E - Medium tealish gray */
+
+    --accent: 180 70% 65%; /* #5CEDED - Even brighter teal for accent */
+    --accent-foreground: 180 70% 10%; /* #112A2A - Dark contrast for accent */
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 180 10% 25%; /* #354747 - Dark tealish gray border */
+    --input: 180 10% 20%; /* #2D3B3B - Darker tealish gray input */
+    --ring: 180 65% 65%; /* #61DADA - Brighter teal ring for dark mode */
+    
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    --sidebar-background: 180 20% 8%; 
+    --sidebar-foreground: 180 15% 85%;
+    --sidebar-primary: 180 65% 55%;
+    --sidebar-primary-foreground: 180 10% 95%;
+    --sidebar-accent: 180 70% 65%;
+    --sidebar-accent-foreground: 180 10% 95%;
+    --sidebar-border: 180 15% 15%;
+    --sidebar-ring: 180 65% 60%;
+  }
+}
+
+@layer base {
+  /* Default Next.js/Tailwind body styling is generally preferred */
+  /* Avoid global height/overflow manipulations unless for very specific full-page effects not managed by layouts */
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+  * {
+    @apply border-border;
+  }
+
+  /* Lenis recommended CSS */
+  html.lenis {
+    height: auto;
+  }
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important; /* Lenis will handle the smooth scrolling */
+  }
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+}
+
+@layer utilities {
+  .magicpattern { 
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: repeat;
+    background-image: url("data:image/svg+xml;utf8,%3Csvg width=%222000%22 height=%221400%22 xmlns=%22http:%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath fill=%22%23e5e5e5%22 d=%22M0 0h2000v1400H0z%22%2F%3E%3Cpath d=%22M0 700h0c32.707-6.418 65.414-12.837 101-41s74.05-78.072 107-76c32.95 2.072 60.388 56.123 94 78 33.612 21.877 73.398 11.578 106 24 32.602 12.422 58.019 47.563 88 51 29.981 3.437 64.528-24.83 102-19 37.472 5.83 77.871 45.756 110 31 32.129-14.756 55.987-84.195 86-75 30.013 9.195 66.182 97.024 100 105 33.818 7.976 65.287-63.9 102-99 36.713-35.1 78.672-33.426 110-36 31.328-2.574 52.026-9.398 86-3s81.223 26.017 115 50 54.083 52.329 85 47c30.917-5.329 72.444-44.333 111-86s74.14-85.996 105-40c30.86 45.996 56.993 182.319 86 179 29.007-3.319 60.886-146.278 98-194 37.114-47.722 79.461-.206 115 33s64.27 52.103 133 71%22 fill=%22none%22 stroke=%22%23212121%22 stroke-width=%2211%22 stroke-linecap=%22round%22%2F%3E%3C%2Fsvg%3E");
+  }
+}
+
+    

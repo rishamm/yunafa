@@ -1,7 +1,6 @@
 
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 
 export default function AppLayout({
   children,
@@ -11,7 +10,6 @@ export default function AppLayout({
   return (
     <div className='relative'>
       <div className="absolute top-0 left-0 w-full z-50">
-        <AnnouncementBar />
         <Header />
       </div>
       <main className="flex-grow ">
