@@ -4,7 +4,7 @@ import { ContainerScroll } from '@/components/ui/container-scroll-animation';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 
-const marqueeText = Array(8).fill('Yunafa Designs');
+const marqueeText = Array(8).fill('Yunafa ');
 
 export function HeroScrollSection() {
   const containerRef = useRef(null);
@@ -19,8 +19,8 @@ export function HeroScrollSection() {
         ref={containerRef}
         className="absolute top-0 left-0 w-full overflow-hidden"
       >
-        {/* Marquee Row 1 */}
-        <motion.div
+      
+        {/* <motion.div
           style={{ x: xLeft }}
           className="text-black md:text-9xl text-5xl font-bold w-max whitespace-nowrap py-4"
         >
@@ -29,12 +29,12 @@ export function HeroScrollSection() {
               {text}
             </span>
           ))}
-        </motion.div>
+        </motion.div> */}
 
         {/* Marquee Row 2 (opposite direction) */}
         <motion.div
           style={{ x: xRight }}
-          className="text-black md:text-9xl text-5xl font-bold w-max whitespace-nowrap py-4"
+          className="text-black md:text-9xl text-7xl font-bold w-max whitespace-nowrap py-4"
         >
           {marqueeText.map((text, i) => (
             <span key={`row2-${i}`} className="mx-4">
