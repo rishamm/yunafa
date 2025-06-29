@@ -15,7 +15,7 @@ export default function AppLayout({
         posterSrc="https://images.unsplash.com/photo-1422493757033-1e0821297b43?w=1920&h=1080&fit=crop" 
         videoHint="abstract landscape" 
       />
-      <div className="absolute top-0 left-0 w-full z-50">
+      <div className="absolute top-0 left-0 w-full ">
         <Header />
       </div>
       <main className="flex-grow relative z-10">

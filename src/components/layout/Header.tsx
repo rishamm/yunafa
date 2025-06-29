@@ -12,6 +12,7 @@ import {
 import { getCategories } from '@/lib/data';
 import type { Category } from '@/lib/types';
 
+
 export async function Header() {
   const categories: Category[] = await getCategories();
 
@@ -23,7 +24,8 @@ export async function Header() {
   ];
 
   return (
-    <header className="w-full py-4">
+    <header className="w-full py-8 ">
+     
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" aria-label="Yunafa Home" className="text-black">
           <Logo height={21} />

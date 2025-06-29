@@ -64,8 +64,8 @@ export function HomePageCarousel({ items, leadingElement }: HomePageCarouselProp
 
   if (finalAssembly.length === 0 && !leadingElement) {
      return (
-      <section>
-        <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
+      <section className="bg-white">
+        <div className="flex w-full overflow-x-hidden bg-white py-10 md:py-20 justify-center">
           <div className="flex flex-row justify-start gap-4 pl-4">
             {[...Array(4)].map((_, index) => (
                <motion.div

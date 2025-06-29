@@ -34,16 +34,7 @@ const slidesData = [
     subtitle: 'Chapter II, page VII',
     paragraph: ""
   },
-  {
-    id: 3,
-    leftImageUrl: 'https://images.unsplash.com/photo-1551803091-e2ab69291dfa?w=800&auto=format&fit=crop&q=60',
-    rightImageUrl: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&auto=format&fit=crop&q=60',
-    leftImageHint: 'fabric texture',
-    rightImageHint: 'luxury product',
-    title: <>A <span className="emphasis">Sense</span>. <br /><span>Of Things to Come.</span></>,
-    subtitle: 'Chapter III, page XI',
-    paragraph: "Every man carries Two Bags about with him, one in front and one behind, and both are packed full of faults. The Bag in front contains his neighbours’ faults, the one behind his own. Hence it is that men do not see their own faults, but never fail to see those of others."
-  },
+ 
 ];
 
 export function ParallaxSwiper() {
