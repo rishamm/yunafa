@@ -34,11 +34,11 @@ export default function HomePage() {
       <div className="relative">
         <HeroScrollSection />
 
-        <section className="h-[70vh] md:h-[80vh] w-full bg-white">
+        <section className="h-[70vh] md:h-[80vh] w-full bg-transparent">
           <ParallaxSwiper />
         </section>
 
-        <section id="home-carousel" className="py-10 md:py-16 bg-background">
+        <section id="home-carousel" className="py-10 md:py-16 bg-transparent">
           {isLoadingData ? (
               <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
                   <p>Loading collections...</p>
