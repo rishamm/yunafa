@@ -19,7 +19,7 @@ export function HeroScrollSection() {
         ref={containerRef}
         className="absolute top-0 left-0 w-full overflow-hidden"
       >
-      
+
         {/* <motion.div
           style={{ x: xLeft }}
           className="text-black md:text-9xl text-5xl font-bold w-max whitespace-nowrap py-4"
@@ -44,12 +44,12 @@ export function HeroScrollSection() {
         </motion.div>
 
 
-    
-        
-        
 
-      
-         
+
+
+
+
+
       </div>
 
       {/* Scrollable Container with Background Video */}

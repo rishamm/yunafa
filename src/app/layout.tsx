@@ -7,7 +7,7 @@ import { SmoothScrollProvider } from '@/components/common/SmoothScrollProvider';
 export const metadata: Metadata = {
   title: 'Yunafa - Luxurious Finds',
   description: 'Discover unique and luxurious products at Yunafa.',
-  icons: null, // Explicitly nullify icons to prevent default processing
+  icons: '/logo.ico',
 };
 
 export default function RootLayout({

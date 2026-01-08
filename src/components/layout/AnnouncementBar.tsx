@@ -33,7 +33,7 @@ export function AnnouncementBar({ targetId = 'hero-scroll' }: { targetId?: strin
           transition={{ duration: 0.4 }}
           className="fixed top-0 left-0 w-full z-50 bg-white text-black text-center py-1 z-[51]"
         >
-           welcome to {"    "}yunafa !
+          Yunafa
         </motion.div>
       )}
     </AnimatePresence>
