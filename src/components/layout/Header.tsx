@@ -15,7 +15,6 @@ import { getCategories } from '@/lib/data';
 export async function Header() {
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/#home-carousel', label: 'Collections' },
     { href: '/our-story', label: 'Our Story' },
     { href: '/lookbook', label: 'Lookbook' },
     { href: '/contact', label: 'Contact' }

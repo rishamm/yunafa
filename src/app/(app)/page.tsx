@@ -8,6 +8,7 @@ import { HeroScrollSection } from '@/components/sections/HeroScrollSection';
 import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
 import { useEffect, useState } from 'react';
 import EditorialHero from '@/components/EditorialHero';
+import { DenimSection } from '@/components/sections/DenimSection';
 
 
 export default function HomePage() {
@@ -58,6 +59,10 @@ export default function HomePage() {
           ) : (
             <HomePageCarousel items={carouselItems} />
           )}
+
+        </section>
+        <section id="denim">
+          <DenimSection />
         </section>
       </div>
     </>

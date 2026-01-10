@@ -68,7 +68,7 @@ export default function EditorialHero() {
                         {/* Minimalist Overlay */}
                         <div className="absolute inset-0 flex flex-col justify-end items-center p-10 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700">
                             <Link href="/collections" className="bg-white px-8 py-3 rounded-full text-[10px] tracking-[0.3em] text-black uppercase hover:bg-lime-50 transition-colors duration-300">
-                                View Collection
+                                Enquire
                             </Link>
                         </div>
                     </motion.div>
