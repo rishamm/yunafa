@@ -56,7 +56,7 @@ export function FullScreenVideo({ videoSrc, posterSrc }: FullScreenVideoProps) {
           </div>
 
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center pt-20">
-            <Logo height={240} className='filter-invert' />
+            <Logo height={240} className='invert' />
             <GoldenHero />
           </div>
 
