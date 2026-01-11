@@ -7,10 +7,10 @@ interface FullScreenVideoProps {
   videoHint?: string;
 }
 
-export function FullScreenVideo({ 
-  videoSrc, 
-  posterSrc, 
-  videoHint = "background video" 
+export function FullScreenVideo({
+  videoSrc,
+  posterSrc,
+  videoHint = "background video"
 }: FullScreenVideoProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -23,34 +23,32 @@ export function FullScreenVideo({
   }, [videoSrc]);
 
   return (
-    <div className="fixed top-0 left-0 h-screen w-full overflow-hidden bg-neutral-800 -z-10">
-      <video
-        ref={videoRef}
-        key={videoSrc} 
-        src={videoSrc}
-        poster={posterSrc}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover"
-        data-ai-hint={videoHint} 
-      >
-        Your browser does not support the video tag.
-      </video>
-      <div
-        className="absolute inset-0 z-[1] pointer-events-none"
-        style={{
-          width: '100%',
-          height: '100%',
-          backgroundSize: '100px',
-          backgroundRepeat: 'repeat',
-          backgroundImage: "url('/overlay.png')", 
-          opacity: 0.1, 
-          borderRadius: 0,
-        }}
-        aria-hidden="true"
-      />
+    /* OUTER DIV: This is the 'Track'. 
+      Because it is 'relative h-screen', the sticky video inside 
+      is ONLY sticky while the user is looking at this specific 100vh block.
+    */
+    <div className="relative h-screen w-full">
+      {/* INNER DIV: The actual sticky element. 
+        Once you scroll past the 100vh above, this div will move UP.
+      */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden bg-zinc-950 z-0">
+        <video
+          ref={videoRef}
+          src={videoSrc}
+          poster={posterSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          data-ai-hint={videoHint}
+        />
+        {/* Subtle overlay to help text readability */}
+        <div className="absolute inset-0 z-[1] bg-black/10" />
+
+        {/* Bottom fade for smooth transition */}
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-zinc-950 to-transparent z-[2]" />
+      </div>
     </div>
   );
 }
