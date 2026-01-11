@@ -59,18 +59,17 @@ export function FullScreenVideo({ videoSrc, posterSrc }: FullScreenVideoProps) {
             <Logo height={240} className='invert' />
             <GoldenHero />
           </div>
-
         </div>
 
-        {/* BOTTOM UI: CONTENT WRAPPER */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
 
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
           {/* Left: Discovery Quote */}
           <div className="max-w-[280px] pb-2">
             <h2 className="text-xs font-bold uppercase tracking-tighter mb-2">Architectural Utility</h2>
             <p className="text-[10px] leading-relaxed text-white/40 uppercase">
               Redefining the silhouette of durable luxury. <br />
               Crafted for movement, built for longevity.
+
             </p>
           </div>
 
