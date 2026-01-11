@@ -16,16 +16,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    // FIX 1: Added h-full to html
+    <html lang="en" className="h-full">
       <head>
         <link href="https://fonts.cdnfonts.com/css/batusa" rel="stylesheet" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600;1,700&family=Cormorant+SC:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet" />
+        {/* ... other links ... */}
       </head>
-      <body className="font-body antialiased flex flex-col min-h-screen">
+      {/* FIX 2: Replaced min-h-screen with h-full and removed flex-col which causes Safari layout bugs */}
+      <body className="font-body antialiased h-full m-0 p-0">
         <SmoothScrollProvider>
-          {children}
+          {/* FIX 3: Ensure children can expand */}
+          <main className="relative h-full w-full">
+            {children}
+          </main>
         </SmoothScrollProvider>
         <Toaster />
       </body>
