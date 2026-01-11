@@ -13,7 +13,7 @@ export const ContainerScroll = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 1%", "start 90%"], 
+    offset: ["start 1%", "start 90%"],
   });
   const [isMobile, setIsMobile] = React.useState(false);
   const [isVeryLargeScreen, setIsVeryLargeScreen] = React.useState(false);
@@ -53,8 +53,8 @@ export const ContainerScroll = ({
     isMobile
       ? [0, 0] // Mobile: card moves 75px up
       : isVeryLargeScreen
-      ? [0, 1] // Very Large Desktop (>1440px): card moves 20px up
-      : [0, 11] // Medium Desktop (<=1440px): card moves 40px up
+        ? [0, 1] // Very Large Desktop (>1440px): card moves 20px up
+        : [0, 11] // Medium Desktop (<=1440px): card moves 40px up
   );
 
 

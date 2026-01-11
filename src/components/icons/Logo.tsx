@@ -7,12 +7,12 @@ interface LogoProps {
 }
 
 
-export function Logo({ height = 30, className }: LogoProps) {
+export function Logo({ height = 300, className }: LogoProps) {
 
-  const width = 30
+  const width = 300
 
   return (
-    <div className='flex flex-col items-center '>
+    <div className='flex flex-col  items-center '>
       <Image
         src="/logo.png"
         alt="Yunafa Logo Image"
@@ -22,9 +22,6 @@ export function Logo({ height = 30, className }: LogoProps) {
         priority
         aria-label="Yunafa Logo Image"
       />
-      <span>
-        YUNAFA
-      </span>
     </div>
   );
 }

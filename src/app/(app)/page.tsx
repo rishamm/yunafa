@@ -9,6 +9,8 @@ import { ParallaxSwiper } from '@/components/sections/ParallaxSwiper';
 import { useEffect, useState } from 'react';
 import EditorialHero from '@/components/EditorialHero';
 import { DenimSection } from '@/components/sections/DenimSection';
+import { FullScreenVideo } from '@/components/sections/FullScreenVideo';
+import { Footer } from '@/components/layout/Footer';
 
 
 export default function HomePage() {
@@ -34,10 +36,14 @@ export default function HomePage() {
   return (
     <>
       <div className="relative">
-
-        <div className='h-screen'>
-          {/* Your top spacer/content */}
-        </div>
+        <FullScreenVideo
+          videoSrc="/land_scape.mp4"
+          posterSrc="https://images.unsplash.com/photo-1422493757033-1e0821297b43?w=1920&h=1080&fit=crop"
+          videoHint="abstract landscape"
+        />
+        {/* <div className='h-screen'>
+         
+        </div> */}
 
         <div className='relative'>
           <HeroScrollSection />
@@ -64,6 +70,7 @@ export default function HomePage() {
         <section id="denim">
           <DenimSection />
         </section>
+        <Footer />
       </div>
     </>
   );
