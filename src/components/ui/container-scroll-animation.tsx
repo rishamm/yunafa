@@ -68,7 +68,7 @@ export const ContainerScroll = ({
         style={{ perspective: "1200px" }}
       >
         {/* LOOK BOOK LAYER (Top Layer) - Minimalist Luxury Style */}
-        <div className="absolute inset-x-0 top-[50%] md:top-[40%] z-50 pointer-events-none overflow-hidden">
+        <div className="absolute inset-x-0 top-[40%] md:top-[20%] z-50 pointer-events-none overflow-hidden">
           <motion.div
             style={{ opacity: opacityText }}
             className="flex items-center justify-center gap-4 md:gap-8"
