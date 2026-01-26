@@ -1,4 +1,4 @@
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
   darkMode: ['class'],
@@ -10,8 +10,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Batusa', 'sans-serif'], 
-        headline: ['Batusa', 'serif'], 
+        body: ['Batusa', 'sans-serif'],
+        headline: ['Batusa', 'serif'],
         code: ['monospace'],
         'plex-mono': ['"IBM Plex Mono"', 'monospace'],
       },
@@ -93,11 +93,27 @@ export default {
           from: { transform: 'translateX(0)' },
           to: { transform: 'translateX(calc(-100% - 1rem))' },
         },
+        'scroll-line': {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(100%)' },
+        },
+        shine: {
+          '0%': { 'background-position': '200% 0' },
+          '100%': { 'background-position': '-200% 0' },
+        },
+        sweep: {
+          '0%': { transform: 'translateX(-200%) skewX(-12deg)' },
+          '100%': { transform: 'translateX(200%) skewX(-12deg)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         marquee: 'marquee 25s linear infinite',
+        scanline: 'scanline 8s linear infinite',
+        'scroll-line': 'scroll-line 2.5s cubic-bezier(0.76, 0, 0.24, 1) infinite',
+        shine: 'shine 5s linear infinite',
+        sweep: 'sweep 4s cubic-bezier(0.77, 0, 0.175, 1) infinite',
       },
     },
   },
