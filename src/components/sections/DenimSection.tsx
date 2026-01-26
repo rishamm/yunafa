@@ -19,8 +19,7 @@ export function DenimSection() {
     // Desktop: Moves further (-55%) | Mobile: Moves less to keep items in frame (-70% of a smaller container)
     const x = useTransform(scrollYProgress, [0, 1], ["0%", "-70%"]);
 
-    // Heading movement: subtle shift to keep it readable
-    const headerX = useTransform(scrollYProgress, [0, 1], ["5%", "-20%"]);
+
     // Mobile heading fade out so it doesn't clash with images
     const headerOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.3]);
 
@@ -38,16 +37,7 @@ export function DenimSection() {
                     </video>
                 </div>
 
-                {/* 2. Ghost Heading (Refined for both) */}
-                <div className="absolute inset-0 z-10 pointer-events-none flex items-center">
-                    <motion.div style={{ x: headerX, opacity: headerOpacity }} className="whitespace-nowrap">
-                        <h2 className="text-[30vw] lg:text-[25vw] font-[1000] italic uppercase leading-none tracking-tighter text-transparent"
-                            style={{ WebkitTextStroke: "1px rgba(255, 255, 255, 0.2)" }}>
-                            TURVIBE
-                            <span className="text-[5vw] lg:text-[4vw] align-top font-mono not-italic ml-2 text-red-600">[S26]</span>
-                        </h2>
-                    </motion.div>
-                </div>
+
 
                 {/* 3. Horizontal Gallery (Mobile & Desktop Unified) */}
                 <div className="flex h-full items-center">

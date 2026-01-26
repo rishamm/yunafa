@@ -58,13 +58,9 @@ export default function HomePage() {
         </section>
 
         <section id="home-carousel" className="py-10 md:py-16 bg-white">
-          {isLoadingData ? (
-            <div className="flex w-full overflow-x-hidden py-10 md:py-20 justify-center">
-              <p>Loading collections...</p>
-            </div>
-          ) : (
-            <HomePageCarousel items={carouselItems} />
-          )}
+
+          <HomePageCarousel items={carouselItems} />
+
 
         </section>
         <section id="denim">

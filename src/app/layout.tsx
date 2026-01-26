@@ -3,7 +3,14 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { SmoothScrollProvider } from '@/components/common/SmoothScrollProvider';
+import { Inter, Montserrat } from 'next/font/google';
 
+const brandFont = Montserrat({
+  subsets: ['latin'],
+  weight: ['900'], // or your specific weight
+  display: 'swap', // This ensures text is visible during font download
+  variable: '--font-brand',
+});
 export const metadata: Metadata = {
   title: 'Yunafa - Luxurious Finds',
   description: 'Discover unique and luxurious products at Yunafa.',
