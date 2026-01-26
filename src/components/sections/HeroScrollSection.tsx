@@ -46,10 +46,6 @@ export function HeroScrollSection() {
 
 
 
-
-
-
-
       </div>
 
       {/* Scrollable Container with Background Video */}
